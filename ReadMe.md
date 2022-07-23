@@ -6,6 +6,9 @@ e2e测试框架
 - Puppeteer: 自动点击测试，适用于冒烟测试用例
 
 # 结果展示
-覆盖率: ![test](public/test_screen.png)
-自动化测试截图: ![home](public/home.jpg)
+## 覆盖率
+![test](public/test_screen.png)
+
+## 自动化测试截图
+![home](public/home.jpg)
 
