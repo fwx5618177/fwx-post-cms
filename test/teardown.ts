@@ -1,14 +1,14 @@
-const fs = require("fs");
-const os = require("os");
-const path = require("path");
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
 
-const DIR = path.join(os.tmpdir(), "jest_puppeteer_global_setup");
+const DIR = path.join(os.tmpdir(), 'jest_puppeteer_global_setup')
 export default async function () {
-  // close the browser instance
-  await globalThis.__BROWSER_GLOBAL__.close();
+    // close the browser instance
+    await globalThis.__BROWSER_GLOBAL__.close()
 
-  // clean-up the wsEndpoint file
-  await fs.rm(DIR, { recursive: true, force: true }, (err) => {
-    if (err) console.log("rm err: ", err);
-  });
+    // clean-up the wsEndpoint file
+    await fs.rm(DIR, { recursive: true, force: true }, err => {
+        if (err) console.log('rm err: ', err)
+    })
 }
