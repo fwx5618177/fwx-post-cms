@@ -1,4 +1,4 @@
-# Vite_React-TS-jest-puppeteer
+# Vite-React-BasicScaffolding
 e2e测试框架
 
 # 现有功能
