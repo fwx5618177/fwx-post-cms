@@ -29,16 +29,20 @@ export default {
         '^react-dom$': 'preact-compat',
     },
     // coverageThreshold: {
-    //   global: {
-    //     branches: 80,
-    //     functions: 80,
-    //     lines: 80,
-    //     statements: -10,
-    //   },
-    //   "./src/**/*.tsx": {
-    //     branches: 40,
-    //     statements: 40,
-    //   },
+    //     global: {
+    //         branches: 80,
+    //         functions: 80,
+    //         lines: 80,
+    //         statements: -10,
+    //     },
+    //     './src/**/*.tsx': {
+    //         branches: 40,
+    //         statements: 40,
+    //     },
+    //     './src/**/*.ts': {
+    //         branches: 40,
+    //         statements: 40,
+    //     },
     // },
     snapshotFormat: {
         printBasicPrototype: false,
