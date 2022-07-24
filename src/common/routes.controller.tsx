@@ -3,6 +3,7 @@ import { lazy } from 'react'
 import { ItemType } from 'antd/lib/menu/hooks/useItems'
 import { errorRoutes, menuConf } from './routes.conf'
 import { Outlet, Route } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 /**
  * @description 字符串转懒加载
@@ -49,26 +50,44 @@ export const errorHanlde = (errorRoutes: RoutesPageI[]): RoutesPageI[] => {
 /**
  * @description 菜单展示菜单栏
  */
-export const queryMenus = (menuConf: RoutesPageI[]): ItemType[] => {
+export const queryMenus = (menuConf: RoutesPageI[], t): ItemType[] => {
     return routesConfiguration(menuConf)
         ?.map(ci => {
+            // 替换文本
+            let label
+            // console.log(typeof ci?.label)
+
+            if (typeof ci?.label === 'string') {
+                label = t(ci?.label)
+            } else {
+                // console.log('ci?.label:', ci?.label?.props)
+
+                label = {
+                    ...ci?.label,
+                    props: {
+                        ...ci?.label?.props,
+                        children: t(ci?.label?.props?.children),
+                    },
+                }
+            }
+
             if (ci?.children && ci?.children.length > 0 && Array.isArray(ci?.children)) {
                 if (!!ci?.menuShow) {
                     return {
                         key: ci?.key as string,
                         icon: ci?.icon,
-                        label: ci?.label,
-                        children: queryMenus(ci?.children),
+                        label: label,
+                        children: queryMenus(ci?.children, t),
                         theme: ci?.theme,
                     }
                 } else {
-                    return queryMenus(ci?.children) as any
+                    return queryMenus(ci?.children, t) as any
                 }
             } else {
                 return {
                     key: ci?.key as string,
                     icon: ci?.icon,
-                    label: ci?.label,
+                    label: label,
                     theme: ci?.theme,
                 }
             }
@@ -80,7 +99,10 @@ export const queryMenus = (menuConf: RoutesPageI[]): ItemType[] => {
  * @description 菜单栏展示控制器
  */
 export const menusController = () => {
-    const conf = queryMenus(menuConf)
+    const { t } = useTranslation()
+    const conf = queryMenus(menuConf, t)
+
+    // console.log(conf)
 
     return conf
 }

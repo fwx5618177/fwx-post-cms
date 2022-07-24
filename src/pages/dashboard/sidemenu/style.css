@@ -1,0 +1,17 @@
+.SideMenu_header {
+    height: auto;
+    margin: 12px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.SideMenu_header > span {
+    width: 15px;
+    height: 30px;
+    background-color: #1890ff;
+}
+
+.SideMenu_header > h3 {
+    margin-left: 5px;
+}

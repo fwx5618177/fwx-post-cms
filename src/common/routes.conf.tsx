@@ -12,9 +12,9 @@ import { RoutesPageI } from './interface'
  */
 export const menuConf: RoutesPageI[] = [
     {
-        key: 'de',
+        key: 'layout',
         icon: <DashboardOutlined />,
-        label: <Link to={'/'}>默认主页</Link>,
+        label: <Link to={'/'}>背景</Link>,
         components: '../pages/Layout.tsx',
         path: '/',
         menuShow: false,
@@ -22,7 +22,7 @@ export const menuConf: RoutesPageI[] = [
             {
                 key: '/',
                 icon: <DashboardOutlined />,
-                label: <Link to={'/'}>默认主页</Link>,
+                label: <Link to={'/'}>defaultMain</Link>,
                 components: '../pages/main/index.tsx',
                 path: '/',
                 index: true,
@@ -31,17 +31,17 @@ export const menuConf: RoutesPageI[] = [
             {
                 key: 'dashboard',
                 icon: <DashboardOutlined />,
-                label: '默认操作台',
+                label: 'defaultOps',
                 outlet: true,
                 path: 'dashboard',
                 children: [
                     {
-                        key: 'default',
+                        key: 'sidemenu',
                         icon: <DashboardOutlined />,
-                        label: <Link to={'/dashboard/default'}>菜单</Link>,
-                        components: '../pages/dashboard/default/index',
+                        label: <Link to={'/dashboard/sidemenu'}>sidemenu</Link>,
+                        components: '../pages/dashboard/sidemenu/index',
                         // index: true,
-                        path: 'default',
+                        path: 'sidemenu',
                         children: [],
                     },
                 ],

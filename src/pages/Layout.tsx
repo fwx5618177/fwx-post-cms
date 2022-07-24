@@ -1,10 +1,11 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined, HomeOutlined } from '@ant-design/icons'
+import { MenuFoldOutlined, MenuUnfoldOutlined, HomeOutlined, FontColorsOutlined } from '@ant-design/icons'
 import { Github } from 'react-bootstrap-icons'
-import { Breadcrumb, Layout, Menu } from 'antd'
+import { Breadcrumb, Dropdown, Layout, Menu } from 'antd'
 import React, { useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import { menusController } from '../common/routes.controller'
 import './layout.css'
+import i18n, { multipleLanguages } from '../../i18n/index'
 
 const { Header, Sider, Content, Footer } = Layout
 
@@ -12,12 +13,17 @@ const LayoutEle = () => {
     const [collapsed, setCollapsed] = useState(false)
     const [linksName, setLinksName] = useState<string[]>(window.location.pathname.split('/').filter(ci => !!ci) as string[])
 
-    // useEffect(() => {
-    //     const re = window.location.pathname.split('/').filter(ci => !!ci)
-    //     setLinksName(re)
-    // }, [])
-
-    // console.log(linksName.length > 1 ? ['/' + linksName[1]] : ['']);
+    const i18nMenus = (
+        <Menu
+            onClick={event => {
+                i18n.changeLanguage(event?.key)
+            }}
+            items={multipleLanguages?.map(ci => ({
+                label: ci?.label,
+                key: ci?.value,
+            }))}
+        />
+    )
 
     return (
         <Layout
@@ -69,23 +75,31 @@ const LayoutEle = () => {
                         className: 'trigger',
                         onClick: () => setCollapsed(!collapsed),
                     })}
+
+                    <div className='layout_multiple_languages'>
+                        <Dropdown overlay={i18nMenus}>
+                            <FontColorsOutlined />
+                        </Dropdown>
+                    </div>
                 </Header>
                 <Breadcrumb style={{ margin: 0, marginLeft: 8, marginTop: 8 }}>
                     <Breadcrumb.Item>
                         <HomeOutlined />
-                        <Link to={'/dashboard'}>
+                        <Link to={'/'}>
                             <span
                                 onClick={() => {
-                                    setLinksName(['dashboard'])
+                                    setLinksName(['/'])
                                 }}
                             >
                                 Home
                             </span>
                         </Link>
                     </Breadcrumb.Item>
-                    {linksName?.map((ci, index) => (
-                        <Breadcrumb.Item key={index + '_menu'}>{ci}</Breadcrumb.Item>
-                    ))}
+                    {linksName.length > 1
+                        ? linksName?.map((ci, index) => {
+                              return <Breadcrumb.Item key={index + '_menu'}>{ci}</Breadcrumb.Item>
+                          })
+                        : null}
                 </Breadcrumb>
                 <Content
                     className='site-layout-background'
