@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "lint": "eslint --ignore-path .gitignore --ext .ts src/",
     "lint:fix": "npm run lint -- --fix",
-    "test": "jest --config jest.config.ts --forceExit --detectOpenHandles"
+    "test": "jest --config jest.config.ts --forceExit --detectOpenHandles && npm run lint"
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
