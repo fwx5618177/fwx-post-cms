@@ -13,10 +13,12 @@
     "test": "jest --config jest.config.ts --forceExit --detectOpenHandles"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@types/jest": "^28.1.6",
     "@types/jest-environment-puppeteer": "^5.0.2",
     "@types/node": "^18.0.6",
     "@types/puppeteer": "^5.4.6",
+    "antd": "^4.21.7",
     "chalk": "^2.4.2",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
@@ -26,6 +28,7 @@
     "prettier": "^2.7.1",
     "puppeteer": "^15.5.0",
     "react": "^18.2.0",
+    "react-bootstrap-icons": "^1.8.4",
     "react-dom": "^18.2.0",
     "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",

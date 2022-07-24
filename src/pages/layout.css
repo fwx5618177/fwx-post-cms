@@ -1,0 +1,114 @@
+.logo {
+    height: 32px;
+    margin: 16px;
+    cursor: pointer;
+    box-sizing: border-box;
+    background: linear-gradient(to right, rgba(197, 194, 194, 0.2), rgb(193, 65, 65, 0.4));
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+    border: 2px solid rgba(154, 148, 148, 0.3);
+    box-shadow: 2px 2px 2px 2px rgba(154, 148, 148, 0.3), 2px -2px 2px 2px rgba(154, 148, 148, 0.3);
+    /* animation: clickFill .3s; */
+}
+
+.logo::after {
+    content: '';
+    background: rgba(231, 35, 35, 0.3);
+    transition: 0.3s;
+}
+
+.logo:hover {
+    transform: translateY(-2px);
+}
+
+.logo:hover > h3 {
+    transform: scale(1.1);
+}
+
+.logo:active {
+    transform: translateY(2px);
+}
+
+.logo:active::after {
+    animation: clickFill 0.2s;
+    transition: 0.3s;
+    /* box-shadow: 0 0 0 6px rgba(17, 83, 196, 0.9) */
+}
+
+@keyframes clickFill {
+    from {
+        background: linear-gradient(to right, transparent, transparent);
+    }
+
+    10% {
+        background: linear-gradient(to right, rgba(52, 86, 145, 0.9), transparent 10%);
+    }
+
+    50% {
+        background: linear-gradient(to right, rgba(38, 86, 168, 0.9), transparent 50%);
+    }
+
+    80% {
+        background: linear-gradient(to right, rgba(17, 83, 196, 0.9), transparent 80%);
+    }
+
+    to {
+        background: linear-gradient(to right, rgba(20, 90, 213, 0.9), rgba(20, 90, 213, 1));
+    }
+}
+
+.button {
+    display: inline-block;
+    padding: 1em 2em;
+    background-color: #ff0081;
+    color: #fff;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 2px 25px rgba(233, 30, 99, 0.5);
+    outline: 0;
+    transition: transform ease-in 0.1s, background-color ease-in 0.1s, box-shadow ease-in 0.25s;
+}
+
+.button::before {
+    position: absolute;
+    content: '';
+    left: -2em;
+    right: -2em;
+    top: -2em;
+    bottom: -2em;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-image: radial-gradient(circle, #ff0081 20%, transparent 20%), radial-gradient(circle, #ff0081 20%, transparent 20%), radial-gradient(circle, #ff0081 20%, transparent 20%), radial-gradient(circle, #ff0081 20%, transparent 20%),
+        radial-gradient(circle, #ff0081 20%, transparent 20%), radial-gradient(circle, #ff0081 20%, transparent 20%), radial-gradient(circle, #ff0081 20%, transparent 20%), radial-gradient(circle, #ff0081 20%, transparent 20%),
+        radial-gradient(circle, #ff0081 20%, transparent 20%), radial-gradient(circle, #ff0081 20%, transparent 20%), radial-gradient(circle, #ff0081 20%, transparent 20%), radial-gradient(circle, #ff0081 20%, transparent 20%),
+        radial-gradient(circle, #ff0081 20%, transparent 20%), radial-gradient(circle, #ff0081 20%, transparent 20%), radial-gradient(circle, #ff0081 20%, transparent 20%), radial-gradient(circle, #ff0081 20%, transparent 20%);
+    background-position: 5% 44%, -5% 20%, 7% 5%, 23% 0%, 37% 0, 58% -2%, 80% 0%, 100% -2%, -5% 80%, 100% 55%, 2% 100%, 23% 100%, 42% 100%, 60% 95%, 70% 96%, 100% 100%;
+    background-size: 0% 0%;
+    transition: background-position 0.5s ease-in-out, background-size 0.75s ease-in-out;
+}
+
+.button:active::before {
+    transition: 0s;
+    background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%, 10% 10%, 18% 18%, 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 10% 10%, 20% 20%;
+    background-position: 18% 40%, 20% 31%, 30% 30%, 40% 30%, 50% 30%, 57% 30%, 65% 30%, 80% 32%, 15% 60%, 83% 60%, 18% 70%, 25% 70%, 41% 70%, 50% 70%, 64% 70%, 80% 71%;
+}
+
+.githubLink {
+    text-decoration: none;
+    color: #000;
+    cursor: pointer;
+
+    padding: 0.3rem;
+    margin-right: 5px;
+
+    transition: box-shadow 0.2s;
+}
+
+.githubLink:hover {
+    color: #fff;
+    background-color: #ff0081;
+    box-shadow: 2px 2px 2px 2px rgba(17, 83, 196, 0.9), -2px -2px 2px 2px rgba(17, 83, 196, 0.9);
+}

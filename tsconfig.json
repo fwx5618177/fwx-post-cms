@@ -17,14 +17,9 @@
     "experimentalDecorators": true,
     "noImplicitAny": false,
     "jsx": "react-jsx",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "outDir": "./dist/",
     "rootDir": ".",
-    "paths": {
-      "@/": ["./*"],
-      "@src": ["./src/*"],
-      "@common/*": ["./src/common/*"]
-    }
   },
   "include": ["src", "test"],
   "exclude": [
