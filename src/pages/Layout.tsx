@@ -42,13 +42,14 @@ const LayoutEle = () => {
                 <Menu
                     theme='dark'
                     mode='inline'
-                    selectedKeys={[window.location.pathname.replace('/dashboard', '') || '/']}
+                    selectedKeys={linksName.length > 1 ? [linksName[1]] : ['/']}
                     items={menusController()}
                     onClick={() => {
                         const re = window.location.pathname.split('/').filter(ci => !!ci)
+
                         setLinksName(re)
                     }}
-                    defaultOpenKeys={linksName.length > 1 ? ['/' + linksName[1]] : ['']}
+                    defaultOpenKeys={linksName.length > 1 ? [linksName[0]] : ['']}
                 />
             </Sider>
             <Layout className='site-layout'>

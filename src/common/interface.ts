@@ -13,6 +13,7 @@ export interface RoutesPageI {
     children?: RoutesPageI[]
     theme?: 'light' | 'dark'
     caseSensitive?: boolean
+    menuShow?: boolean
 }
 
 /**

@@ -1,15 +1,16 @@
-import { extraRoutesHandle, routesConf, test } from './common/routes.controller'
+import { extraRoutesHandle, routesConf } from './common/routes.controller'
 import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes } from 'react-router-dom'
 import { ConfigProvider } from 'antd'
 import './index.css'
+import SpinLoading from './loading/spin'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <ConfigProvider>
             <BrowserRouter>
-                <Suspense fallback={<p>Loading</p>}>
+                <Suspense fallback={<SpinLoading />}>
                     <Routes>{routesConf(extraRoutesHandle())}</Routes>
                 </Suspense>
             </BrowserRouter>

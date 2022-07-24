@@ -10,6 +10,8 @@ describe('/ (Home Page)', () => {
         await page.goto(`${URL}`, { waitUntil: 'domcontentloaded' })
         await page.emulate(iPhonex)
         await page.setViewport({ width: 375, height: 812, isMobile: false })
+
+        await page.waitForSelector('.logo')
     })
 
     afterAll(async () => {
@@ -20,12 +22,10 @@ describe('/ (Home Page)', () => {
         const text = await page.evaluate(() => document.body.textContent)
 
         for (let i = 0; i < 100; i++) {
-            await page.waitForSelector('#test_id')
-            await page.click('#test_id')
+            await page.click('.logo')
         }
 
-        // page.waitForTimeout(5000)
-        expect(text).toContain('Loading')
+        expect(text).toContain('Moxi')
     })
 
     test('Take screenshot of home pag', async () => {
