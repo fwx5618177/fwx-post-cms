@@ -32,25 +32,49 @@ const SideMenu: React.FC = () => {
                 }}
             >
                 <Form name='basic' labelCol={{ span: 4 }} wrapperCol={{ span: 8 }} initialValues={{ remember: true }} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete='off'>
-                    <Form.Item name='key' label='路由key' rules={[{ required: true, message: '输入路由key值!' }]}>
+                    <Form.Item name='menushow' label={t('routemenushow')} rules={[{ required: true, message: t('routemenushow.text') }]}>
                         <Input />
                     </Form.Item>
 
-                    <Form.Item name='label' label='路由名' rules={[{ required: true, message: '输入路由名!' }]}>
+                    <Form.Item name='key' label={t('routekey')} rules={[{ required: true, message: t('routekey.text') }]}>
                         <Input />
                     </Form.Item>
 
-                    <Form.Item name='path' label='路由路径' rules={[{ required: true, message: '输入路由路径!' }]}>
+                    <Form.Item name='label' label={t('routelabel')} rules={[{ required: true, message: t('routelabel.text') }]}>
                         <Input />
                     </Form.Item>
 
-                    <Form.Item name='path' label='路由路径' rules={[{ required: true, message: '输入路由路径!' }]}>
+                    <Form.Item name='path' label={t('routepath')} rules={[{ required: true, message: t('routepath.text') }]}>
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item name='icon' label={t('routeicon')} rules={[{ required: true, message: t('routeicon.text') }]}>
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item name='index' label={t('routeindex')} rules={[{ required: true, message: t('routeindex.text') }]}>
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item name='child' label={t('routechild')} rules={[{ required: true, message: t('routechild.text') }]}>
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item name='component' label={t('routecomponent')} rules={[{ required: true, message: t('routecomponent.text') }]}>
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item name='outlet' label={t('routeoutlet')} rules={[{ required: true, message: t('routeoutlet.text') }]}>
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item name='casesensitive' label={t('routecasesensitive')} rules={[{ required: true, message: t('routecasesensitive.text') }]}>
                         <Input />
                     </Form.Item>
 
                     <Form.Item wrapperCol={{ offset: 4, span: 8 }}>
                         <Button type='primary' htmlType='submit'>
-                            提交
+                            {t('button.submit')}
                         </Button>
 
                         <Button
@@ -60,7 +84,7 @@ const SideMenu: React.FC = () => {
                             htmlType='button'
                             onClick={onReset}
                         >
-                            重置
+                            {t('button.reset')}
                         </Button>
                     </Form.Item>
                 </Form>

@@ -28,7 +28,7 @@ const LayoutEle = () => {
     return (
         <Layout
             style={{
-                minHeight: '100vh',
+                height: '100vh',
                 width: '100%',
             }}
         >
@@ -104,12 +104,10 @@ const LayoutEle = () => {
                 <Content
                     className='site-layout-background'
                     style={{
-                        margin: '5px 8px 6px 8px',
+                        margin: 2,
                         overflowY: 'scroll',
                         overflowX: 'hidden',
-                        // margin: '24px 16px',
-                        // padding: 24,
-                        // minHeight: 280,
+                        padding: 0,
                     }}
                 >
                     <Outlet />
@@ -117,6 +115,7 @@ const LayoutEle = () => {
                 <Footer
                     style={{
                         textAlign: 'center',
+                        padding: 2,
                     }}
                 >
                     <a className='githubLink' href='https://github.com/fwx5618177'>
