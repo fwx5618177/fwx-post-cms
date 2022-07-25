@@ -10,6 +10,7 @@
     - [ ] 权限与展示隔离
 - [ ] 基础通信库
 - [x] e2e
-    - jest
-    - Puppeteer
+    - [x] jest
+    - [x] Puppeteer
+    - [x] 自动化测试
 - [x] 多语言-i18n
