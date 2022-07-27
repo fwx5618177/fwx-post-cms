@@ -26,3 +26,14 @@ export interface RoutesConfI {
     caseSensitive?: boolean
     children?: RoutesConfI[]
 }
+
+/**
+ * 路由表结构
+ */
+export interface RouteTableI {
+    title: string
+    key: string
+    icon: React.ReactNode
+    switcherIcon?: React.ReactNode
+    children?: RouteTableI[]
+}

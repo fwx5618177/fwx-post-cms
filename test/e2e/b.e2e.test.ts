@@ -8,7 +8,7 @@ describe('Login', () => {
             args: ['--start-maximized'],
         })
         const page: puppeteer.Page = await browser.newPage()
-        await page.goto(`${URL}`)
+        await page.goto(`http://localhost:5173/`)
         for (let i = 0; i < 100; i++) {
             await page.waitForSelector('.logo')
             await page.click('.logo')

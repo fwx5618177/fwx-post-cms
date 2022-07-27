@@ -14,6 +14,7 @@ const dashboardSideMenu = {
 
 const menuSideForm = {
     routemenushow: '主题背景设置',
+    routebgshowstatus: '是否设置背景',
     routekey: '路由关键字',
     routelabel: '路由名',
     routepath: '路由路径',
@@ -35,6 +36,11 @@ const menuSideForm = {
     'routecomponent.text': '请输入路由组件',
     'routeoutlet.text': '请输入路由是否可点击',
     'routecasesensitive.text': '请输入大小写确认',
+    'routebadge.ribbon': '路由配置',
+    'routebadge.ribbonshow': '路由表展示',
+    'routecard.text': '路由表设置',
+    'routetable.treedata': '现存路由表',
+    'routetable.switch': '展开',
 }
 
 export const zh_menu = {

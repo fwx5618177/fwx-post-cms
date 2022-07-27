@@ -7,7 +7,7 @@ describe('/ (Home Page)', () => {
     const iPhonex = devices['iPhone X']
     beforeAll(async () => {
         page = await globalThis.__BROWSER_GLOBAL__.newPage()
-        await page.goto(`${URL}`, { waitUntil: 'domcontentloaded' })
+        await page.goto(`http://localhost:5173/`, { waitUntil: 'domcontentloaded' })
         await page.emulate(iPhonex)
         await page.setViewport({ width: 375, height: 812, isMobile: false })
 

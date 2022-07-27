@@ -8,6 +8,9 @@ export default defineConfig({
     resolve: {
         alias: {
             src: path.resolve(__dirname, './src'),
+            '@/': './',
+            mocks: './mocks',
+            tests: './tests',
         },
     },
 })

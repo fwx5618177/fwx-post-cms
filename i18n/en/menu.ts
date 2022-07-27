@@ -14,6 +14,7 @@ const dashboardSideMenu = {
 
 const menuSideForm = {
     routemenushow: 'backgroundset',
+    routebgshowstatus: 'set new background',
     routekey: 'route key',
     routelabel: 'route name',
     routepath: 'route path',
@@ -35,6 +36,11 @@ const menuSideForm = {
     'routecomponent.text': 'Please input!',
     'routeoutlet.text': 'Please input!',
     'routecasesensitive.text': 'Please input!',
+    'routebadge.ribbon': 'route conf',
+    'routebadge.ribbonshow': 'Route Show',
+    'routecard.text': 'Route Setting',
+    'routetable.treedata': 'Route Tree Data',
+    'routetable.switch': 'Expand',
 }
 
 export const en_menu = {

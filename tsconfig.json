@@ -20,8 +20,22 @@
     "baseUrl": ".",
     "outDir": "./dist/",
     "rootDir": ".",
+    "rootDirs": [
+      "src",
+      "tests",
+      "mocks"
+    ],
+    "paths": {
+      "@/": ["./*"],
+      "@mocks": ["./mocks/*"],
+      "@tests": ["./tests/*"],
+    }
   },
-  "include": ["src", "test"],
+  "include": [
+    "src",
+    "test",
+    "mocks",
+  ],
   "exclude": [
     "jest.config.js",
     // "src/types/**",

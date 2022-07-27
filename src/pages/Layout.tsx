@@ -10,6 +10,7 @@ import i18n, { multipleLanguages } from '../../i18n/index'
 const { Header, Sider, Content, Footer } = Layout
 
 const LayoutEle = () => {
+    // const [langugaeSet, setLangugaeSet] = useState<string>('中文')
     const [collapsed, setCollapsed] = useState(false)
     const [linksName, setLinksName] = useState<string[]>(window.location.pathname.split('/').filter(ci => !!ci) as string[])
 
@@ -80,6 +81,7 @@ const LayoutEle = () => {
                         <Dropdown overlay={i18nMenus}>
                             <FontColorsOutlined />
                         </Dropdown>
+                        {/* <span>{langugaeSet}</span> */}
                     </div>
                 </Header>
                 <Breadcrumb style={{ margin: 0, marginLeft: 8, marginTop: 8 }}>

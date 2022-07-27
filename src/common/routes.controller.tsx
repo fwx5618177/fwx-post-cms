@@ -1,9 +1,11 @@
-import { RoutesConfI, RoutesPageI } from './interface'
+import { RoutesConfI, RoutesPageI, RouteTableI } from './interface'
 import { lazy } from 'react'
 import { ItemType } from 'antd/lib/menu/hooks/useItems'
 import { errorRoutes, menuConf } from './routes.conf'
 import { Outlet, Route } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { t } from 'i18next'
+import { Sunrise } from 'react-bootstrap-icons'
 
 /**
  * @description 字符串转懒加载
@@ -167,4 +169,34 @@ export const routesConf = (conf: RoutesConfI[], deep = 0) => {
             return <Route key={index + '_routes_child_' + deep} caseSensitive={ci?.caseSensitive} index={ci?.index} path={ci?.index ? '' : ci?.path} element={ci?.element} />
         }
     })
+}
+
+/**
+ * 路由表生成
+ */
+export const routeTable = (): RouteTableI[] => {
+    const queryRoutes = (menuConf: RoutesPageI[], deep = 0): RouteTableI[] => {
+        return menuConf?.map(ci => {
+            if (ci?.children && ci?.children.length > 0 && Array.isArray(ci?.children)) {
+                return {
+                    title: typeof ci?.label === 'string' ? t(ci?.label) : t((ci?.label as JSX.Element)?.props?.children),
+                    key: ci?.key as string,
+                    icon: ci?.icon,
+                    children: queryRoutes(ci?.children, deep + 1),
+                }
+            } else {
+                return {
+                    title: typeof ci?.label === 'string' ? t(ci?.label) : t((ci?.label as JSX.Element)?.props?.children),
+                    key: ci?.key as string,
+                    icon: ci?.icon,
+                    switcherIcon: <Sunrise />,
+                    children: [],
+                }
+            }
+        })
+    }
+
+    const data = queryRoutes([...menuConf, ...errorRoutes])
+
+    return data
 }

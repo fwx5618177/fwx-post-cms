@@ -15,3 +15,16 @@
 .SideMenu_header > h3 {
     margin-left: 5px;
 }
+
+.route_conf_card_title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.route_conf_card_title > h3 {
+    margin: 0px;
+    margin-left: 5px;
+    cursor: default;
+    user-select: none;
+}

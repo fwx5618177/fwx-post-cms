@@ -6,7 +6,7 @@ export default {
         URL: 'http://localhost:5173/',
     },
     preset: 'ts-jest',
-    // preset: "jest-puppeteer",
+    // preset: 'jest-puppeteer',
     globalSetup: './test/setup.ts',
     globalTeardown: './test/teardown.ts',
     testEnvironment: './test/puppeteer_environment.ts',

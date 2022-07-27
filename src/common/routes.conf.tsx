@@ -1,6 +1,7 @@
-import { DashboardOutlined } from '@ant-design/icons'
+import { DashboardOutlined, HomeOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import { RoutesPageI } from './interface'
+import { WindowStack } from 'react-bootstrap-icons'
 
 /**
  * @description 路由-菜单的配置列表
@@ -21,7 +22,7 @@ export const menuConf: RoutesPageI[] = [
         children: [
             {
                 key: '/',
-                icon: <DashboardOutlined />,
+                icon: <HomeOutlined />,
                 label: <Link to={'/'}>defaultMain</Link>,
                 components: '../pages/main/index.tsx',
                 path: '/',
@@ -30,7 +31,7 @@ export const menuConf: RoutesPageI[] = [
             },
             {
                 key: 'dashboard',
-                icon: <DashboardOutlined />,
+                icon: <WindowStack />,
                 label: 'defaultOps',
                 outlet: true,
                 path: 'dashboard',
@@ -55,7 +56,10 @@ export const menuConf: RoutesPageI[] = [
  */
 export const errorRoutes: RoutesPageI[] = [
     {
+        key: '404',
+        icon: '',
         path: '*',
+        label: '404',
         components: '../error/404',
     },
 ]
