@@ -4,6 +4,8 @@ const NodeEnvironment = require('jest-environment-node')
 const path = require('path')
 const os = require('os')
 const fs = require('fs')
+import { JSDOM } from 'jsdom'
+import 'jsdom-global/register'
 
 const DIR = path.join(os.tmpdir(), 'jest_puppeteer_global_setup')
 
@@ -19,12 +21,14 @@ class PuppeteerEnvironment extends NodeEnvironment {
         if (!wsEndpoint) {
             throw new Error('wsEndpoint not found')
         }
-        this.global.__BROWSER_GLOBAL__ = await puppeteer.connect({
+        this.global.__BROWSER__ = await puppeteer.connect({
             browserWSEndpoint: wsEndpoint,
             defaultViewport: { width: 1920, height: 1080 },
         })
 
-        globalThis.__BROWSER_GLOBAL__ = this.global.__BROWSER__
+        const doc = new JSDOM(`<!DOCTYPE html><p>Hello world</p>`)
+        global.document = doc.window.document
+        global.window = doc.window as any
     }
 
     async teardown() {
@@ -32,13 +36,9 @@ class PuppeteerEnvironment extends NodeEnvironment {
         await super.teardown()
     }
 
-    runScript(script) {
-        return super.runScript(script)
-    }
-
-    getVmContext() {
-        return super.getVmContext()
-    }
+    // runScript(script) {
+    //     return super.runScript(script)
+    // }
 }
 
 export default PuppeteerEnvironment

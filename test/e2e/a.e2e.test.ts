@@ -6,7 +6,8 @@ describe('/ (Home Page)', () => {
     let page: puppeteer.Page = null as unknown as puppeteer.Page
     const iPhonex = devices['iPhone X']
     beforeAll(async () => {
-        page = await globalThis.__BROWSER_GLOBAL__.newPage()
+        // page = await globalThis.__BROWSER_GLOBAL__.newPage()
+        page = await global.__BROWSER__.newPage()
         await page.goto(`http://localhost:5173/`, { waitUntil: 'domcontentloaded' })
         await page.emulate(iPhonex)
         await page.setViewport({ width: 375, height: 812, isMobile: false })
