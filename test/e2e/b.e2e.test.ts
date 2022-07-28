@@ -9,6 +9,7 @@ describe('Login', () => {
         })
         const page: puppeteer.Page = await browser.newPage()
         await page.goto(`http://localhost:5173/`)
+        // await page.goto(`${URL}`)
         for (let i = 0; i < 100; i++) {
             await page.waitForSelector('.logo')
             await page.click('.logo')
