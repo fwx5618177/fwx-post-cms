@@ -200,3 +200,16 @@ export const routeTable = (): RouteTableI[] => {
 
     return data
 }
+
+/**
+ * 获取背景设置的函数
+ */
+export const bgLayoutSet = (): {
+    label: string
+    value: string | number
+}[] => {
+    return menuConf?.map(ci => ({
+        label: t((ci?.label as JSX.Element)?.props?.children),
+        value: ci?.key as string,
+    }))
+}

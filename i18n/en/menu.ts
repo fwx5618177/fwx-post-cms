@@ -3,7 +3,7 @@
  */
 
 const backgroundSide = {
-    layoutBg: 'background',
+    layoutBg: 'Background layout',
 }
 
 const dashboardSideMenu = {
@@ -41,6 +41,10 @@ const menuSideForm = {
     'routecard.text': 'Route Setting',
     'routetable.treedata': 'Route Tree Data',
     'routetable.switch': 'Expand',
+    'routeoutlet.text.radio.status.start': 'Yes',
+    'routeoutlet.text.radio.status.close': 'No',
+    'routecasesensitive.radio.status.start': 'Start',
+    'routecasesensitive.radio.status.close': 'Close',
 }
 
 export const en_menu = {

@@ -1,14 +1,19 @@
-import { routeTable } from '../../../common/routes.controller'
+import { bgLayoutSet, routeTable } from '../../../common/routes.controller'
 import { CheckOutlined, CloseOutlined, DownOutlined, RightCircleTwoTone, SettingTwoTone } from '@ant-design/icons'
-import { Badge, Button, Card, Col, Form, Input, Row, Switch, Tree } from 'antd'
+import { Badge, Button, Card, Col, Form, Input, Radio, Row, Switch, Tree, Select } from 'antd'
 import { treeData } from 'mocks/routeData'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import './style.css'
 
+const { Option } = Select
+
 const SideMenu: React.FC = () => {
     const [form] = Form.useForm()
     const { t } = useTranslation()
+
+    // 设置背景归类
+    const [bgSortsStatus, setBgSortsStatus] = useState<boolean>(true)
 
     // style
     const layout = {
@@ -70,12 +75,20 @@ const SideMenu: React.FC = () => {
                         >
                             <Form {...layout} form={form} name='basic' initialValues={{ remember: true }} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete='off'>
                                 <Form.Item name='routebgshowstatus' label={t('routebgshowstatus')} rules={[{ required: true, message: t('routemenushow.text') }]}>
-                                    <Switch />
+                                    <Switch checkedChildren={<CheckOutlined />} unCheckedChildren={<CloseOutlined />} defaultChecked onChange={(checked: boolean) => setBgSortsStatus(checked)} />
                                 </Form.Item>
 
-                                <Form.Item name='menushow' label={t('routemenushow')} rules={[{ required: true, message: t('routemenushow.text') }]}>
-                                    <Input />
-                                </Form.Item>
+                                {bgSortsStatus && (
+                                    <Form.Item name='menushow' label={t('routemenushow')} rules={[{ required: true, message: t('routemenushow.text') }]}>
+                                        <Select placeholder='Select'>
+                                            {bgLayoutSet()?.map((ci, index) => (
+                                                <Option key={index + '_bglayout'} value={ci?.value}>
+                                                    {ci?.label}
+                                                </Option>
+                                            ))}
+                                        </Select>
+                                    </Form.Item>
+                                )}
 
                                 <Form.Item name='key' label={t('routekey')} rules={[{ required: true, message: t('routekey.text') }]}>
                                     <Input />
@@ -106,11 +119,37 @@ const SideMenu: React.FC = () => {
                                 </Form.Item>
 
                                 <Form.Item name='outlet' label={t('routeoutlet')} rules={[{ required: true, message: t('routeoutlet.text') }]}>
-                                    <Input />
+                                    <Radio.Group
+                                        options={[
+                                            {
+                                                label: t('routeoutlet.text.radio.status.start'),
+                                                value: true,
+                                            },
+                                            {
+                                                label: t('routeoutlet.text.radio.status.close'),
+                                                value: false,
+                                            },
+                                        ]}
+                                        optionType={'button'}
+                                        buttonStyle={'solid'}
+                                    />
                                 </Form.Item>
 
                                 <Form.Item name='casesensitive' label={t('routecasesensitive')} rules={[{ required: true, message: t('routecasesensitive.text') }]}>
-                                    <Input />
+                                    <Radio.Group
+                                        options={[
+                                            {
+                                                label: t('routecasesensitive.radio.status.start'),
+                                                value: true,
+                                            },
+                                            {
+                                                label: t('routecasesensitive.radio.status.close'),
+                                                value: false,
+                                            },
+                                        ]}
+                                        optionType={'button'}
+                                        buttonStyle={'solid'}
+                                    />
                                 </Form.Item>
 
                                 <Form.Item {...tailLayout}>

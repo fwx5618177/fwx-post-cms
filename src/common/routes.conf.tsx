@@ -1,7 +1,7 @@
 import { DashboardOutlined, HomeOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import { RoutesPageI } from './interface'
-import { WindowStack } from 'react-bootstrap-icons'
+import { WindowStack, Images } from 'react-bootstrap-icons'
 
 /**
  * @description 路由-菜单的配置列表
@@ -14,8 +14,8 @@ import { WindowStack } from 'react-bootstrap-icons'
 export const menuConf: RoutesPageI[] = [
     {
         key: 'layout',
-        icon: <DashboardOutlined />,
-        label: <Link to={'/'}>背景</Link>,
+        icon: <Images />,
+        label: <Link to={'/'}>layoutBg</Link>,
         components: '../pages/Layout.tsx',
         path: '/',
         menuShow: false,

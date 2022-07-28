@@ -3,7 +3,7 @@
  */
 
 const backgroundSide = {
-    layoutBg: '背景',
+    layoutBg: '背景布局',
 }
 
 const dashboardSideMenu = {
@@ -41,6 +41,10 @@ const menuSideForm = {
     'routecard.text': '路由表设置',
     'routetable.treedata': '现存路由表',
     'routetable.switch': '展开',
+    'routeoutlet.text.radio.status.start': '是',
+    'routeoutlet.text.radio.status.close': '否',
+    'routecasesensitive.radio.status.start': '开启',
+    'routecasesensitive.radio.status.close': '关闭',
 }
 
 export const zh_menu = {
