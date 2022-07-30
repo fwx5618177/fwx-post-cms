@@ -129,3 +129,7 @@
     color: #1890ff;
     transform: translateY(2px) scale(1.5);
 }
+
+.site-layout-background {
+    width: calc(100% - 10px) !important;
+}

@@ -10,6 +10,8 @@ const dashboardSideMenu = {
     defaultMain: 'Default Main Page',
     defaultOps: 'Default Work',
     sidemenu: 'Menu',
+    charts: 'Charts',
+    'charts.s2': 'Dynamic Charts',
 }
 
 const menuSideForm = {
@@ -47,6 +49,10 @@ const menuSideForm = {
     'routecasesensitive.radio.status.close': 'Close',
 }
 
+const chartsContext = {
+    's2table.header.title': 'Dynamic Table',
+}
+
 export const en_menu = {
     info: 'Info',
     blog: 'Blog',
@@ -55,4 +61,5 @@ export const en_menu = {
     ...backgroundSide,
     ...dashboardSideMenu,
     ...menuSideForm,
+    ...chartsContext,
 }

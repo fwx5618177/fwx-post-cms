@@ -1,7 +1,7 @@
-import { DashboardOutlined, HomeOutlined } from '@ant-design/icons'
+import { DashboardOutlined, HomeOutlined, PieChartOutlined, TableOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import { RoutesPageI } from './interface'
-import { WindowStack, Images } from 'react-bootstrap-icons'
+import { WindowStack, Images, MenuButtonFill } from 'react-bootstrap-icons'
 
 /**
  * @description 路由-菜单的配置列表
@@ -38,11 +38,28 @@ export const menuConf: RoutesPageI[] = [
                 children: [
                     {
                         key: 'sidemenu',
-                        icon: <DashboardOutlined />,
+                        icon: <MenuButtonFill />,
                         label: <Link to={'/dashboard/sidemenu'}>sidemenu</Link>,
                         components: '../pages/dashboard/sidemenu/index',
                         // index: true,
                         path: 'sidemenu',
+                        children: [],
+                    },
+                ],
+            },
+            {
+                key: 'charts',
+                icon: <PieChartOutlined />,
+                label: 'charts',
+                outlet: true,
+                path: 'charts',
+                children: [
+                    {
+                        key: 's2table',
+                        icon: <TableOutlined />,
+                        label: <Link to={'/charts/s2table'}>charts.s2</Link>,
+                        components: '../pages/charts/s2table/index',
+                        path: 's2table',
                         children: [],
                     },
                 ],

@@ -10,6 +10,8 @@ const dashboardSideMenu = {
     defaultMain: '默认主页',
     defaultOps: '默认工作台',
     sidemenu: '菜单',
+    charts: '图标',
+    'charts.s2': '动态图表展示',
 }
 
 const menuSideForm = {
@@ -26,13 +28,14 @@ const menuSideForm = {
     routecasesensitive: '大小写确认',
     'button.submit': '提交',
     'button.reset': '重置',
+    'routebgshowstatus.text': '请选择背景设置的状态',
     'routemenushow.text': '请输入主题背景设置的值!',
-    'routekey.text': '请输入路由关键字的值!',
-    'routelabel.text': '请输入路由名',
-    'routepath.text': '请输入路由路径',
-    'routeicon.text': '请输入路由图标',
-    'routeindex.text': '请输入路由顺序',
-    'routechild.text': '请输入子路由',
+    'routekey.text': '请输入路由关键字的值(key)',
+    'routelabel.text': '请输入路由名(label)',
+    'routepath.text': '请输入路由路径(path)',
+    'routeicon.text': '请输入路由图标(icon)',
+    'routeindex.text': '请输入路由顺序(index)',
+    'routechild.text': '请输入子路由(children)',
     'routecomponent.text': '请输入路由组件',
     'routeoutlet.text': '请输入路由是否可点击',
     'routecasesensitive.text': '请输入大小写确认',
@@ -47,6 +50,10 @@ const menuSideForm = {
     'routecasesensitive.radio.status.close': '关闭',
 }
 
+const chartsContext = {
+    's2table.header.title': '动态表格',
+}
+
 export const zh_menu = {
     info: '信息',
     blog: '博客',
@@ -55,4 +62,5 @@ export const zh_menu = {
     ...backgroundSide,
     ...dashboardSideMenu,
     ...menuSideForm,
+    ...chartsContext,
 }

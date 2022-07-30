@@ -73,8 +73,8 @@ const SideMenu: React.FC = () => {
                             }
                             size={'small'}
                         >
-                            <Form {...layout} form={form} name='basic' initialValues={{ remember: true }} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete='off'>
-                                <Form.Item name='routebgshowstatus' label={t('routebgshowstatus')} rules={[{ required: true, message: t('routemenushow.text') }]}>
+                            <Form {...layout} form={form} name='basic' initialValues={{ routebgshowstatus: bgSortsStatus }} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete='off'>
+                                <Form.Item name='routebgshowstatus' label={t('routebgshowstatus')} rules={[{ required: true, message: t('routebgshowstatus.text') }]}>
                                     <Switch checkedChildren={<CheckOutlined />} unCheckedChildren={<CloseOutlined />} defaultChecked onChange={(checked: boolean) => setBgSortsStatus(checked)} />
                                 </Form.Item>
 
@@ -110,13 +110,13 @@ const SideMenu: React.FC = () => {
                                     <Input />
                                 </Form.Item>
 
-                                <Form.Item name='child' label={t('routechild')} rules={[{ required: true, message: t('routechild.text') }]}>
+                                {/* <Form.Item name='child' label={t('routechild')} rules={[{ required: true, message: t('routechild.text') }]}>
                                     <Input />
-                                </Form.Item>
+                                </Form.Item> */}
 
-                                <Form.Item name='component' label={t('routecomponent')} rules={[{ required: true, message: t('routecomponent.text') }]}>
+                                {/* <Form.Item name='component' label={t('routecomponent')} rules={[{ required: true, message: t('routecomponent.text') }]}>
                                     <Input />
-                                </Form.Item>
+                                </Form.Item> */}
 
                                 <Form.Item name='outlet' label={t('routeoutlet')} rules={[{ required: true, message: t('routeoutlet.text') }]}>
                                     <Radio.Group
