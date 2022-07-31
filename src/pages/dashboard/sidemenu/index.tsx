@@ -90,6 +90,10 @@ const SideMenu: React.FC = () => {
                                     </Form.Item>
                                 )}
 
+                                <Form.Item name='pageLevel' label={t('routepagelevel')} rules={[{ required: true, message: t('routepagelevel.text') }]}>
+                                    <Select placeholder='Select'></Select>
+                                </Form.Item>
+
                                 <Form.Item name='key' label={t('routekey')} rules={[{ required: true, message: t('routekey.text') }]}>
                                     <Input />
                                 </Form.Item>

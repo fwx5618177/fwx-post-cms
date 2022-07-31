@@ -12,6 +12,9 @@ const dashboardSideMenu = {
     sidemenu: 'Menu',
     charts: 'Charts',
     'charts.s2': 'Dynamic Charts',
+    'charts.x6': 'Flow',
+    'charts.ava': 'Dynamic Charts',
+    'charts.l7': '3D Charts',
 }
 
 const menuSideForm = {
@@ -26,6 +29,7 @@ const menuSideForm = {
     routecomponent: 'components',
     routeoutlet: 'outlet',
     routecasesensitive: 'case sensitive',
+    routepagelevel: 'route page level',
     'button.submit': 'submit',
     'button.reset': 'reset',
     'routemenushow.text': 'Please input!',
@@ -35,6 +39,7 @@ const menuSideForm = {
     'routeicon.text': 'Please input!',
     'routeindex.text': 'Please input!',
     'routechild.text': 'Please input!',
+    'routepagelevel.text': 'Please input!',
     'routecomponent.text': 'Please input!',
     'routeoutlet.text': 'Please input!',
     'routecasesensitive.text': 'Please input!',
@@ -51,6 +56,9 @@ const menuSideForm = {
 
 const chartsContext = {
     's2table.header.title': 'Dynamic Table',
+    'x6flow.header.title': 'X6 Flow',
+    'ava.header.title': 'Automatical Chart',
+    'charts.header.title': '3D Charts',
 }
 
 export const en_menu = {

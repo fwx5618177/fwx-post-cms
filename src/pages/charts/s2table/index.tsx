@@ -1,8 +1,11 @@
+import TableCompare from './components/tableCompare'
 import { PivotSheet } from '@antv/s2'
 import { Card } from 'antd'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import Schedule from './schedule'
+import Schedule from './components/schedule'
+import EditeTable from './components/EditeTable'
+import Scroll from './components/Scroll'
 const DynamicTable = () => {
     const { t } = useTranslation()
     const tableRef = useRef<HTMLDivElement>(null)
@@ -148,6 +151,21 @@ const DynamicTable = () => {
                 <h3>{t('s2table.header.title')}</h3>
                 <Card bordered={false}>
                     <Schedule />
+                </Card>
+
+                <h3>{t('s2table.header.title')}</h3>
+                <Card bordered={false}>
+                    <TableCompare />
+                </Card>
+
+                <h3>{t('s2table.header.title')}</h3>
+                <Card bordered={false}>
+                    <EditeTable />
+                </Card>
+
+                <h3>{t('s2table.header.title')}</h3>
+                <Card bordered={false}>
+                    <Scroll />
                 </Card>
             </div>
         </>

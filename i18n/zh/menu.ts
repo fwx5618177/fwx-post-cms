@@ -12,6 +12,9 @@ const dashboardSideMenu = {
     sidemenu: '菜单',
     charts: '图标',
     'charts.s2': '动态图表展示',
+    'charts.x6': '流程图',
+    'charts.ava': '自动图',
+    'charts.l7': '3D图表',
 }
 
 const menuSideForm = {
@@ -26,6 +29,7 @@ const menuSideForm = {
     routecomponent: '路由组件',
     routeoutlet: '路由是否可点击',
     routecasesensitive: '大小写确认',
+    routepagelevel: '路由级别',
     'button.submit': '提交',
     'button.reset': '重置',
     'routebgshowstatus.text': '请选择背景设置的状态',
@@ -52,6 +56,9 @@ const menuSideForm = {
 
 const chartsContext = {
     's2table.header.title': '动态表格',
+    'x6flow.header.title': '流程图',
+    'ava.header.title': '自动图标',
+    'charts.header.title': '3D图表',
 }
 
 export const zh_menu = {

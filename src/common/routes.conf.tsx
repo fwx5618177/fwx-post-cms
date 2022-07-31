@@ -1,7 +1,7 @@
-import { DashboardOutlined, HomeOutlined, PieChartOutlined, TableOutlined } from '@ant-design/icons'
+import { HomeOutlined, PieChartOutlined, TableOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import { RoutesPageI } from './interface'
-import { WindowStack, Images, MenuButtonFill } from 'react-bootstrap-icons'
+import { WindowStack, Images, MenuButtonFill, BoxArrowDownRight, Box, Badge3d } from 'react-bootstrap-icons'
 
 /**
  * @description 路由-菜单的配置列表
@@ -62,6 +62,30 @@ export const menuConf: RoutesPageI[] = [
                         path: 's2table',
                         children: [],
                     },
+                    {
+                        key: 'x6flow',
+                        icon: <BoxArrowDownRight />,
+                        label: <Link to={'/charts/x6flow'}>charts.x6</Link>,
+                        components: '../pages/charts/x6flow/index',
+                        path: 'x6flow',
+                        children: [],
+                    },
+                    {
+                        key: 'l7',
+                        icon: <Badge3d />,
+                        label: <Link to={'/charts/l7'}>charts.l7</Link>,
+                        components: '../pages/charts/l7/index',
+                        path: 'l7',
+                        children: [],
+                    },
+                    // {
+                    //     key: 'ava',
+                    //     icon: <Box />,
+                    //     label: <Link to={'/charts/ava'}>charts.ava</Link>,
+                    //     components: '../pages/charts/ava/index',
+                    //     path: 'ava',
+                    //     children: [],
+                    // },
                 ],
             },
         ],
