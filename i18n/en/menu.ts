@@ -10,6 +10,7 @@ const dashboardSideMenu = {
     defaultMain: 'Default Main Page',
     defaultOps: 'Default Work',
     sidemenu: 'Menu',
+    menucontent: 'Content',
     charts: 'Charts',
     'charts.s2': 'Dynamic Charts',
     'charts.x6': 'Flow',
@@ -54,6 +55,13 @@ const menuSideForm = {
     'routecasesensitive.radio.status.close': 'Close',
 }
 
+const menucontent = {
+    'menucontent.name.form.label': 'Menu Name',
+    'menucontent.name.form.select.text': 'Select Menu Name',
+    'menucontent.name.form.content': 'Content',
+    'menucontent.name.form.content.text': 'Please Input Content',
+}
+
 const chartsContext = {
     's2table.header.title': 'Dynamic Table',
     'x6flow.header.title': 'X6 Flow',
@@ -70,4 +78,5 @@ export const en_menu = {
     ...dashboardSideMenu,
     ...menuSideForm,
     ...chartsContext,
+    ...menucontent,
 }

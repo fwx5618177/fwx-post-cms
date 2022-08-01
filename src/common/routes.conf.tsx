@@ -1,7 +1,7 @@
 import { HomeOutlined, PieChartOutlined, TableOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import { RoutesPageI } from './interface'
-import { WindowStack, Images, MenuButtonFill, BoxArrowDownRight, Box, Badge3d } from 'react-bootstrap-icons'
+import { WindowStack, Images, MenuButtonFill, BoxArrowDownRight, Box, Badge3d, Journal } from 'react-bootstrap-icons'
 
 /**
  * @description 路由-菜单的配置列表
@@ -43,6 +43,15 @@ export const menuConf: RoutesPageI[] = [
                         components: '../pages/dashboard/sidemenu/index',
                         // index: true,
                         path: 'sidemenu',
+                        children: [],
+                    },
+                    {
+                        key: 'menucontent',
+                        icon: <Journal />,
+                        label: <Link to={'/dashboard/menucontent'}>menucontent</Link>,
+                        components: '../pages/dashboard/menucontent/index',
+                        // index: true,
+                        path: 'menucontent',
                         children: [],
                     },
                 ],

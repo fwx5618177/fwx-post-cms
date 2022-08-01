@@ -39,6 +39,7 @@
     "jest-transform-stub": "^2.0.0",
     "jsdom": "20.0.0",
     "jsdom-global": "3.0.2",
+    "marked": "^4.0.18",
     "mkdirp": "^1.0.4",
     "prettier": "^2.7.1",
     "puppeteer": "^15.5.0",

@@ -10,6 +10,7 @@ const dashboardSideMenu = {
     defaultMain: '默认主页',
     defaultOps: '默认工作台',
     sidemenu: '菜单',
+    menucontent: '页面内容',
     charts: '图标',
     'charts.s2': '动态图表展示',
     'charts.x6': '流程图',
@@ -54,6 +55,13 @@ const menuSideForm = {
     'routecasesensitive.radio.status.close': '关闭',
 }
 
+const menucontent = {
+    'menucontent.name.form.label': '菜单名称',
+    'menucontent.name.form.select.text': '选择菜单名称',
+    'menucontent.name.form.content': '内容',
+    'menucontent.name.form.content.text': '请输入内容',
+}
+
 const chartsContext = {
     's2table.header.title': '动态表格',
     'x6flow.header.title': '流程图',
@@ -70,4 +78,5 @@ export const zh_menu = {
     ...dashboardSideMenu,
     ...menuSideForm,
     ...chartsContext,
+    ...menucontent,
 }
