@@ -213,3 +213,10 @@ export const bgLayoutSet = (): {
         value: ci?.key as string,
     }))
 }
+
+/**
+ * 获取树的交集
+ */
+export const queryInterSection = () => {
+    // const interSection = () => {}
+}

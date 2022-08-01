@@ -70,14 +70,14 @@ export const menuConf: RoutesPageI[] = [
                         path: 'x6flow',
                         children: [],
                     },
-                    {
-                        key: 'l7',
-                        icon: <Badge3d />,
-                        label: <Link to={'/charts/l7'}>charts.l7</Link>,
-                        components: '../pages/charts/l7/index',
-                        path: 'l7',
-                        children: [],
-                    },
+                    // {
+                    //     key: 'l7',
+                    //     icon: <Badge3d />,
+                    //     label: <Link to={'/charts/l7'}>charts.l7</Link>,
+                    //     components: '../pages/charts/l7/index',
+                    //     path: 'l7',
+                    //     children: [],
+                    // },
                     // {
                     //     key: 'ava',
                     //     icon: <Box />,

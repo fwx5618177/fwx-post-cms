@@ -1,3 +1,5 @@
+import { LazyExoticComponent } from 'react'
+
 /**
  *  页面的配置表
  */
@@ -7,13 +9,14 @@ export interface RoutesPageI {
     icon?: string | JSX.Element
     itemIcon?: string | JSX.Element
     outlet?: boolean
-    components?: string
+    components?: string | LazyExoticComponent<React.FC<{}>>
     path?: string
     index?: boolean
     children?: RoutesPageI[]
     theme?: 'light' | 'dark'
     caseSensitive?: boolean
     menuShow?: boolean
+    lazy?: boolean
 }
 
 /**
