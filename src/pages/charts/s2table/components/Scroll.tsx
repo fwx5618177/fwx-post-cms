@@ -71,7 +71,7 @@ const Scroll = () => {
         }
 
         const s2Options = {
-            width: 600,
+            width: 1050,
             height: 480,
             style: {
                 cellCfg: {

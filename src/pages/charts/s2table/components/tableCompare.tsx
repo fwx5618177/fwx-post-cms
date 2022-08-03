@@ -111,7 +111,7 @@ const TableCompare = () => {
             )
         }
         const s2Options = {
-            width: '',
+            width: 1050,
             height: 400,
             conditions: {
                 text: [

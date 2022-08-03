@@ -216,7 +216,7 @@ const Schedule = () => {
             }
 
             const s2Options = {
-                width: 1050,
+                // width: 1050,
                 height: 420,
                 showDefaultHeaderActionIcon: false,
                 dataCell: viewMeta => {

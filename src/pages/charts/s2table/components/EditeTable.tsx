@@ -10,7 +10,7 @@ import { createRoot } from 'react-dom/client'
 
 // 初始化配置
 const s2Options = {
-    width: 600,
+    // width: 600,
     height: 400,
     showSeriesNumber: true,
     tooltip: { showTooltip: false },
