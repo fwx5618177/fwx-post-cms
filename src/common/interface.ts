@@ -40,3 +40,15 @@ export interface RouteTableI {
     switcherIcon?: React.ReactNode
     children?: RouteTableI[]
 }
+
+/**
+ * request所需要的请求接口
+ */
+
+export interface IResponseData {
+    code: number
+    msg: string
+    result: string[] | any
+    status: number
+    redirect?: string
+}
