@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import './style.css'
 import { confRouteLevel } from './conf'
+import api from './api'
 
 const { Option } = Select
 
@@ -28,43 +29,26 @@ const SideMenu: React.FC = () => {
         wrapperCol: { offset: 8, span: 16 },
     }
 
-    const onFinish = (values: any) => {
+    const onFinish = async (values: any) => {
         console.log('Success:', values)
 
         const { menushow, pageLevel, key, label, path, outlet, casesensitive } = values
-        if (pageLevel === 0) {
-            const routeConf = {
-                key,
-                label,
-                path,
-                menushow,
-                children: [],
-            }
 
-            console.log(routeConf)
-        } else if (pageLevel === 1) {
-            const routeConf = {
-                key,
-                label,
-                path,
-                outlet,
-                casesensitive,
-                children: [],
-            }
-
-            console.log(routeConf)
-        } else {
-            const routeConf = {
-                key,
-                label,
-                path,
-                // outlet,
-                casesensitive,
-                children: [],
-            }
-
-            console.log(routeConf)
+        const routeConf = {
+            menushow,
+            level: String(pageLevel),
+            key,
+            label,
+            path,
+            outlet,
+            casesensitive,
         }
+
+        console.log(routeConf)
+
+        const result = await api.createRoute(routeConf)
+
+        console.log(result)
     }
 
     const onFinishFailed = (errorInfo: any) => {

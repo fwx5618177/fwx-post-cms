@@ -47,17 +47,17 @@ const msgList: {
 // interceptors
 request.interceptors.response.use(
     response => {
-        console.log(response, response.request.responseURL, response.data.code)
+        // console.log(response, response.request.responseURL, response.data.code)
         const resData: IResponseData = response.data
         const redirect: string = resData?.redirect as string
-        if (response.status === 200) {
+        if (response.status === 200 || response.status === 201) {
             if (resData.code === 3333) {
                 setTimeout(() => {
                     window.location.href = redirect
                 }, 10000)
             }
 
-            return Promise.resolve(resData)
+            return Promise.resolve(resData?.result)
         } else return Promise.reject(response)
     },
     error => {
