@@ -1,22 +1,31 @@
 import { Card, Col, Form, Input, Row, Select } from 'antd'
 import { useTranslation } from 'react-i18next'
 import * as marked from 'marked'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import api from './api'
 
 const MenuContent = () => {
     const { t } = useTranslation()
 
-    // const [markedShow, setMarkedShow] = useState<string>('')
     const showRef = useRef<HTMLDivElement>(null)
+    const [routeList, setRouteList] = useState([])
 
     const handleChange = _ => {
         const value = _?.target?.value
         const result = marked.parse(value)
         console.log(result)
         ;(showRef.current as HTMLDivElement).innerHTML = result
-
-        // setMarkedShow(result)
     }
+
+    const queryRouteList = async () => {
+        const result = await api.queryRouteList({})
+
+        console.log(result)
+    }
+
+    useEffect(() => {
+        queryRouteList()
+    }, [])
 
     return (
         <>

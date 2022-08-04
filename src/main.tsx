@@ -8,13 +8,13 @@ import SpinLoading from './loading/spin'
 import '../i18n/index'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-    <React.StrictMode>
-        <ConfigProvider>
-            <BrowserRouter>
-                <Suspense fallback={<SpinLoading />}>
-                    <Routes>{routesConf(extraRoutesHandle())}</Routes>
-                </Suspense>
-            </BrowserRouter>
-        </ConfigProvider>
-    </React.StrictMode>,
+    // <React.StrictMode>
+    <ConfigProvider>
+        <BrowserRouter>
+            <Suspense fallback={<SpinLoading />}>
+                <Routes>{routesConf(extraRoutesHandle())}</Routes>
+            </Suspense>
+        </BrowserRouter>
+    </ConfigProvider>,
+    // </React.StrictMode>,
 )
