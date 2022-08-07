@@ -2,23 +2,26 @@
  * En
  */
 
-const backgroundSide = {
-    layoutBg: 'Background layout',
-}
-
 const dashboardSideMenu = {
+    info: 'Info',
+    blog: 'Blog',
+    resume: 'Resume',
+    contact: 'Contact',
+    layoutBg: 'Background layout',
     defaultMain: 'Default Main Page',
     defaultOps: 'Default Work',
     sidemenu: 'Menu',
     menucontent: 'Content',
     charts: 'Charts',
+    product: 'Product',
+    kaboom: 'Kaboom',
+    todoist: 'Todoist',
+    'todoist.list': 'List',
+    'kaboom.title.text.01': 'Marios',
     'charts.s2': 'Dynamic Charts',
     'charts.x6': 'Flow',
     'charts.ava': 'Dynamic Charts',
     'charts.l7': '3D Charts',
-}
-
-const menuSideForm = {
     routemenushow: 'backgroundset',
     routebgshowstatus: 'set new background',
     routekey: 'route key',
@@ -31,6 +34,7 @@ const menuSideForm = {
     routeoutlet: 'outlet',
     routecasesensitive: 'case sensitive',
     routepagelevel: 'route page level',
+    routepageParent: 'Parent Route',
     'button.submit': 'submit',
     'button.reset': 'reset',
     'routemenushow.text': 'Please input!',
@@ -41,6 +45,7 @@ const menuSideForm = {
     'routeindex.text': 'Please input!',
     'routechild.text': 'Please input!',
     'routepagelevel.text': 'Please input!',
+    'routepageParent.text': 'Please input',
     'routecomponent.text': 'Please input!',
     'routeoutlet.text': 'Please input!',
     'routecasesensitive.text': 'Please input!',
@@ -53,16 +58,17 @@ const menuSideForm = {
     'routeoutlet.text.radio.status.close': 'No',
     'routecasesensitive.radio.status.start': 'Start',
     'routecasesensitive.radio.status.close': 'Close',
-}
-
-const menucontent = {
+    'menucontent.header.title.add': 'Add / Load',
+    'menucontent.header.title.switch.text.add': 'Add',
+    'menucontent.header.title.switch.text.load': 'Load',
+    'menucontent.header.title.switch.text.load.select': 'Select',
+    'menucontent.header.title.show': 'Show',
     'menucontent.name.form.label': 'Menu Name',
     'menucontent.name.form.select.text': 'Select Menu Name',
+    'menucontent.name.form.title': 'Title',
+    'menucontent.name.form.title.text': 'Please Input title',
     'menucontent.name.form.content': 'Content',
     'menucontent.name.form.content.text': 'Please Input Content',
-}
-
-const chartsContext = {
     's2table.header.title': 'Dynamic Table',
     'x6flow.header.title': 'X6 Flow',
     'ava.header.title': 'Automatical Chart',
@@ -70,13 +76,5 @@ const chartsContext = {
 }
 
 export const en_menu = {
-    info: 'Info',
-    blog: 'Blog',
-    resume: 'Resume',
-    contact: 'Contact',
-    ...backgroundSide,
     ...dashboardSideMenu,
-    ...menuSideForm,
-    ...chartsContext,
-    ...menucontent,
 }

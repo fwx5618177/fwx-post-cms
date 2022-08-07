@@ -14,3 +14,10 @@
     - [x] Puppeteer
     - [x] 自动化测试
 - [x] 多语言-i18n
+- [ ] 产品介绍-实现
+- [ ] 旧产品的移植
+- [ ] 3D
+- [ ] Todoist
+- [ ] OSS
+- [ ] CDN
+- [ ] server

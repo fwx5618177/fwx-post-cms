@@ -1,7 +1,17 @@
 import { HomeOutlined, PieChartOutlined, TableOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import { RoutesPageI } from './interface'
-import { WindowStack, Images, MenuButtonFill, BoxArrowDownRight, Box, Badge3d, Journal } from 'react-bootstrap-icons'
+import {
+    WindowStack,
+    Images,
+    MenuButtonFill,
+    BoxArrowDownRight,
+    Puzzle,
+    Journal,
+    Tornado,
+    CardChecklist,
+    FileEarmarkCheck,
+} from 'react-bootstrap-icons'
 
 /**
  * @description 路由-菜单的配置列表
@@ -95,6 +105,42 @@ export const menuConf: RoutesPageI[] = [
                     //     path: 'ava',
                     //     children: [],
                     // },
+                ],
+            },
+
+            {
+                key: 'product',
+                icon: <Puzzle />,
+                label: 'product',
+                outlet: true,
+                path: 'product',
+                children: [
+                    {
+                        key: 'kaboom',
+                        icon: <Tornado />,
+                        label: <Link to={'/product/kaboom'}>kaboom</Link>,
+                        components: '../pages/product/kaboom/index',
+                        path: 'kaboom',
+                        children: [],
+                    },
+                ],
+            },
+
+            {
+                key: 'todoist',
+                icon: <CardChecklist />,
+                label: 'todoist',
+                outlet: true,
+                path: 'todoist',
+                children: [
+                    {
+                        key: 'list',
+                        icon: <FileEarmarkCheck />,
+                        label: <Link to={'/todoist/list'}>todoist.list</Link>,
+                        components: '../pages/todoist/list/index',
+                        path: 'list',
+                        children: [],
+                    },
                 ],
             },
         ],

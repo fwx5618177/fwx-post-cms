@@ -2,23 +2,26 @@
  * 中文的多语言
  */
 
-const backgroundSide = {
-    layoutBg: '背景布局',
-}
-
 const dashboardSideMenu = {
+    info: '信息',
+    blog: '博客',
+    resume: '简历',
+    contact: '联系',
+    layoutBg: '背景布局',
     defaultMain: '默认主页',
     defaultOps: '默认工作台',
     sidemenu: '菜单',
     menucontent: '页面内容',
     charts: '图标',
+    product: '产品展示',
+    kaboom: 'Kaboom',
+    todoist: '待做事项',
+    'todoist.list': '待做清单',
+    'kaboom.title.text.01': '马里奥',
     'charts.s2': '动态图表展示',
     'charts.x6': '流程图',
     'charts.ava': '自动图',
     'charts.l7': '3D图表',
-}
-
-const menuSideForm = {
     routemenushow: '主题背景设置',
     routebgshowstatus: '是否设置背景',
     routekey: '路由关键字',
@@ -31,6 +34,7 @@ const menuSideForm = {
     routeoutlet: '路由是否可点击',
     routecasesensitive: '大小写确认',
     routepagelevel: '路由级别',
+    routepageParent: '父路由',
     'button.submit': '提交',
     'button.reset': '重置',
     'routebgshowstatus.text': '请选择背景设置的状态',
@@ -41,8 +45,9 @@ const menuSideForm = {
     'routeicon.text': '请输入路由图标(icon)',
     'routeindex.text': '请输入路由顺序(index)',
     'routechild.text': '请输入子路由(children)',
+    'routepageParent.text': '请输入父路由',
     'routecomponent.text': '请输入路由组件',
-    'routeoutlet.text': '请输入路由是否可点击',
+    'routeoutlet.text': '请选择路由是否可点击',
     'routecasesensitive.text': '请输入大小写确认',
     'routebadge.ribbon': '路由配置',
     'routebadge.ribbonshow': '路由表展示',
@@ -53,16 +58,17 @@ const menuSideForm = {
     'routeoutlet.text.radio.status.close': '否',
     'routecasesensitive.radio.status.start': '开启',
     'routecasesensitive.radio.status.close': '关闭',
-}
-
-const menucontent = {
+    'menucontent.header.title.add': '新增 / 读取',
+    'menucontent.header.title.switch.text.add': '新增',
+    'menucontent.header.title.switch.text.load': '读取',
+    'menucontent.header.title.switch.text.load.select': '选择',
+    'menucontent.header.title.show': '展示',
     'menucontent.name.form.label': '菜单名称',
     'menucontent.name.form.select.text': '选择菜单名称',
+    'menucontent.name.form.title': '标题',
+    'menucontent.name.form.title.text': '请输入标题',
     'menucontent.name.form.content': '内容',
     'menucontent.name.form.content.text': '请输入内容',
-}
-
-const chartsContext = {
     's2table.header.title': '动态表格',
     'x6flow.header.title': '流程图',
     'ava.header.title': '自动图标',
@@ -70,13 +76,5 @@ const chartsContext = {
 }
 
 export const zh_menu = {
-    info: '信息',
-    blog: '博客',
-    resume: '简历',
-    contact: '联系',
-    ...backgroundSide,
     ...dashboardSideMenu,
-    ...menuSideForm,
-    ...chartsContext,
-    ...menucontent,
 }

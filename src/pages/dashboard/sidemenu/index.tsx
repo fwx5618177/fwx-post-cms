@@ -2,13 +2,18 @@ import { bgLayoutSet, routeTable } from '../../../common/routes.controller'
 import { CheckOutlined, CloseOutlined, DownOutlined, RightCircleTwoTone, SettingTwoTone } from '@ant-design/icons'
 import { Badge, Button, Card, Col, Form, Input, Radio, Row, Switch, Tree, Select } from 'antd'
 import { treeData } from 'mocks/routeData'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import './style.css'
 import { confRouteLevel } from './conf'
 import api from './api'
 
 const { Option } = Select
+
+interface OptionItem {
+    label: string
+    value: string | number
+}
 
 const SideMenu: React.FC = () => {
     const [form] = Form.useForm()
@@ -19,6 +24,12 @@ const SideMenu: React.FC = () => {
 
     // 设置为父还是组件
     const [outletSet, setOutletSet] = useState<boolean>(true)
+
+    // 路由的等级
+    const [routeLevel, setRouteLevel] = useState<number>(0)
+
+    // 获取父路由
+    const [parentRouteList, setParentRouteList] = useState<OptionItem[]>([])
 
     // style
     const layout = {
@@ -63,6 +74,35 @@ const SideMenu: React.FC = () => {
         console.log('selected', selectedKeys, info)
     }
 
+    const queryExtraRoutes = async () => {
+        // const result = await api.queryRouteList()
+    }
+
+    const queryParentRoutes = async () => {
+        const result = await api.parentLists({
+            parent: routeLevel - 1,
+        })
+
+        if (result && Array.isArray(result) && result.length > 0) {
+            const data: OptionItem[] = result?.map(ci => ({
+                label: ci?.name,
+                value: ci?.key,
+            }))
+
+            setParentRouteList(data)
+        } else {
+            setParentRouteList([])
+        }
+    }
+
+    useEffect(() => {
+        queryExtraRoutes()
+    }, [])
+
+    useEffect(() => {
+        queryParentRoutes()
+    }, [routeLevel])
+
     return (
         <>
             <header className='SideMenu_header'>
@@ -96,13 +136,34 @@ const SideMenu: React.FC = () => {
                             }
                             size={'small'}
                         >
-                            <Form {...layout} form={form} name='basic' initialValues={{ routebgshowstatus: bgSortsStatus }} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete='off'>
-                                <Form.Item name='routebgshowstatus' label={t('routebgshowstatus')} rules={[{ required: true, message: t('routebgshowstatus.text') }]}>
-                                    <Switch checkedChildren={<CheckOutlined />} unCheckedChildren={<CloseOutlined />} defaultChecked onChange={(checked: boolean) => setBgSortsStatus(checked)} />
+                            <Form
+                                {...layout}
+                                form={form}
+                                name='basic'
+                                initialValues={{ routebgshowstatus: bgSortsStatus }}
+                                onFinish={onFinish}
+                                onFinishFailed={onFinishFailed}
+                                autoComplete='off'
+                            >
+                                <Form.Item
+                                    name='routebgshowstatus'
+                                    label={t('routebgshowstatus')}
+                                    rules={[{ required: true, message: t('routebgshowstatus.text') }]}
+                                >
+                                    <Switch
+                                        checkedChildren={<CheckOutlined />}
+                                        unCheckedChildren={<CloseOutlined />}
+                                        defaultChecked
+                                        onChange={(checked: boolean) => setBgSortsStatus(checked)}
+                                    />
                                 </Form.Item>
 
                                 {bgSortsStatus && (
-                                    <Form.Item name='menushow' label={t('routemenushow')} rules={[{ required: true, message: t('routemenushow.text') }]}>
+                                    <Form.Item
+                                        name='menushow'
+                                        label={t('routemenushow')}
+                                        rules={[{ required: true, message: t('routemenushow.text') }]}
+                                    >
                                         <Select placeholder='Select'>
                                             {bgLayoutSet()?.map((ci, index) => (
                                                 <Option key={index + '_bglayout'} value={ci?.value}>
@@ -113,10 +174,15 @@ const SideMenu: React.FC = () => {
                                     </Form.Item>
                                 )}
 
-                                <Form.Item name='pageLevel' label={t('routepagelevel')} rules={[{ required: true, message: t('routepagelevel.text') }]}>
+                                <Form.Item
+                                    name='pageLevel'
+                                    label={t('routepagelevel')}
+                                    rules={[{ required: true, message: t('routepagelevel.text') }]}
+                                >
                                     <Select
                                         placeholder='Select'
                                         onSelect={_ => {
+                                            setRouteLevel(_)
                                             if (_ === 2) {
                                                 setOutletSet(false)
                                             }
@@ -130,15 +196,43 @@ const SideMenu: React.FC = () => {
                                     </Select>
                                 </Form.Item>
 
-                                <Form.Item name='key' label={t('routekey')} rules={[{ required: true, message: t('routekey.text') }]}>
+                                {routeLevel !== 0 && (
+                                    <Form.Item
+                                        name='parent'
+                                        label={t('routepageParent')}
+                                        rules={[{ required: true, message: t('routepageParent.text') }]}
+                                    >
+                                        <Select placeholder='Select'>
+                                            {parentRouteList?.map((ci, index) => (
+                                                <Option key={index + '_confRoute'} value={ci?.value}>
+                                                    {ci?.label}
+                                                </Option>
+                                            ))}
+                                        </Select>
+                                    </Form.Item>
+                                )}
+
+                                <Form.Item
+                                    name='key'
+                                    label={t('routekey')}
+                                    rules={[{ required: true, message: t('routekey.text') }]}
+                                >
                                     <Input />
                                 </Form.Item>
 
-                                <Form.Item name='label' label={t('routelabel')} rules={[{ required: true, message: t('routelabel.text') }]}>
+                                <Form.Item
+                                    name='label'
+                                    label={t('routelabel')}
+                                    rules={[{ required: true, message: t('routelabel.text') }]}
+                                >
                                     <Input />
                                 </Form.Item>
 
-                                <Form.Item name='path' label={t('routepath')} rules={[{ required: true, message: t('routepath.text') }]}>
+                                <Form.Item
+                                    name='path'
+                                    label={t('routepath')}
+                                    rules={[{ required: true, message: t('routepath.text') }]}
+                                >
                                     <Input />
                                 </Form.Item>
 
@@ -159,7 +253,11 @@ const SideMenu: React.FC = () => {
                                 </Form.Item> */}
 
                                 {outletSet && (
-                                    <Form.Item name='outlet' label={t('routeoutlet')} rules={[{ required: true, message: t('routeoutlet.text') }]}>
+                                    <Form.Item
+                                        name='outlet'
+                                        label={t('routeoutlet')}
+                                        rules={[{ required: true, message: t('routeoutlet.text') }]}
+                                    >
                                         <Radio.Group
                                             options={[
                                                 {
@@ -177,7 +275,11 @@ const SideMenu: React.FC = () => {
                                     </Form.Item>
                                 )}
 
-                                <Form.Item name='casesensitive' label={t('routecasesensitive')} rules={[{ required: true, message: t('routecasesensitive.text') }]}>
+                                <Form.Item
+                                    name='casesensitive'
+                                    label={t('routecasesensitive')}
+                                    rules={[{ required: true, message: t('routecasesensitive.text') }]}
+                                >
                                     <Radio.Group
                                         options={[
                                             {

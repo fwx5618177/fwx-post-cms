@@ -25,3 +25,14 @@ export const deleteRequest = (uri: string) => request.delete(uri)
 export const encryptText = (text: string, salt = 'fwx') => {
     return crypt.AES.encrypt(text, salt).toString()
 }
+
+/**
+ * 获取当前的key-path
+ */
+export const queryPathKey = (href: string): string => {
+    const data = href.split('/')
+
+    const key = data[data.length - 1]
+
+    return key
+}

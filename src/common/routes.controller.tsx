@@ -1,4 +1,4 @@
-import { RoutesConfI, RoutesPageI, RouteTableI } from './interface'
+import { RoutesConfI, RoutesPageI, RouteTableI } from '../common/interface'
 import { lazy } from 'react'
 import { ItemType } from 'antd/lib/menu/hooks/useItems'
 import { errorRoutes, menuConf } from './routes.conf'
