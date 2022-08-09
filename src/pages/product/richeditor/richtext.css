@@ -1,0 +1,10 @@
+.performance_div > pre {
+    background-color: #1f1f1f;
+    padding: 5px;
+    width: 200px;
+    border-radius: 5px;
+}
+
+.language-c {
+    color: #fff;
+}

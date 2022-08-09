@@ -83,7 +83,7 @@ const ListCard = () => {
                                 name={'briefTitle'}
                                 rules={[{ required: true, message: '请输入' }]}
                             >
-                                <Input placeholder='Input todoist' suffix={<EnterOutlined />} />
+                                <Input placeholder='Input todoist' suffix={<EnterOutlined />} allowClear />
                             </Form.Item>
 
                             <Form.Item
@@ -97,6 +97,7 @@ const ListCard = () => {
                                         marginTop: 1,
                                     }}
                                     autoSize={{ minRows: 10, maxRows: 10 }}
+                                    allowClear
                                 />
                             </Form.Item>
 

@@ -11,6 +11,7 @@ import {
     Tornado,
     CardChecklist,
     FileEarmarkCheck,
+    FileRichtext,
 } from 'react-bootstrap-icons'
 
 /**
@@ -121,6 +122,22 @@ export const menuConf: RoutesPageI[] = [
                         label: <Link to={'/product/kaboom'}>kaboom</Link>,
                         components: '../pages/product/kaboom/index',
                         path: 'kaboom',
+                        children: [],
+                    },
+                    {
+                        key: 'richeditor',
+                        icon: <FileRichtext />,
+                        label: <Link to={'/product/richeditor'}>richeditor</Link>,
+                        components: '../pages/product/richeditor/index',
+                        path: 'richeditor',
+                        children: [],
+                    },
+                    {
+                        key: 'markdown',
+                        icon: <FileRichtext />,
+                        label: <Link to={'/product/markdown'}>markdown</Link>,
+                        components: '../pages/product/markdown/index',
+                        path: 'markdown',
                         children: [],
                     },
                 ],

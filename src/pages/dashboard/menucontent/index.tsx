@@ -1,4 +1,4 @@
-import { Button, Card, Col, Descriptions, Form, Input, Row, Select, Switch } from 'antd'
+import { Button, Card, Col, Descriptions, Form, Input, message, Row, Select, Switch } from 'antd'
 import { useTranslation } from 'react-i18next'
 import * as marked from 'marked'
 import { useEffect, useRef, useState } from 'react'
@@ -77,6 +77,10 @@ const MenuContent = () => {
         const result = await api.createContent(contentConf)
 
         console.log(result, contentConf)
+
+        if (result && Array.isArray(result) && result.length > 0) {
+            message.success('添加成功!')
+        }
     }
 
     const onFinishFailed = (errorInfo: any) => {

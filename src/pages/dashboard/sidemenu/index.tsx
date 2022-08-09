@@ -1,6 +1,6 @@
 import { bgLayoutSet, routeTable } from '../../../common/routes.controller'
 import { CheckOutlined, CloseOutlined, DownOutlined, RightCircleTwoTone, SettingTwoTone } from '@ant-design/icons'
-import { Badge, Button, Card, Col, Form, Input, Radio, Row, Switch, Tree, Select } from 'antd'
+import { Badge, Button, Card, Col, Form, Input, Radio, Row, Switch, Tree, Select, message } from 'antd'
 import { treeData } from 'mocks/routeData'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -59,7 +59,11 @@ const SideMenu: React.FC = () => {
 
         const result = await api.createRoute(routeConf)
 
-        console.log(result)
+        // console.log(result)
+
+        if (result && Array.isArray(result) && result.length > 0) {
+            message.success('添加成功!')
+        }
     }
 
     const onFinishFailed = (errorInfo: any) => {
