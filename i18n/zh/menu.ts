@@ -12,6 +12,7 @@ const dashboardSideMenu = {
     defaultOps: '默认工作台',
     sidemenu: '菜单',
     menucontent: '页面内容',
+    ossupload: 'OSS上传',
     charts: '图标',
     product: '产品展示',
     kaboom: 'Kaboom',
@@ -77,6 +78,8 @@ const dashboardSideMenu = {
     'x6flow.header.title': '流程图',
     'ava.header.title': '自动图标',
     'charts.header.title': '3D图表',
+    'component.ossupload.dragger.title': '点击或者拖动文件到此区域',
+    'component.ossupload.dragger.body': '支持多个文件上传',
 }
 
 export const zh_menu = {

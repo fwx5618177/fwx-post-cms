@@ -65,6 +65,14 @@ export const menuConf: RoutesPageI[] = [
                         path: 'menucontent',
                         children: [],
                     },
+                    {
+                        key: 'ossupload',
+                        icon: <Journal />,
+                        label: <Link to={'/dashboard/ossupload'}>ossupload</Link>,
+                        components: '../pages/dashboard/ossupload/index',
+                        path: 'ossupload',
+                        children: [],
+                    },
                 ],
             },
             {

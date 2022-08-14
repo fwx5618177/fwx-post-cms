@@ -1,3 +1,4 @@
+import COS from 'cos-js-sdk-v5'
 import { LazyExoticComponent } from 'react'
 
 /**
@@ -52,3 +53,69 @@ export interface IResponseData {
     status: number
     redirect?: string
 }
+
+/**
+ * OSS临时签证接口
+ */
+export interface IOSS {
+    tmpSecretId: string
+    tmpSecretKey: string
+    securityToken: string
+    expiredTime: number
+    scopeLimit: boolean
+    startTime: number
+
+    bucketName: string
+    region: string
+    serverName: string
+    uploadPath: string
+    signAuth: string
+}
+
+/**
+ * OSS验证数据接口
+ */
+export interface IOSSValidation {
+    allowPrefix: string
+    username: string
+    password: string
+}
+
+/**
+ * upload return func
+ */
+export interface IUpload {
+    instance: COS
+    config: {
+        TmpSecretId: string
+        TmpSecretKey: string
+        XCosSecurityToken: string
+        scopeLimit: boolean
+        StartTime: number
+        ExpiredTime: number
+        Bucket: string
+        Region: string
+        Path: string
+        ServerName: string
+        signAuth: string
+    }
+}
+
+export interface PostCosConf {
+    key: string
+    policy: string
+    'q-ak': string
+    'q-header-list': string
+    'q-key-time': string
+    'q-sign-algorithm': string
+    'q-sign-time': string
+    'q-signature': string
+    'q-url-param-list': string
+}
+
+export type BeforeUploadValueType = void | boolean | string | Blob | File
+
+// export type acceptUploadFileType = '*' | 'webp' | 'png'
+export type uploadOSSDir = 'upload' | 'image' | 'file' | 'video'
+
+export type uploadStyle = 'click' | 'dragger'

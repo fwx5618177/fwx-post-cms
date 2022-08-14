@@ -159,14 +159,25 @@ export const routesConf = (conf: RoutesConfI[], deep = 0) => {
     return conf?.map((ci, index) => {
         if (ci?.children && Array.isArray(ci?.children) && ci?.children.length > 0) {
             return (
-                <>
-                    <Route key={index + '_routes_parent' + deep} caseSensitive={ci?.caseSensitive} path={ci?.path} element={ci?.element}>
-                        {routesConf(ci?.children, deep + 1)}
-                    </Route>
-                </>
+                <Route
+                    key={index + '_routes_parent' + deep}
+                    caseSensitive={ci?.caseSensitive}
+                    path={ci?.path}
+                    element={ci?.element}
+                >
+                    {routesConf(ci?.children, deep + 1)}
+                </Route>
             )
         } else {
-            return <Route key={index + '_routes_child_' + deep} caseSensitive={ci?.caseSensitive} index={ci?.index} path={ci?.index ? '' : ci?.path} element={ci?.element} />
+            return (
+                <Route
+                    key={index + '_routes_child_' + deep}
+                    caseSensitive={ci?.caseSensitive}
+                    index={ci?.index}
+                    path={ci?.index ? '' : ci?.path}
+                    element={ci?.element}
+                />
+            )
         }
     })
 }
@@ -179,14 +190,16 @@ export const routeTable = (): RouteTableI[] => {
         return menuConf?.map(ci => {
             if (ci?.children && ci?.children.length > 0 && Array.isArray(ci?.children)) {
                 return {
-                    title: typeof ci?.label === 'string' ? t(ci?.label) : t((ci?.label as JSX.Element)?.props?.children),
+                    title:
+                        typeof ci?.label === 'string' ? t(ci?.label) : t((ci?.label as JSX.Element)?.props?.children),
                     key: ci?.key as string,
                     icon: ci?.icon,
                     children: queryRoutes(ci?.children, deep + 1),
                 }
             } else {
                 return {
-                    title: typeof ci?.label === 'string' ? t(ci?.label) : t((ci?.label as JSX.Element)?.props?.children),
+                    title:
+                        typeof ci?.label === 'string' ? t(ci?.label) : t((ci?.label as JSX.Element)?.props?.children),
                     key: ci?.key as string,
                     icon: ci?.icon,
                     switcherIcon: <Sunrise />,

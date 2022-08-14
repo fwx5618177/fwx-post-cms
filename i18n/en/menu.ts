@@ -12,6 +12,7 @@ const dashboardSideMenu = {
     defaultOps: 'Default Work',
     sidemenu: 'Menu',
     menucontent: 'Content',
+    ossupload: 'OSS Upload',
     charts: 'Charts',
     product: 'Product',
     kaboom: 'Kaboom',
@@ -77,6 +78,9 @@ const dashboardSideMenu = {
     'x6flow.header.title': 'X6 Flow',
     'ava.header.title': 'Automatical Chart',
     'charts.header.title': '3D Charts',
+    'component.ossupload.dragger.title': 'Click or drag file to this area to upload',
+    'component.ossupload.dragger.body':
+        'Support for a single or bulk upload. Strictly prohibit from uploading company data or other band files',
 }
 
 export const en_menu = {
