@@ -1,13 +1,28 @@
-import { Button, Card, Col, Form, Row, Select, UploadFile, UploadProps } from 'antd'
+import { Button, Card, Col, Form, Input, message, Row, Select, Switch, UploadFile, UploadProps } from 'antd'
 import { useState } from 'react'
-import { uploadStyle } from 'src/common/interface'
+import { uploadOSSDir, uploadStyle } from 'src/common/interface'
 import OSSUploadBase from 'src/pages/components/OssUpload'
+import { UploadPost } from './interface'
+import { v4 as uuidv4 } from 'uuid'
+import api from './api'
 
 const { Option } = Select
 
+interface FormI {
+    directory: string
+    dragger: 'click' | 'dragger'
+    list: string
+    path: string
+    resoureParent: string
+    uploadFile: (UploadFile & { dist: string })[]
+}
+
 const OSSUpload = () => {
-    const [listType, setListType] = useState<UploadProps['listType']>('picture')
+    const [listType, setListType] = useState<UploadProps['listType']>('text')
     const [uploadStyle, setUploadStyle] = useState<uploadStyle>('click')
+    const [uploadPath, setUploadPath] = useState<uploadOSSDir>('image')
+    const [directoryStatus, setDirectoryStatus] = useState<boolean>(false)
+    const [resource, setResource] = useState<string>('')
 
     const [form] = Form.useForm()
 
@@ -15,26 +30,41 @@ const OSSUpload = () => {
         wrapperCol: { offset: 8, span: 16 },
     }
 
-    const handleSubmit = value => {
-        const { uploadFile } = value as {
-            uploadFile: (UploadFile & { dist: string })[]
-        }
+    const onReset = () => {
+        form.resetFields()
+    }
 
-        const result: {
-            url: string | undefined
-            dist: string
-            name: string
-            size: number | undefined
-            type: string | undefined
-        }[] = uploadFile?.map(ci => ({
-            url: ci?.url,
-            dist: ci?.dist,
-            name: ci?.name,
-            size: ci?.size,
-            type: ci?.type,
+    const handleSubmit = async value => {
+        console.log(value)
+
+        const { uploadFile, resoureParent } = value as FormI
+
+        const result: UploadPost[] = uploadFile?.map(ci => ({
+            uuid: uuidv4(),
+            createdAt: new Date(),
+            url: ci?.url as string,
+            relativePath: ci?.dist as string,
+            name: ci?.name as string,
+            size: String(ci?.size),
+            type: ci?.type as string,
+            resoureParent: resoureParent,
         }))
 
-        console.log(result)
+        if (result.length > 1) {
+            const data = await api.createData(result)
+            console.log('count:', data)
+            message.success(`${data}个上传成功!`)
+        } else {
+            const data = await api.createData(result[0])
+            console.log('add:', data)
+            message.success(`${(data as any)?.name} 上传成功!`)
+        }
+    }
+
+    const initialVal = {
+        list: 'text',
+        dragger: 'click',
+        path: uploadPath,
     }
 
     return (
@@ -52,58 +82,97 @@ const OSSUpload = () => {
                     margin: 12,
                 }}
             >
-                <Row
-                    gutter={24}
-                    style={{
-                        margin: 8,
-                    }}
-                >
-                    <Col span={12}>
-                        <span>List Type:</span>
-                        <Select
-                            style={{
-                                width: '60%',
-                            }}
-                            placeholder='Please select'
-                            onSelect={_ => setListType(_)}
-                        >
-                            {(['text', 'picture', 'picture-card'] as UploadProps['listType'][])?.map((ci, index) => (
-                                <Option key={index + '_listType'} value={ci}>
-                                    {ci}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Col>
+                <Form name='form' form={form} onFinish={handleSubmit} initialValues={initialVal}>
+                    <Row gutter={24}>
+                        <Col span={12}>
+                            <Form.Item name={'list'} label='List Type'>
+                                <Select placeholder='Please select' onSelect={_ => setListType(_)}>
+                                    {(['text', 'picture', 'picture-card'] as UploadProps['listType'][])?.map(
+                                        (ci, index) => (
+                                            <Option key={index + '_listType'} value={ci}>
+                                                {ci}
+                                            </Option>
+                                        ),
+                                    )}
+                                </Select>
+                            </Form.Item>
+                        </Col>
 
-                    <Col span={12}>
-                        <span>List Type:</span>
-                        <Select
-                            style={{
-                                width: '60%',
-                            }}
-                            placeholder='Please select'
-                            onSelect={_ => setUploadStyle(_)}
-                        >
-                            {(['click', 'dragger'] as uploadStyle[])?.map((ci, index) => (
-                                <Option key={index + '_uploadStyle'} value={ci}>
-                                    {ci}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Col>
-                </Row>
-            </Card>
+                        <Col span={12}>
+                            <Form.Item name={'dragger'} label='Dragger Type'>
+                                <Select placeholder='Please select' onSelect={_ => setUploadStyle(_)}>
+                                    {(['click', 'dragger'] as uploadStyle[])?.map((ci, index) => (
+                                        <Option key={index + '_uploadStyle'} value={ci}>
+                                            {ci}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                    </Row>
 
-            <Card
-                style={{
-                    margin: 12,
-                }}
-            >
-                <Form name='form' form={form} onFinish={handleSubmit}>
+                    <Row gutter={24}>
+                        <Col span={12}>
+                            <Form.Item name={'path'} label='Upload Path'>
+                                <Select
+                                    placeholder='Please select'
+                                    onSelect={_ => {
+                                        setUploadPath(_)
+                                    }}
+                                >
+                                    {['upload', 'image', 'file', 'video', 'kaboom']?.map((ci, index) => (
+                                        <Option key={index + '_uploadpath'} value={ci}>
+                                            {ci}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+
+                        <Col span={12}>
+                            <Form.Item name={'directory'} label='directory switch'>
+                                <Switch
+                                    checkedChildren={'开启'}
+                                    unCheckedChildren={'关闭'}
+                                    onChange={(checked: boolean) => setDirectoryStatus(checked)}
+                                ></Switch>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={24}>
+                        <Col span={12}>
+                            <Form.Item
+                                name={'resoureParent'}
+                                label={'Resource'}
+                                required
+                                rules={[
+                                    {
+                                        message: 'Need to addthis resource parent',
+                                    },
+                                ]}
+                            >
+                                <Input
+                                    onChange={e => {
+                                        const value = e?.target.value
+                                        setResource(`/${value}`)
+                                    }}
+                                    placeholder='Please input your key words'
+                                    allowClear
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
                     <Row gutter={24}>
                         <Col span={24}>
                             <Form.Item name={'uploadFile'}>
-                                <OSSUploadBase listType={listType} uploadStyle={uploadStyle} uploadDir={'image'} />
+                                <OSSUploadBase
+                                    listType={listType}
+                                    uploadStyle={uploadStyle}
+                                    uploadDir={(uploadPath + resource) as any}
+                                    directory={directoryStatus}
+                                />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -118,7 +187,7 @@ const OSSUpload = () => {
                                 marginLeft: 8,
                             }}
                             htmlType='button'
-                            // onClick={onReset}
+                            onClick={onReset}
                         >
                             Reset
                         </Button>

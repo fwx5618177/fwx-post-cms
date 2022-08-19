@@ -2,6 +2,7 @@ import { Card } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { queryPathKey } from 'src/common/lib'
 import Instro from 'src/pages/components/instro'
+import MarioGame from './Mario'
 
 const Kaboom = () => {
     const { t } = useTranslation()
@@ -30,7 +31,9 @@ const Kaboom = () => {
                 style={{
                     margin: 12,
                 }}
-            ></Card>
+            >
+                <MarioGame />
+            </Card>
         </>
     )
 }

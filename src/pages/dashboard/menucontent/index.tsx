@@ -10,6 +10,7 @@ const { Option } = Select
 
 const MenuContent = () => {
     const [form] = Form.useForm()
+    const [updateForm] = Form.useForm()
     const { t } = useTranslation()
 
     const showRef = useRef<HTMLDivElement>(null)
@@ -117,10 +118,22 @@ const MenuContent = () => {
 
             ;(showRef.current as HTMLDivElement).innerHTML = re
 
+            updateForm.setFieldValue('updateContent', value)
+
             setDetailInfos(data)
         } else {
             setDetailInfos(null)
         }
+    }
+
+    const onUpdate = async values => {
+        const { title, updateContent } = values
+        const result = await api.updateContent({
+            title,
+            content: updateContent,
+        })
+
+        console.log(result)
     }
 
     useEffect(() => {
@@ -174,141 +187,175 @@ const MenuContent = () => {
                         />
                     </Col>
                 </Row>
-                {loadStatus && (
-                    <Form
-                        {...layout}
-                        form={form}
-                        name='basic'
-                        onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
-                        autoComplete='off'
-                    >
-                        <Row gutter={24}>
-                            <Col span={12}>
-                                <Form.Item
-                                    label={t('menucontent.name.form.label')}
-                                    name={'name'}
-                                    rules={[{ required: true, message: t('routepagelevel.text') }]}
-                                >
-                                    <Select placeholder={t('menucontent.name.form.select.text')}>
-                                        {routeList?.map((ci, index) => (
-                                            <Option key={index + '_routeList'} value={ci?.value}>
-                                                {ci?.label}
-                                            </Option>
-                                        ))}
-                                    </Select>
-                                </Form.Item>
-                            </Col>
-                        </Row>
-
-                        <Row gutter={24}>
-                            <Col span={12}>
-                                <Form.Item
-                                    label={t('menucontent.name.form.title')}
-                                    name={'title'}
-                                    rules={[{ required: true, message: t('routepagelevel.text') }]}
-                                >
-                                    <Input
-                                        showCount
-                                        placeholder={t('menucontent.name.form.title.text')}
-                                        allowClear
-                                    ></Input>
-                                </Form.Item>
-                            </Col>
-                        </Row>
-
-                        <Row gutter={24}>
-                            <Col span={24}>
-                                <Form.Item
-                                    label={t('menucontent.name.form.content')}
-                                    name={'content'}
-                                    rules={[{ required: true, message: t('routepagelevel.text') }]}
-                                >
-                                    <Input.TextArea
-                                        onChange={handleChange}
-                                        showCount
-                                        placeholder={t('menucontent.name.form.content.text')}
-                                        allowClear
-                                        autoSize={{ minRows: 5, maxRows: 8 }}
-                                    ></Input.TextArea>
-                                </Form.Item>
-                            </Col>
-                        </Row>
-
-                        <Form.Item>
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <Button type='primary' htmlType='submit'>
-                                    {t('button.submit')}
-                                </Button>
-
-                                <Button
-                                    style={{
-                                        marginLeft: 8,
-                                    }}
-                                    htmlType='button'
-                                    onClick={onReset}
-                                >
-                                    {t('button.reset')}
-                                </Button>
-                            </div>
-                        </Form.Item>
-                    </Form>
-                )}
-
-                {!loadStatus && (
-                    <>
-                        <Row gutter={24}>
-                            <Col span={24}>
-                                <span
-                                    style={{
-                                        marginRight: 6,
-                                    }}
-                                >
-                                    Select:
-                                </span>
-                                <Select
-                                    style={{
-                                        width: 300,
-                                    }}
-                                    placeholder={t('menucontent.header.title.switch.text.load.select')}
-                                    onSelect={handleDetailInfo}
-                                >
-                                    {versions?.map((ci, index) => (
-                                        <Option key={index + '_versions'} value={ci?.value}>
-                                            {ci?.label}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </Col>
-                        </Row>
-
-                        {detailInfos && (
+                <Form
+                    {...layout}
+                    form={form}
+                    name='basic'
+                    onFinish={onFinish}
+                    onFinishFailed={onFinishFailed}
+                    autoComplete='off'
+                >
+                    {loadStatus && (
+                        <>
                             <Row gutter={24}>
-                                <Col span={24}>
-                                    <Descriptions
-                                        title='Versions'
-                                        bordered
-                                        // column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
+                                <Col span={12}>
+                                    <Form.Item
+                                        label={t('menucontent.name.form.label')}
+                                        name={'name'}
+                                        rules={[{ required: true, message: t('routepagelevel.text') }]}
                                     >
-                                        <Descriptions.Item label='title'>{detailInfos?.title}</Descriptions.Item>
-                                        <Descriptions.Item label='time'>
-                                            {detailInfos &&
-                                                moment(detailInfos?.createdAt).format('YYYY-MM-DD hh:mm:ss')}
-                                        </Descriptions.Item>
-                                        <Descriptions.Item label='routekeyname'>
-                                            {detailInfos?.routekeyname}
-                                        </Descriptions.Item>
-                                    </Descriptions>
+                                        <Select placeholder={t('menucontent.name.form.select.text')}>
+                                            {routeList?.map((ci, index) => (
+                                                <Option key={index + '_routeList'} value={ci?.value}>
+                                                    {ci?.label}
+                                                </Option>
+                                            ))}
+                                        </Select>
+                                    </Form.Item>
                                 </Col>
                             </Row>
-                        )}
-                    </>
-                )}
+                            <Row gutter={24}>
+                                <Col span={12}>
+                                    <Form.Item
+                                        label={t('menucontent.name.form.title')}
+                                        name={'title'}
+                                        rules={[{ required: true, message: t('routepagelevel.text') }]}
+                                    >
+                                        <Input
+                                            showCount
+                                            placeholder={t('menucontent.name.form.title.text')}
+                                            allowClear
+                                        ></Input>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                            <Row gutter={24}>
+                                <Col span={24}>
+                                    <Form.Item
+                                        label={t('menucontent.name.form.content')}
+                                        name={'content'}
+                                        rules={[{ required: true, message: t('routepagelevel.text') }]}
+                                    >
+                                        <Input.TextArea
+                                            onChange={handleChange}
+                                            showCount
+                                            placeholder={t('menucontent.name.form.content.text')}
+                                            allowClear
+                                            autoSize={{ minRows: 5, maxRows: 8 }}
+                                        ></Input.TextArea>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                            <Form.Item>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <Button type='primary' htmlType='submit'>
+                                        {t('button.submit')}
+                                    </Button>
+
+                                    <Button
+                                        style={{
+                                            marginLeft: 8,
+                                        }}
+                                        htmlType='button'
+                                        onClick={onReset}
+                                    >
+                                        {t('button.reset')}
+                                    </Button>
+                                </div>
+                            </Form.Item>
+                        </>
+                    )}
+                </Form>
+
+                <Form name='updateForm' form={updateForm} onFinish={onUpdate} autoComplete='off'>
+                    {!loadStatus && (
+                        <>
+                            <Row gutter={24}>
+                                <Col span={24}>
+                                    <Form.Item name={'title'} label={'Title'}>
+                                        <Select
+                                            style={{
+                                                width: 300,
+                                            }}
+                                            placeholder={t('menucontent.header.title.switch.text.load.select')}
+                                            onSelect={handleDetailInfo}
+                                        >
+                                            {versions?.map((ci, index) => (
+                                                <Option key={index + '_versions'} value={ci?.value}>
+                                                    {ci?.label}
+                                                </Option>
+                                            ))}
+                                        </Select>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+
+                            <Row
+                                gutter={24}
+                                style={{
+                                    marginTop: 8,
+                                }}
+                            >
+                                <Col span={24}>
+                                    <Form.Item name={'updateContent'} label={'Text'}>
+                                        <Input.TextArea
+                                            onChange={handleChange}
+                                            showCount
+                                            placeholder={t('menucontent.name.form.content.text')}
+                                            allowClear
+                                            autoSize={{ minRows: 5, maxRows: 8 }}
+                                        ></Input.TextArea>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+
+                            <Form.Item>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <Button type='primary' htmlType='submit'>
+                                        {t('button.submit')}
+                                    </Button>
+
+                                    <Button
+                                        style={{
+                                            marginLeft: 8,
+                                        }}
+                                        htmlType='button'
+                                        onClick={onReset}
+                                    >
+                                        {t('button.reset')}
+                                    </Button>
+                                </div>
+                            </Form.Item>
+
+                            {detailInfos && (
+                                <Row gutter={24}>
+                                    <Col span={24}>
+                                        <Descriptions title='Versions' bordered>
+                                            <Descriptions.Item label='title'>{detailInfos?.title}</Descriptions.Item>
+                                            <Descriptions.Item label='time'>
+                                                {detailInfos &&
+                                                    moment(detailInfos?.createdAt).format('YYYY-MM-DD hh:mm:ss')}
+                                            </Descriptions.Item>
+                                            <Descriptions.Item label='routekeyname'>
+                                                {detailInfos?.routekeyname}
+                                            </Descriptions.Item>
+                                        </Descriptions>
+                                    </Col>
+                                </Row>
+                            )}
+                        </>
+                    )}
+                </Form>
             </Card>
 
             <h3
@@ -325,7 +372,6 @@ const MenuContent = () => {
                     overflow: 'scroll',
                 }}
             >
-                {/* {markedShow} */}
                 <div ref={showRef}></div>
             </Card>
         </>

@@ -12,6 +12,8 @@ class api {
     static list = () => get('/api/content/list')
 
     static detail = params => get(`/api/content/detail/${params}`)
+
+    static updateContent = params => put(`/api/content/detail/${params?.title}`, params)
 }
 
 export default api

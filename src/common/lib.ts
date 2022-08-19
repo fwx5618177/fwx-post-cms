@@ -11,7 +11,7 @@ import { RcFile } from 'antd/lib/upload'
 // 查询存在、修改
 export const head = (uri: string) => request.head(uri)
 
-export const get = (uri: string) => request.get(uri)
+export const get = (uri: string): any => request.get(uri)
 
 export const post = (uri: string, params: any) => request.post(uri, params)
 

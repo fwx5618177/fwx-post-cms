@@ -1,4 +1,4 @@
-import { InboxOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons'
+import { InboxOutlined, PlusOutlined, UploadOutlined, FileImageOutlined } from '@ant-design/icons'
 import { Button, message, Modal, Upload, UploadFile, UploadProps } from 'antd'
 import { RcFile } from 'antd/lib/upload/interface'
 import { useEffect, useState } from 'react'
@@ -28,7 +28,7 @@ const OSSUploadBase = ({
     uploadDir = 'upload',
     directory = false,
     multiple = false,
-    maxCount = 8,
+    maxCount = 50,
     listType = 'picture-card',
     uploadStyle = 'click',
 }: OSSUploadProps) => {
@@ -50,6 +50,7 @@ const OSSUploadBase = ({
             })
 
             setOSSData(result as unknown as PostCosConf)
+            // console.log(result)
         } catch (error) {
             message.error(error as any)
         }
@@ -57,7 +58,7 @@ const OSSUploadBase = ({
 
     useEffect(() => {
         init()
-    }, [])
+    }, [uploadDir])
 
     const uploadProps: UploadProps = {
         action: 'https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com',
@@ -120,8 +121,8 @@ const OSSUploadBase = ({
         switch (listType) {
             case 'picture':
                 return (
-                    <Button type='primary' icon={<UploadOutlined />}>
-                        Click to Upload
+                    <Button type='primary' icon={<FileImageOutlined />}>
+                        Click Image to Upload
                     </Button>
                 )
             case 'picture-card':
