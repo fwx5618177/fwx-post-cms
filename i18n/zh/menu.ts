@@ -80,6 +80,7 @@ const dashboardSideMenu = {
     'charts.header.title': '3D图表',
     'component.ossupload.dragger.title': '点击或者拖动文件到此区域',
     'component.ossupload.dragger.body': '支持多个文件上传',
+    'model.city': '3D城市',
 }
 
 export const zh_menu = {

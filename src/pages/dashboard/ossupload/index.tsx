@@ -120,7 +120,7 @@ const OSSUpload = () => {
                                         setUploadPath(_)
                                     }}
                                 >
-                                    {['upload', 'image', 'file', 'video', 'kaboom']?.map((ci, index) => (
+                                    {['upload', 'image', 'file', 'video', 'kaboom', '3DModel']?.map((ci, index) => (
                                         <Option key={index + '_uploadpath'} value={ci}>
                                             {ci}
                                         </Option>

@@ -12,6 +12,8 @@ import {
     CardChecklist,
     FileEarmarkCheck,
     FileRichtext,
+    EggFill,
+    Box2,
 } from 'react-bootstrap-icons'
 
 /**
@@ -146,6 +148,23 @@ export const menuConf: RoutesPageI[] = [
                         label: <Link to={'/product/markdown'}>markdown</Link>,
                         components: '../pages/product/markdown/index',
                         path: 'markdown',
+                        children: [],
+                    },
+                ],
+            },
+            {
+                key: 'model',
+                icon: <EggFill />,
+                label: 'Model',
+                outlet: true,
+                path: 'model',
+                children: [
+                    {
+                        key: 'city',
+                        icon: <Box2 />,
+                        label: <Link to={'/model/city'}>model.city</Link>,
+                        components: '../pages/model/city/index',
+                        path: 'city',
                         children: [],
                     },
                 ],
