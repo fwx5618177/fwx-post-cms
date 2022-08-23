@@ -82,6 +82,7 @@ const dashboardSideMenu = {
     'component.ossupload.dragger.body':
         'Support for a single or bulk upload. Strictly prohibit from uploading company data or other band files',
     'model.city': '3D City',
+    'model.robot': 'Robot',
 }
 
 export const en_menu = {

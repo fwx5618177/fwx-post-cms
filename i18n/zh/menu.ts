@@ -81,6 +81,7 @@ const dashboardSideMenu = {
     'component.ossupload.dragger.title': '点击或者拖动文件到此区域',
     'component.ossupload.dragger.body': '支持多个文件上传',
     'model.city': '3D城市',
+    'model.robot': '机器人',
 }
 
 export const zh_menu = {

@@ -14,6 +14,7 @@ import {
     FileRichtext,
     EggFill,
     Box2,
+    Robot,
 } from 'react-bootstrap-icons'
 
 /**
@@ -165,6 +166,14 @@ export const menuConf: RoutesPageI[] = [
                         label: <Link to={'/model/city'}>model.city</Link>,
                         components: '../pages/model/city/index',
                         path: 'city',
+                        children: [],
+                    },
+                    {
+                        key: 'robotcircle',
+                        icon: <Robot />,
+                        label: <Link to={'/model/robotcircle'}>model.robot</Link>,
+                        components: '../pages/model/robot/index',
+                        path: 'robotcircle',
                         children: [],
                     },
                 ],
