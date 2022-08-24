@@ -82,6 +82,8 @@ const dashboardSideMenu = {
     'component.ossupload.dragger.body': '支持多个文件上传',
     'model.city': '3D城市',
     'model.robot': '机器人',
+    'model.carcolor': '汽车',
+    'model.island': '小岛',
 }
 
 export const zh_menu = {

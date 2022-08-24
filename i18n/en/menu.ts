@@ -83,6 +83,8 @@ const dashboardSideMenu = {
         'Support for a single or bulk upload. Strictly prohibit from uploading company data or other band files',
     'model.city': '3D City',
     'model.robot': 'Robot',
+    'model.carcolor': 'Car',
+    'model.island': 'Island',
 }
 
 export const en_menu = {

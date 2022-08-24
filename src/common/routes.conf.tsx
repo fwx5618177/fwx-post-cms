@@ -1,4 +1,4 @@
-import { HomeOutlined, PieChartOutlined, TableOutlined } from '@ant-design/icons'
+import { HomeOutlined, PieChartOutlined, TableOutlined, CarOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import { RoutesPageI } from './interface'
 import {
@@ -174,6 +174,22 @@ export const menuConf: RoutesPageI[] = [
                         label: <Link to={'/model/robotcircle'}>model.robot</Link>,
                         components: '../pages/model/robot/index',
                         path: 'robotcircle',
+                        children: [],
+                    },
+                    {
+                        key: 'carcolor',
+                        icon: <CarOutlined />,
+                        label: <Link to={'/model/carcolor'}>model.carcolor</Link>,
+                        components: '../pages/model/carcolor/index',
+                        path: 'carcolor',
+                        children: [],
+                    },
+                    {
+                        key: 'island',
+                        icon: <CarOutlined />,
+                        label: <Link to={'/model/island'}>model.island</Link>,
+                        components: '../pages/model/island/index',
+                        path: 'island',
                         children: [],
                     },
                 ],
