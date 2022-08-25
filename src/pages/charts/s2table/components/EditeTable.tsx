@@ -76,7 +76,8 @@ const App = ({ data }) => {
                     const colCellHeight = (spreadsheet.getColumnNodes()[0] || { height: 0 }).height
                     const inView = (x, y) => {
                         const inX = x > scroll.scrollX && x < scroll.scrollX + spreadsheet.options.width
-                        const inY = y > scroll.scrollY + colCellHeight && y < scroll.scrollY + spreadsheet.options.height
+                        const inY =
+                            y > scroll.scrollY + colCellHeight && y < scroll.scrollY + spreadsheet.options.height
                         return inX && inY
                     }
                     if (inView(position.left, position.top + colCellHeight)) {
@@ -163,7 +164,15 @@ const App = ({ data }) => {
 
     return (
         <div style={{ position: 'relative' }}>
-            {show && <input ref={inputRef} style={style} value={value} onChange={e => setValue(e.target.value)} onBlur={() => onSave(value)} />}
+            {show && (
+                <input
+                    ref={inputRef}
+                    style={style as any}
+                    value={value}
+                    onChange={e => setValue(e.target.value)}
+                    onBlur={() => onSave(value)}
+                />
+            )}
             <SheetComponent ref={S2Ref} dataCfg={dataCfg} options={options} sheetType='table' />
         </div>
     )
