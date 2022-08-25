@@ -12,7 +12,9 @@ const { Header, Sider, Content, Footer } = Layout
 const LayoutEle = () => {
     // const [langugaeSet, setLangugaeSet] = useState<string>('中文')
     const [collapsed, setCollapsed] = useState(false)
-    const [linksName, setLinksName] = useState<string[]>(window.location.pathname.split('/').filter(ci => !!ci) as string[])
+    const [linksName, setLinksName] = useState<string[]>(
+        window.location.pathname.split('/').filter(ci => !!ci) as string[],
+    )
 
     const i18nMenus = (
         <Menu
@@ -42,7 +44,7 @@ const LayoutEle = () => {
                             fontFamily: 'sans-serif',
                         }}
                     >
-                        Moxi
+                        web技术分享测试
                     </h3>
                 </div>
 
@@ -125,6 +127,13 @@ const LayoutEle = () => {
                         Moxi
                     </a>
                     ©2022 Created by Moxi
+                    <div
+                        style={{
+                            cursor: 'default',
+                        }}
+                    >
+                        备案号: 豫ICP备20016314号-1
+                    </div>
                 </Footer>
             </Layout>
         </Layout>
