@@ -69,7 +69,7 @@ const Schedule = () => {
 
                 let fill
                 let opacity = 1
-                if (!isNaN(fieldValue)) {
+                if (!isNaN(fieldValue as any)) {
                     fill = paletteLegendMap.find(v => v.text === colQuery['时刻'])?.color ?? '#FAD5BB'
                     opacity = 0.5
                 } else {
@@ -157,7 +157,23 @@ const Schedule = () => {
 
         ;(s2DataConfig => {
             const s2Palette = {
-                basicColors: ['#FFFFFF', '#020138', 'rgba(255,255,255,0.18)', '#020138', 'rgba(255,255,255,0.18)', '#7232CF', '#7232CF', '#AB76F7', '#020138', 'rgba(255,255,255,0)', 'rgba(255,255,255,0)', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
+                basicColors: [
+                    '#FFFFFF',
+                    '#020138',
+                    'rgba(255,255,255,0.18)',
+                    '#020138',
+                    'rgba(255,255,255,0.18)',
+                    '#7232CF',
+                    '#7232CF',
+                    '#AB76F7',
+                    '#020138',
+                    'rgba(255,255,255,0)',
+                    'rgba(255,255,255,0)',
+                    '#FFFFFF',
+                    '#FFFFFF',
+                    '#FFFFFF',
+                    '#FFFFFF',
+                ],
                 // ---------- semantic colors ----------
                 semanticColors: {
                     red: '#FF4D4F',
@@ -251,7 +267,12 @@ const Schedule = () => {
             root.render(
                 <div className='sheet-wrapper'>
                     <PaletteLegend />
-                    <SheetComponent dataCfg={s2DataConfig} options={s2Options} sheetType='pivot' themeCfg={{ theme: s2Theme, palette: s2Palette }} />
+                    <SheetComponent
+                        dataCfg={s2DataConfig}
+                        options={s2Options as any}
+                        sheetType='pivot'
+                        themeCfg={{ theme: s2Theme as any, palette: s2Palette }}
+                    />
                 </div>,
             )
 
