@@ -14,4 +14,12 @@ export default defineConfig({
             extends: './extends',
         },
     },
+    build: {
+        terserOptions: {
+            compress: {
+                drop_console: true,
+                drop_debugger: true,
+            },
+        },
+    },
 })

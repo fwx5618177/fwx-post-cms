@@ -11,7 +11,13 @@ import { Sunrise } from 'react-bootstrap-icons'
  * @description 字符串转懒加载
  */
 const transferLazyLoad = (components: string): React.LazyExoticComponent<() => JSX.Element> => {
-    return lazy(() => import(/* @vite-ignore */ components))
+    return lazy(
+        () =>
+            import(/* @vite-ignore */ components).then(m => ({
+                default: m.ProjectDocumentsScreen,
+            })),
+        // import.meta.globEager(/* @vite-ignore */ components),
+    )
 }
 
 /**

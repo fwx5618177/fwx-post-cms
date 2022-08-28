@@ -30,7 +30,7 @@ export const menuConf: RoutesPageI[] = [
         key: 'layout',
         icon: <Images />,
         label: <Link to={'/'}>layoutBg</Link>,
-        components: '../pages/Layout.tsx',
+        components: '../pages/Layout',
         path: '/',
         menuShow: false,
         children: [
@@ -38,7 +38,7 @@ export const menuConf: RoutesPageI[] = [
                 key: '/',
                 icon: <HomeOutlined />,
                 label: <Link to={'/'}>defaultMain</Link>,
-                components: '../pages/main/index.tsx',
+                components: '../pages/main/index',
                 path: '/',
                 index: true,
                 children: [],
