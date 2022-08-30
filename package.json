@@ -4,13 +4,17 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
+        "bootstrap": "npm install",
         "prepare": "husky install",
+        "commit": "czg",
+        "log": "conventional-changelog -p angular -i CHANGELOG.md -s",
         "dev": "vite",
         "build": "tsc && vite build",
         "preview": "vite preview",
         "lint": "eslint --ignore-path .gitignore --ext .ts src/",
         "lint:fix": "npm run lint -- --fix",
         "lint:lint-staged": "lint-staged",
+        "reinstall": "rimraf pnpm-lock.yaml && rimraf package.lock.json && rimraf node_modules && npm run bootstrap",
         "test": "jest --config jest.config.ts --forceExit --detectOpenHandles && npm run lint"
     },
     "engines": {
@@ -65,8 +69,11 @@
         "@wangeditor/editor-for-react": "^1.0.4",
         "antd": "^4.21.7",
         "chalk": "^2.4.2",
+        "conventional-changelog-cli": "^2.2.2",
         "cos-js-sdk-v5": "^1.3.10",
         "crypto-js": "^4.1.1",
+        "cz-conventional-changelog": "^3.3.0",
+        "czg": "^1.3.11",
         "dat.gui": "^0.7.9",
         "editor.md": "^1.5.0",
         "eslint-config-prettier": "^8.5.0",
@@ -97,6 +104,7 @@
         "react-router": "^6.3.0",
         "react-router-dom": "^6.3.0",
         "react-uuid": "^1.0.2",
+        "rimraf": "^3.0.2",
         "stylelint": "^14.11.0",
         "stylelint-config-prettier": "^9.0.3",
         "stylelint-config-recommended": "^9.0.0",
@@ -122,6 +130,11 @@
         "husky": "^8.0.1",
         "typescript": "^4.6.4",
         "vite": "^3.0.3"
+    },
+    "config": {
+        "commitizen": {
+            "path": "node_modules/cz-git"
+        }
     },
     "jest": {
         "verbose": true
