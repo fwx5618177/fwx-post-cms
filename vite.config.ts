@@ -28,7 +28,23 @@ export default defineConfig({
             // },
         ],
     },
+    server: {
+        host: true,
+        port: 3000,
+        https: false,
+        proxy: {},
+    },
     build: {
+        target: 'es2015',
+        cssTarget: 'chrome80',
+        // minify: 'terser',
+        // terserOptions: {
+        //     compress: {
+        //         keep_infinity: true,
+        //         // drop_console: VITE_DROP_CONSOLE,
+        //     },
+        // },
+        chunkSizeWarningLimit: 2000,
         terserOptions: {
             compress: {
                 drop_console: true,
@@ -37,10 +53,10 @@ export default defineConfig({
         },
     },
     experimental: {
-        renderBuiltUrl(
+        renderBuiltUrl: (
             filename: string,
             { hostId, hostType, type }: { hostId: string; hostType: 'js' | 'css' | 'html'; type: 'public' | 'asset' },
-        ) {
+        ) => {
             if (type === 'public') {
                 return 'https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/' + filename
             } else if (path.extname(hostId) === '.js') {
