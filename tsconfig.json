@@ -18,13 +18,8 @@
     "noImplicitAny": false,
     "jsx": "react-jsx",
     "baseUrl": ".",
-    "outDir": "dist/",
+    "outDir": "dist",
     "rootDir": ".",
-    "rootDirs": [
-      "src",
-      "tests",
-      "mocks"
-    ],
     "paths": {
       // "@/": ["./*"],
       "@mocks": ["./mocks/*"],
@@ -32,9 +27,9 @@
     }
   },
   "include": [
-    "src",
-    "test",
-    "mocks",
+    "src/**/*",
+    "tests/**/*",
+    "mocks/**/*.ts",
   ],
   "exclude": [
     "jest.config.js",

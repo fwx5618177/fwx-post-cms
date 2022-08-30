@@ -10,7 +10,7 @@ export interface RoutesPageI {
     icon?: string | JSX.Element
     itemIcon?: string | JSX.Element
     outlet?: boolean
-    components?: string | LazyExoticComponent<React.FC<{}>>
+    components?: string | LazyExoticComponent<React.FC<{}>> | any
     path?: string
     index?: boolean
     children?: RoutesPageI[]

@@ -6,13 +6,27 @@ import path from 'path'
 export default defineConfig({
     plugins: [react()],
     resolve: {
-        alias: {
-            src: path.resolve(__dirname, './src'),
-            '@/': './',
-            mocks: './mocks',
-            tests: './tests',
-            extends: './extends',
-        },
+        alias: [
+            {
+                find: 'i18n',
+                replacement: 'i18n/i18n.js',
+            },
+            {
+                find: 'src',
+                replacement: path.resolve(__dirname, './src'),
+            },
+            // {
+            //     find: /@\//,
+            //     replacement: pathResolve('src') + '/',
+            // },
+            // {
+            //     src: path.resolve(__dirname, './src'),
+            //     '@/': './',
+            //     mocks: './mocks',
+            //     tests: './tests',
+            //     extends: './extends',
+            // },
+        ],
     },
     build: {
         terserOptions: {
