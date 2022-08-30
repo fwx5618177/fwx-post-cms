@@ -58,11 +58,11 @@ export default defineConfig({
             { hostId, hostType, type }: { hostId: string; hostType: 'js' | 'css' | 'html'; type: 'public' | 'asset' },
         ) => {
             if (type === 'public') {
-                return 'https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/' + filename
+                return 'https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/moxixii.com/' + filename
             } else if (path.extname(hostId) === '.js') {
                 return { runtime: `window.__assetsPath(${JSON.stringify(filename)})` }
             } else {
-                return 'https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/assets/' + filename
+                return 'https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/moxixii.com/assets/' + filename
             }
         },
     },
