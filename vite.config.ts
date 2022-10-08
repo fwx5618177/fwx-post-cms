@@ -4,7 +4,8 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: 'https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/moxixii.com/',
+    // base: `https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/moxixii.com/`,
+    base: `https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/`,
     plugins: [react()],
     resolve: {
         alias: [
@@ -38,7 +39,7 @@ export default defineConfig({
     build: {
         target: 'es2015',
         cssTarget: 'chrome80',
-        // minify: 'terser',
+        minify: 'terser',
         // terserOptions: {
         //     compress: {
         //         keep_infinity: true,

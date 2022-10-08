@@ -84,6 +84,9 @@ const dashboardSideMenu = {
     'model.robot': '机器人',
     'model.carcolor': '汽车',
     'model.island': '小岛',
+    sourcelook: '阅读',
+    'sourcelook.sourcecode': '源码阅读',
+    'sourcelook.richtext': '掘金富文本',
 }
 
 export const zh_menu = {

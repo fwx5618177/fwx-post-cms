@@ -212,6 +212,32 @@ export const menuConf: RoutesPageI[] = [
                     },
                 ],
             },
+
+            {
+                key: 'sourcelook',
+                icon: <CardChecklist />,
+                label: 'sourcelook',
+                outlet: true,
+                path: 'sourcelook',
+                children: [
+                    {
+                        key: 'richtext',
+                        icon: <FileEarmarkCheck />,
+                        label: <Link to={'/sourcelook/richtext'}>sourcelook.richtext</Link>,
+                        components: import('../pages/sourcelook/richtext/index'),
+                        path: 'richtext',
+                        children: [],
+                    },
+                    {
+                        key: 'sourcecode',
+                        icon: <FileEarmarkCheck />,
+                        label: <Link to={'/sourcelook/sourcecode'}>sourcelook.sourcecode</Link>,
+                        components: import('../pages/sourcelook/sourcecode/index'),
+                        path: 'sourcecode',
+                        children: [],
+                    },
+                ],
+            },
         ],
     },
 ]
