@@ -126,13 +126,20 @@ const LayoutEle = () => {
                         <Github />
                         Moxi
                     </a>
-                    ©2022 Created by Moxi
+                    ©2017-{new Date().getFullYear()} Created by Moxi
                     <div
                         style={{
                             cursor: 'default',
                         }}
                     >
-                        备案号: 豫ICP备20016314号-1
+                        <a
+                            style={{
+                                color: 'black',
+                            }}
+                            href='https://beian.miit.gov.cn'
+                        >
+                            备案号: 豫ICP备20016314号-1
+                        </a>
                     </div>
                 </Footer>
             </Layout>
