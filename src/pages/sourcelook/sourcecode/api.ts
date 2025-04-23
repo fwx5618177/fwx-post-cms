@@ -1,5 +1,5 @@
-import { post } from 'src/common/lib'
+import { post } from "src/common/lib";
 
 export default class api {
-    static look = params => post('/api/sourcelook/sourcecode', params)
+    static look = params => post("/api/sourcelook/sourcecode", params);
 }

@@ -1,7 +1,7 @@
-import { post } from 'src/common/lib'
+import { post } from "src/common/lib";
 
 class api {
-    static createData = params => post('/api/upload/list', params)
+    static createData = params => post("/api/upload/list", params);
 }
 
-export default api
+export default api;

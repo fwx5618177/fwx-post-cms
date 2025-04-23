@@ -1,13 +1,5 @@
-import { Card } from 'antd'
+const RichText = () => {
+    return <div>RichText</div>;
+};
 
-export default () => {
-    return (
-        <>
-            <Card
-                style={{
-                    margin: 8,
-                }}
-            ></Card>
-        </>
-    )
-}
+export default RichText;

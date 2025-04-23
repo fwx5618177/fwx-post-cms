@@ -1,18 +1,18 @@
-import { Row, Col, Input } from 'antd'
-import { useRef } from 'react'
-import * as marked from 'marked'
+import { Row, Col, Input } from "antd";
+import { useRef } from "react";
+import * as marked from "marked";
 
-import './markdown.css'
+import "./markdown.css";
 
 const MarkdonwEditor = () => {
-    const showRef = useRef<HTMLDivElement>(null)
+    const showRef = useRef<HTMLDivElement>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const value = e.target.value
+        const value = e.target.value;
 
         // console.log(value)
-        ;(showRef.current as HTMLDivElement).innerHTML = marked.parse(value)
-    }
+        (showRef.current as HTMLDivElement).innerHTML = marked.parse(value);
+    };
 
     return (
         <>
@@ -27,11 +27,11 @@ const MarkdonwEditor = () => {
                     />
                 </Col>
                 <Col span={12}>
-                    <div className='markdown_editor_self' ref={showRef}></div>
+                    <div className="markdown_editor_self" ref={showRef}></div>
                 </Col>
             </Row>
         </>
-    )
-}
+    );
+};
 
-export default MarkdonwEditor
+export default MarkdonwEditor;

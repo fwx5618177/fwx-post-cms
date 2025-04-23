@@ -1,7 +1,7 @@
-import { get } from 'src/common/lib'
+import { get } from "src/common/lib";
 
 class api {
-    static queryMarioResource = params => get(`/api/model/list/${params}`)
+    static queryMarioResource = params => get(`/api/model/list/${params}`);
 }
 
-export default api
+export default api;

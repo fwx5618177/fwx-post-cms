@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import * as THREE from "three";
 
 const frag_basic = `
 precision mediump float;
@@ -44,7 +44,7 @@ uniform float u_speed;
 
 varying vec2 v_position;
 
-    `
+    `;
 const Shader = {
     vertexShader: `
     varying vec2 v_position;
@@ -83,20 +83,20 @@ const Shader = {
  
         gl_FragColor = vec4(u_color, d_opacity * u_opacity);
     }`,
-}
+};
 
 const Radar = (opts: {
-    radius?: 50 | undefined
-    color?: '#fff' | undefined
-    speed?: 1 | undefined
-    opacity?: 1 | undefined
-    angle?: number | undefined
-    position?: { x: number; y: number; z: number } | undefined
-    rotation?: { x: number; y: number; z: number } | undefined
+    radius?: 50 | undefined;
+    color?: "#fff" | undefined;
+    speed?: 1 | undefined;
+    opacity?: 1 | undefined;
+    angle?: number | undefined;
+    position?: { x: number; y: number; z: number } | undefined;
+    rotation?: { x: number; y: number; z: number } | undefined;
 }) => {
     const {
         radius = 50,
-        color = '#fff',
+        color = "#fff",
         speed = 1,
         opacity = 1,
         angle = Math.PI,
@@ -110,11 +110,11 @@ const Radar = (opts: {
             y: 0,
             z: 0,
         },
-    } = opts
+    } = opts;
 
-    const width = radius * 2
+    const width = radius * 2;
 
-    const geometry = new THREE.PlaneBufferGeometry(width, width, 1, 1)
+    const geometry = new THREE.PlaneBufferGeometry(width, width, 1, 1);
 
     const material = new THREE.ShaderMaterial({
         uniforms: {
@@ -142,14 +142,14 @@ const Radar = (opts: {
         side: THREE.DoubleSide,
         vertexShader: Shader.vertexShader,
         fragmentShader: Shader.fragmentShader,
-    })
+    });
 
-    const mesh = new THREE.Mesh(geometry, material)
+    const mesh = new THREE.Mesh(geometry, material);
 
-    mesh.rotation.set(rotation.x, rotation.y, rotation.z)
-    mesh.position.copy(position as THREE.Vector3)
+    mesh.rotation.set(rotation.x, rotation.y, rotation.z);
+    mesh.position.copy(position as THREE.Vector3);
 
-    return mesh
-}
+    return mesh;
+};
 
-export default Radar
+export default Radar;

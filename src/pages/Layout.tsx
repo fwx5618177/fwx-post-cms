@@ -1,47 +1,47 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined, HomeOutlined, FontColorsOutlined } from '@ant-design/icons'
-import { Github } from 'react-bootstrap-icons'
-import { Breadcrumb, Dropdown, Layout, Menu } from 'antd'
-import React, { useState } from 'react'
-import { Link, Outlet } from 'react-router-dom'
-import { menusController } from '../common/routes.controller'
-import './layout.css'
-import i18n, { multipleLanguages } from '../../i18n/index'
+import { MenuFoldOutlined, MenuUnfoldOutlined, HomeOutlined, FontColorsOutlined } from "@ant-design/icons";
+import { Github } from "react-bootstrap-icons";
+import { Breadcrumb, Dropdown, Layout, Menu } from "antd";
+import React, { useState } from "react";
+import { Link, Outlet } from "react-router-dom";
+import { menusController } from "../common/routes.controller";
+import "./layout.css";
+import i18n, { multipleLanguages } from "../../i18n/index";
 
-const { Header, Sider, Content, Footer } = Layout
+const { Header, Sider, Content, Footer } = Layout;
 
 const LayoutEle = () => {
     // const [langugaeSet, setLangugaeSet] = useState<string>('中文')
-    const [collapsed, setCollapsed] = useState(false)
+    const [collapsed, setCollapsed] = useState(false);
     const [linksName, setLinksName] = useState<string[]>(
-        window.location.pathname.split('/').filter(ci => !!ci) as string[],
-    )
+        window.location.pathname.split("/").filter(ci => !!ci) as string[],
+    );
 
     const i18nMenus = (
         <Menu
             onClick={event => {
-                i18n.changeLanguage(event?.key)
+                i18n.changeLanguage(event?.key);
             }}
             items={multipleLanguages?.map(ci => ({
                 label: ci?.label,
                 key: ci?.value,
             }))}
         />
-    )
+    );
 
     return (
         <Layout
             style={{
-                height: '100vh',
-                width: '100%',
+                height: "100vh",
+                width: "100%",
             }}
         >
             <Sider trigger={null} collapsible collapsed={collapsed}>
-                <div className='logo'>
+                <div className="logo">
                     <h3
                         style={{
                             marginTop: 3,
-                            color: '#fff566',
-                            fontFamily: 'sans-serif',
+                            color: "#fff566",
+                            fontFamily: "sans-serif",
                         }}
                     >
                         web技术分享测试
@@ -49,37 +49,37 @@ const LayoutEle = () => {
                 </div>
 
                 <Menu
-                    theme='dark'
-                    mode='inline'
-                    selectedKeys={linksName.length > 1 ? [linksName[1]] : ['/']}
+                    theme="dark"
+                    mode="inline"
+                    selectedKeys={linksName.length > 1 ? [linksName[1]] : ["/"]}
                     items={menusController()}
                     onClick={() => {
-                        const re = window.location.pathname.split('/').filter(ci => !!ci)
+                        const re = window.location.pathname.split("/").filter(ci => !!ci);
 
-                        setLinksName(re)
+                        setLinksName(re);
                     }}
-                    defaultOpenKeys={linksName.length > 1 ? [linksName[0]] : ['']}
+                    defaultOpenKeys={linksName.length > 1 ? [linksName[0]] : [""]}
                 />
             </Sider>
-            <Layout className='site-layout'>
+            <Layout className="site-layout">
                 <Header
-                    className='site-layout-background'
+                    className="site-layout-background"
                     style={{
                         margin: 2,
                         padding: 0,
-                        background: 'transparent',
-                        border: '2px solid rgba(154,150,150, 0.9)',
-                        boxShadow: '7px 4px 12px 2px rgba(154,150,150, 0.9)',
+                        background: "transparent",
+                        border: "2px solid rgba(154,150,150, 0.9)",
+                        boxShadow: "7px 4px 12px 2px rgba(154,150,150, 0.9)",
                         borderRadius: 5,
-                        overflow: 'hidden',
+                        overflow: "hidden",
                     }}
                 >
                     {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                        className: 'trigger',
+                        className: "trigger",
                         onClick: () => setCollapsed(!collapsed),
                     })}
 
-                    <div className='layout_multiple_languages'>
+                    <div className="layout_multiple_languages">
                         <Dropdown overlay={i18nMenus}>
                             <FontColorsOutlined />
                         </Dropdown>
@@ -89,10 +89,10 @@ const LayoutEle = () => {
                 <Breadcrumb style={{ margin: 0, marginLeft: 8, marginTop: 8 }}>
                     <Breadcrumb.Item>
                         <HomeOutlined />
-                        <Link to={'/'}>
+                        <Link to={"/"}>
                             <span
                                 onClick={() => {
-                                    setLinksName(['/'])
+                                    setLinksName(["/"]);
                                 }}
                             >
                                 Home
@@ -101,16 +101,16 @@ const LayoutEle = () => {
                     </Breadcrumb.Item>
                     {linksName.length > 1
                         ? linksName?.map((ci, index) => {
-                              return <Breadcrumb.Item key={index + '_menu'}>{ci}</Breadcrumb.Item>
+                              return <Breadcrumb.Item key={index + "_menu"}>{ci}</Breadcrumb.Item>;
                           })
                         : null}
                 </Breadcrumb>
                 <Content
-                    className='site-layout-background'
+                    className="site-layout-background"
                     style={{
                         margin: 2,
-                        overflowY: 'scroll',
-                        overflowX: 'hidden',
+                        overflowY: "scroll",
+                        overflowX: "hidden",
                         padding: 0,
                     }}
                 >
@@ -118,25 +118,25 @@ const LayoutEle = () => {
                 </Content>
                 <Footer
                     style={{
-                        textAlign: 'center',
+                        textAlign: "center",
                         padding: 2,
                     }}
                 >
-                    <a className='githubLink' href='https://github.com/fwx5618177'>
+                    <a className="githubLink" href="https://github.com/fwx5618177">
                         <Github />
                         Moxi
                     </a>
                     ©2017-{new Date().getFullYear()} Created by Moxi
                     <div
                         style={{
-                            cursor: 'default',
+                            cursor: "default",
                         }}
                     >
                         <a
                             style={{
-                                color: 'black',
+                                color: "black",
                             }}
-                            href='https://beian.miit.gov.cn'
+                            href="https://beian.miit.gov.cn"
                         >
                             备案号: 豫ICP备20016314号-1
                         </a>
@@ -144,7 +144,7 @@ const LayoutEle = () => {
                 </Footer>
             </Layout>
         </Layout>
-    )
-}
+    );
+};
 
-export default LayoutEle
+export default LayoutEle;

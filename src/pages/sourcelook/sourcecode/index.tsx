@@ -1,17 +1,7 @@
-import { Button, Card, Form, Input } from 'antd'
-import api from './api'
+import { Button, Card, Form, Input } from "antd";
 
-export default () => {
-    const [form] = Form.useForm()
-
-    const handleSubmit = async (values: { path: string }) => {
-        console.log(values)
-        const result = await api.look({
-            path: values?.path,
-        })
-
-        console.log(result)
-    }
+const SourceCode = () => {
+    const [form] = Form.useForm();
 
     return (
         <>
@@ -20,18 +10,20 @@ export default () => {
                     margin: 8,
                 }}
             >
-                <Form name='baseForm' form={form} onFinish={handleSubmit}>
-                    <Form.Item name={'path'} label={'path'}>
-                        <Input placeholder='Input absolute path name' />
+                <Form name="baseForm" form={form}>
+                    <Form.Item name={"path"} label={"path"}>
+                        <Input placeholder="Input absolute path name" />
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type='primary' htmlType='submit'>
+                        <Button type="primary" htmlType="submit">
                             Scan
                         </Button>
                     </Form.Item>
                 </Form>
             </Card>
         </>
-    )
-}
+    );
+};
+
+export default SourceCode;

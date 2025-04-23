@@ -1,63 +1,63 @@
-import { EnterOutlined } from '@ant-design/icons'
-import { Button, Card, Col, Form, Input, List, message, Radio, Row } from 'antd'
-import moment from 'moment'
-import { useEffect, useState } from 'react'
-import api from './api'
-import './list.css'
+import { EnterOutlined } from "@ant-design/icons";
+import { Button, Card, Col, Form, Input, List, message, Radio, Row } from "antd";
+import moment from "moment";
+import { useEffect, useState } from "react";
+import api from "./api";
+import "./list.css";
 
 interface Performance {
-    title: string
-    time: string
-    id: number
+    title: string;
+    time: string;
+    id: number;
 }
 
 const ListCard = () => {
-    const [form] = Form.useForm()
-    const [todoLists, setTodoLists] = useState<Performance[]>([])
+    const [form] = Form.useForm();
+    const [todoLists, setTodoLists] = useState<Performance[]>([]);
 
     const onFinish = async (value: any) => {
-        const { briefTitle, detailInfos } = value
+        const { briefTitle, detailInfos } = value;
 
         const result = await api.create({
             brief: briefTitle,
             detail: detailInfos,
-        })
+        });
 
         if (result && Array.isArray(result) && result.length > 0) {
-            message.success('新增成功')
-            queryList()
+            message.success("新增成功");
+            queryList();
         }
-    }
+    };
 
     const queryList = async () => {
-        const result = await api.list()
+        const result = await api.list();
 
         if (result && Array.isArray(result) && result.length > 0) {
-            const data: Performance[] = result?.map(ci => ({ title: ci?.brief, time: ci?.createdAt, id: ci?.id }))
-            setTodoLists(data)
+            const data: Performance[] = result?.map(ci => ({ title: ci?.brief, time: ci?.createdAt, id: ci?.id }));
+            setTodoLists(data);
         } else {
-            setTodoLists([])
+            setTodoLists([]);
         }
-    }
+    };
 
     const handleDetail = async e => {
-        const brief = e?.target?.value
+        const brief = e?.target?.value;
 
-        const result = await api.queryId(brief)
+        const result = await api.queryId(brief);
 
         if (result && Array.isArray(result) && result.length > 0) {
-            const data = result[0]
-            const { brief: briefTitle, detail: detailInfos } = data
+            const data = result[0];
+            const { brief: briefTitle, detail: detailInfos } = data;
             form.setFieldsValue({
                 briefTitle,
                 detailInfos,
-            })
+            });
         }
-    }
+    };
 
     useEffect(() => {
-        queryList()
-    }, [])
+        queryList();
+    }, []);
 
     return (
         <>
@@ -77,22 +77,22 @@ const ListCard = () => {
             >
                 <Col span={12}>
                     <Card>
-                        <Form name='basic' form={form} onFinish={onFinish} autoComplete='off'>
+                        <Form name="basic" form={form} onFinish={onFinish} autoComplete="off">
                             <Form.Item
-                                label='title'
-                                name={'briefTitle'}
-                                rules={[{ required: true, message: '请输入' }]}
+                                label="title"
+                                name={"briefTitle"}
+                                rules={[{ required: true, message: "请输入" }]}
                             >
-                                <Input placeholder='Input todoist' suffix={<EnterOutlined />} allowClear />
+                                <Input placeholder="Input todoist" suffix={<EnterOutlined />} allowClear />
                             </Form.Item>
 
                             <Form.Item
-                                label='detail'
-                                name={'detailInfos'}
-                                rules={[{ required: true, message: '请输入' }]}
+                                label="detail"
+                                name={"detailInfos"}
+                                rules={[{ required: true, message: "请输入" }]}
                             >
                                 <Input.TextArea
-                                    placeholder='Input detail information'
+                                    placeholder="Input detail information"
                                     style={{
                                         marginTop: 1,
                                     }}
@@ -102,13 +102,13 @@ const ListCard = () => {
                             </Form.Item>
 
                             <Form.Item>
-                                <div className='list_container_btn'>
+                                <div className="list_container_btn">
                                     <Button
-                                        htmlType='submit'
+                                        htmlType="submit"
                                         style={{
-                                            margin: '0 atuo',
+                                            margin: "0 atuo",
                                         }}
-                                        type='primary'
+                                        type="primary"
                                     >
                                         Submit
                                     </Button>
@@ -122,19 +122,19 @@ const ListCard = () => {
                     <Card
                         style={{
                             height: 400,
-                            overflowY: 'scroll',
+                            overflowY: "scroll",
                         }}
                     >
                         <Radio.Group onChange={handleDetail}>
                             <List
-                                size='small'
-                                header='Todo Lists'
+                                size="small"
+                                header="Todo Lists"
                                 bordered
                                 dataSource={todoLists}
                                 renderItem={item => (
                                     <List.Item>
                                         <Radio value={item?.title}>
-                                            {moment(item?.time).format('YYYY-MM-DD HH:mm:ss')}: {item?.title}
+                                            {moment(item?.time).format("YYYY-MM-DD HH:mm:ss")}: {item?.title}
                                         </Radio>
                                     </List.Item>
                                 )}
@@ -144,7 +144,7 @@ const ListCard = () => {
                 </Col>
             </Row>
         </>
-    )
-}
+    );
+};
 
-export default ListCard
+export default ListCard;

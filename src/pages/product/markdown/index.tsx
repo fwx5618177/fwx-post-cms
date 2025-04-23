@@ -1,18 +1,18 @@
-import { Card } from 'antd'
-import { useTranslation } from 'react-i18next'
-import { queryPathKey } from 'src/common/lib'
-import Instro from 'src/pages/components/instro'
-import MarkdonwEditor from './reactMarkdownEditorLite'
+import { Card } from "antd";
+import { useTranslation } from "react-i18next";
+import { queryPathKey } from "src/common/lib";
+import Instro from "src/pages/components/instro";
+import MarkdonwEditor from "./reactMarkdownEditorLite";
 
 const MarkdownComponents = () => {
-    const { t } = useTranslation()
+    const { t } = useTranslation();
 
     return (
         <>
             <h3
                 style={{
                     margin: 0,
-                    textAlign: 'center',
+                    textAlign: "center",
                 }}
             >
                 Rich Text
@@ -25,7 +25,7 @@ const MarkdownComponents = () => {
                     margin: 12,
                 }}
             >
-                {t('markdown.title.react-markdown-editor-lite')}
+                {t("markdown.title.react-markdown-editor-lite")}
             </h3>
 
             <Card
@@ -36,7 +36,7 @@ const MarkdownComponents = () => {
                 <MarkdonwEditor />
             </Card>
         </>
-    )
-}
+    );
+};
 
-export default MarkdownComponents
+export default MarkdownComponents;

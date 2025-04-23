@@ -2,18 +2,18 @@
  * API
  */
 
-import { get, post, put } from 'src/common/lib'
+import { get, post, put } from "src/common/lib";
 
 class api {
-    static queryRouteList = params => post('/api/route/list', params)
+    static queryRouteList = params => post("/api/route/list", params);
 
-    static createContent = params => put('/api/content/create', params)
+    static createContent = params => put("/api/content/create", params);
 
-    static list = () => get('/api/content/list')
+    static list = () => get("/api/content/list");
 
-    static detail = params => get(`/api/content/detail/${params}`)
+    static detail = params => get(`/api/content/detail/${params}`);
 
-    static updateContent = params => put(`/api/content/detail/${params?.title}`, params)
+    static updateContent = params => put(`/api/content/detail/${params?.title}`, params);
 }
 
-export default api
+export default api;

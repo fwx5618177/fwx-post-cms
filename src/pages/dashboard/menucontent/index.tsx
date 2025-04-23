@@ -1,150 +1,150 @@
-import { Button, Card, Col, Descriptions, Form, Input, message, Row, Select, Switch } from 'antd'
-import { useTranslation } from 'react-i18next'
-import * as marked from 'marked'
-import { useEffect, useRef, useState } from 'react'
-import api from './api'
-import { CheckOutlined } from '@ant-design/icons'
-import moment from 'moment'
+import { Button, Card, Col, Descriptions, Form, Input, message, Row, Select, Switch } from "antd";
+import { useTranslation } from "react-i18next";
+import * as marked from "marked";
+import { useEffect, useRef, useState } from "react";
+import api from "./api";
+import { CheckOutlined } from "@ant-design/icons";
+import moment from "moment";
 
-const { Option } = Select
+const { Option } = Select;
 
 const MenuContent = () => {
-    const [form] = Form.useForm()
-    const [updateForm] = Form.useForm()
-    const { t } = useTranslation()
+    const [form] = Form.useForm();
+    const [updateForm] = Form.useForm();
+    const { t } = useTranslation();
 
-    const showRef = useRef<HTMLDivElement>(null)
+    const showRef = useRef<HTMLDivElement>(null);
     const [routeList, setRouteList] = useState<
         {
-            label: string
-            value: string
+            label: string;
+            value: string;
         }[]
-    >([])
+    >([]);
     const [versions, setVersions] = useState<
         {
-            label: string
-            value: string
+            label: string;
+            value: string;
         }[]
-    >([])
+    >([]);
 
-    const [loadStatus, setLoadStatus] = useState<boolean>(false)
-    const [detailInfos, setDetailInfos] = useState<any>(null)
+    const [loadStatus, setLoadStatus] = useState<boolean>(false);
+    const [detailInfos, setDetailInfos] = useState<any>(null);
 
     const handleChange = _ => {
-        const value = _?.target?.value
-        const result = marked.parse(value)
-        console.log(result)
-        ;(showRef.current as HTMLDivElement).innerHTML = result
-    }
+        const value = _?.target?.value;
+        const result = marked.parse(value);
+        console.log(result);
+        (showRef.current as HTMLDivElement).innerHTML = result;
+    };
 
     const queryRouteList = async () => {
         const result: {
-            label: string
-            key: string
-            path: string
-        }[] = (await api.queryRouteList({})) as any
+            label: string;
+            key: string;
+            path: string;
+        }[] = (await api.queryRouteList({})) as any;
 
-        console.log(result)
+        console.log(result);
 
         if (result && Array.isArray(result) && result.length > 0) {
             const items: {
-                label: string
-                value: string
+                label: string;
+                value: string;
             }[] = result?.map(ci => ({
                 label: ci?.label,
                 value: ci?.key,
-            }))
-            setRouteList(items)
+            }));
+            setRouteList(items);
         } else {
-            setRouteList([])
+            setRouteList([]);
         }
-    }
+    };
 
     const onReset = () => {
-        form.resetFields()
-    }
+        form.resetFields();
+    };
 
     const onFinish = async (values: any) => {
-        console.log('Success:', values)
+        console.log("Success:", values);
 
-        const { content, title, name } = values
+        const { content, title, name } = values;
 
         const contentConf = {
             content,
             title,
             routekeyname: name,
-        }
+        };
 
-        const result = await api.createContent(contentConf)
+        const result = await api.createContent(contentConf);
 
-        console.log(result, contentConf)
+        console.log(result, contentConf);
 
         if (result && Array.isArray(result) && result.length > 0) {
-            message.success('添加成功!')
+            message.success("添加成功!");
         }
-    }
+    };
 
     const onFinishFailed = (errorInfo: any) => {
-        console.log('Failed:', errorInfo)
-    }
+        console.log("Failed:", errorInfo);
+    };
 
     const queryContenList = async () => {
-        const result = await api.list()
+        const result = await api.list();
 
-        console.log(result)
+        console.log(result);
 
         if (result && Array.isArray(result) && result.length > 0) {
             const data: {
-                label: string
-                value: string
+                label: string;
+                value: string;
             }[] = result?.map(ci => ({
                 label: `${ci?.title} - ${ci?.routekeyname}`,
                 value: ci?.title,
-            }))
-            setVersions(data)
+            }));
+            setVersions(data);
         } else {
-            setVersions([])
+            setVersions([]);
         }
-    }
+    };
 
     const handleDetailInfo = async (title: string) => {
-        const result = await api.detail(title)
+        const result = await api.detail(title);
 
         if (result && Array.isArray(result) && result.length > 0) {
-            const data = result[0]
+            const data = result[0];
 
-            const value = data?.content
-            const re = marked.parse(value)
+            const value = data?.content;
+            const re = marked.parse(value);
 
-            ;(showRef.current as HTMLDivElement).innerHTML = re
+            (showRef.current as HTMLDivElement).innerHTML = re;
 
-            updateForm.setFieldValue('updateContent', value)
+            updateForm.setFieldValue("updateContent", value);
 
-            setDetailInfos(data)
+            setDetailInfos(data);
         } else {
-            setDetailInfos(null)
+            setDetailInfos(null);
         }
-    }
+    };
 
     const onUpdate = async values => {
-        const { title, updateContent } = values
+        const { title, updateContent } = values;
         const result = await api.updateContent({
             title,
             content: updateContent,
-        })
+        });
 
-        console.log(result)
-    }
+        console.log(result);
+    };
 
     useEffect(() => {
-        queryRouteList()
-        queryContenList()
-    }, [])
+        queryRouteList();
+        queryContenList();
+    }, []);
 
     const layout = {
         // labelCol: { span: 4 },
         // wrapperCol: { span: 16 },
-    }
+    };
 
     return (
         <>
@@ -153,7 +153,7 @@ const MenuContent = () => {
                     margin: 12,
                 }}
             >
-                {t('menucontent.header.title.add')}
+                {t("menucontent.header.title.add")}
             </h3>
             <Card
                 bordered={false}
@@ -173,13 +173,13 @@ const MenuContent = () => {
                         <Switch
                             checkedChildren={
                                 <>
-                                    {t('menucontent.header.title.switch.text.add')}
+                                    {t("menucontent.header.title.switch.text.add")}
                                     <CheckOutlined />
                                 </>
                             }
                             unCheckedChildren={
                                 <>
-                                    {t('menucontent.header.title.switch.text.load')}
+                                    {t("menucontent.header.title.switch.text.load")}
                                     <CheckOutlined />
                                 </>
                             }
@@ -190,23 +190,23 @@ const MenuContent = () => {
                 <Form
                     {...layout}
                     form={form}
-                    name='basic'
+                    name="basic"
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
-                    autoComplete='off'
+                    autoComplete="off"
                 >
                     {loadStatus && (
                         <>
                             <Row gutter={24}>
                                 <Col span={12}>
                                     <Form.Item
-                                        label={t('menucontent.name.form.label')}
-                                        name={'name'}
-                                        rules={[{ required: true, message: t('routepagelevel.text') }]}
+                                        label={t("menucontent.name.form.label")}
+                                        name={"name"}
+                                        rules={[{ required: true, message: t("routepagelevel.text") }]}
                                     >
-                                        <Select placeholder={t('menucontent.name.form.select.text')}>
+                                        <Select placeholder={t("menucontent.name.form.select.text")}>
                                             {routeList?.map((ci, index) => (
-                                                <Option key={index + '_routeList'} value={ci?.value}>
+                                                <Option key={index + "_routeList"} value={ci?.value}>
                                                     {ci?.label}
                                                 </Option>
                                             ))}
@@ -217,13 +217,13 @@ const MenuContent = () => {
                             <Row gutter={24}>
                                 <Col span={12}>
                                     <Form.Item
-                                        label={t('menucontent.name.form.title')}
-                                        name={'title'}
-                                        rules={[{ required: true, message: t('routepagelevel.text') }]}
+                                        label={t("menucontent.name.form.title")}
+                                        name={"title"}
+                                        rules={[{ required: true, message: t("routepagelevel.text") }]}
                                     >
                                         <Input
                                             showCount
-                                            placeholder={t('menucontent.name.form.title.text')}
+                                            placeholder={t("menucontent.name.form.title.text")}
                                             allowClear
                                         ></Input>
                                     </Form.Item>
@@ -232,14 +232,14 @@ const MenuContent = () => {
                             <Row gutter={24}>
                                 <Col span={24}>
                                     <Form.Item
-                                        label={t('menucontent.name.form.content')}
-                                        name={'content'}
-                                        rules={[{ required: true, message: t('routepagelevel.text') }]}
+                                        label={t("menucontent.name.form.content")}
+                                        name={"content"}
+                                        rules={[{ required: true, message: t("routepagelevel.text") }]}
                                     >
                                         <Input.TextArea
                                             onChange={handleChange}
                                             showCount
-                                            placeholder={t('menucontent.name.form.content.text')}
+                                            placeholder={t("menucontent.name.form.content.text")}
                                             allowClear
                                             autoSize={{ minRows: 5, maxRows: 8 }}
                                         ></Input.TextArea>
@@ -249,22 +249,22 @@ const MenuContent = () => {
                             <Form.Item>
                                 <div
                                     style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
+                                        display: "flex",
+                                        justifyContent: "center",
                                     }}
                                 >
-                                    <Button type='primary' htmlType='submit'>
-                                        {t('button.submit')}
+                                    <Button type="primary" htmlType="submit">
+                                        {t("button.submit")}
                                     </Button>
 
                                     <Button
                                         style={{
                                             marginLeft: 8,
                                         }}
-                                        htmlType='button'
+                                        htmlType="button"
                                         onClick={onReset}
                                     >
-                                        {t('button.reset')}
+                                        {t("button.reset")}
                                     </Button>
                                 </div>
                             </Form.Item>
@@ -272,21 +272,21 @@ const MenuContent = () => {
                     )}
                 </Form>
 
-                <Form name='updateForm' form={updateForm} onFinish={onUpdate} autoComplete='off'>
+                <Form name="updateForm" form={updateForm} onFinish={onUpdate} autoComplete="off">
                     {!loadStatus && (
                         <>
                             <Row gutter={24}>
                                 <Col span={24}>
-                                    <Form.Item name={'title'} label={'Title'}>
+                                    <Form.Item name={"title"} label={"Title"}>
                                         <Select
                                             style={{
                                                 width: 300,
                                             }}
-                                            placeholder={t('menucontent.header.title.switch.text.load.select')}
+                                            placeholder={t("menucontent.header.title.switch.text.load.select")}
                                             onSelect={handleDetailInfo}
                                         >
                                             {versions?.map((ci, index) => (
-                                                <Option key={index + '_versions'} value={ci?.value}>
+                                                <Option key={index + "_versions"} value={ci?.value}>
                                                     {ci?.label}
                                                 </Option>
                                             ))}
@@ -302,11 +302,11 @@ const MenuContent = () => {
                                 }}
                             >
                                 <Col span={24}>
-                                    <Form.Item name={'updateContent'} label={'Text'}>
+                                    <Form.Item name={"updateContent"} label={"Text"}>
                                         <Input.TextArea
                                             onChange={handleChange}
                                             showCount
-                                            placeholder={t('menucontent.name.form.content.text')}
+                                            placeholder={t("menucontent.name.form.content.text")}
                                             allowClear
                                             autoSize={{ minRows: 5, maxRows: 8 }}
                                         ></Input.TextArea>
@@ -317,22 +317,22 @@ const MenuContent = () => {
                             <Form.Item>
                                 <div
                                     style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
+                                        display: "flex",
+                                        justifyContent: "center",
                                     }}
                                 >
-                                    <Button type='primary' htmlType='submit'>
-                                        {t('button.submit')}
+                                    <Button type="primary" htmlType="submit">
+                                        {t("button.submit")}
                                     </Button>
 
                                     <Button
                                         style={{
                                             marginLeft: 8,
                                         }}
-                                        htmlType='button'
+                                        htmlType="button"
                                         onClick={onReset}
                                     >
-                                        {t('button.reset')}
+                                        {t("button.reset")}
                                     </Button>
                                 </div>
                             </Form.Item>
@@ -340,13 +340,13 @@ const MenuContent = () => {
                             {detailInfos && (
                                 <Row gutter={24}>
                                     <Col span={24}>
-                                        <Descriptions title='Versions' bordered>
-                                            <Descriptions.Item label='title'>{detailInfos?.title}</Descriptions.Item>
-                                            <Descriptions.Item label='time'>
+                                        <Descriptions title="Versions" bordered>
+                                            <Descriptions.Item label="title">{detailInfos?.title}</Descriptions.Item>
+                                            <Descriptions.Item label="time">
                                                 {detailInfos &&
-                                                    moment(detailInfos?.createdAt).format('YYYY-MM-DD hh:mm:ss')}
+                                                    moment(detailInfos?.createdAt).format("YYYY-MM-DD hh:mm:ss")}
                                             </Descriptions.Item>
-                                            <Descriptions.Item label='routekeyname'>
+                                            <Descriptions.Item label="routekeyname">
                                                 {detailInfos?.routekeyname}
                                             </Descriptions.Item>
                                         </Descriptions>
@@ -363,19 +363,19 @@ const MenuContent = () => {
                     margin: 12,
                 }}
             >
-                {t('menucontent.header.title.show')}
+                {t("menucontent.header.title.show")}
             </h3>
             <Card
                 style={{
                     margin: 12,
                     height: 300,
-                    overflow: 'scroll',
+                    overflow: "scroll",
                 }}
             >
                 <div ref={showRef}></div>
             </Card>
         </>
-    )
-}
+    );
+};
 
-export default MenuContent
+export default MenuContent;

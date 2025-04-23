@@ -1,40 +1,30 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "esModuleInterop": false,
-    "allowSyntheticDefaultImports": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
-    "isolatedModules": false,
-    "noEmit": true,
-    "experimentalDecorators": true,
-    "noImplicitAny": false,
-    "jsx": "react-jsx",
-    "baseUrl": ".",
-    "outDir": "dist",
-    "rootDir": ".",
-    "paths": {
-      // "@/": ["./*"],
-      "@mocks": ["./mocks/*"],
-      "@tests": ["./tests/*"],
-    }
-  },
-  "include": [
-    "src/**/*",
-    "tests/**/*",
-    "mocks/**/*.ts",
-  ],
-  "exclude": [
-    "jest.config.js",
-    // "src/types/**",
-    // "public/**",
-  ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+    "compilerOptions": {
+        "target": "ESNext",
+        "useDefineForClassFields": true,
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        "allowJs": false,
+        "skipLibCheck": true,
+        "esModuleInterop": false,
+        "allowSyntheticDefaultImports": true,
+        "strict": false,
+        "forceConsistentCasingInFileNames": true,
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
+        "isolatedModules": false,
+        "noEmit": true,
+        "experimentalDecorators": true,
+        "noImplicitAny": false,
+        "jsx": "react-jsx",
+        "baseUrl": ".",
+        "outDir": "dist",
+        "rootDir": ".",
+        "paths": {
+            "@mocks": ["./mocks/*"],
+            "@tests": ["./tests/*"]
+        }
+    },
+    "include": ["src/**/*", "mocks/**/*.ts"],
+    "exclude": []
 }

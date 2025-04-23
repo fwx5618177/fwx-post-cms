@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import * as THREE from "three";
 
 const vertexShader = `
 uniform vec3 u_color;
@@ -16,7 +16,7 @@ void main() {
  
     gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
 }
-`
+`;
 const fragmentShader = ` 
 uniform vec3 u_color;
 uniform float u_opacity;
@@ -26,13 +26,13 @@ varying float v_opacity;
 void main() { 
     gl_FragColor = vec4(u_color, v_opacity * u_opacity);
 }
-`
+`;
 
 const Wall = (option = {}) => {
-    const { radius, height, opacity, color, speed, renderOrder } = option as any
-    const geometry = new THREE.CylinderGeometry(radius, radius, height, 32, 1, true)
+    const { radius, height, opacity, color, speed, renderOrder } = option as any;
+    const geometry = new THREE.CylinderGeometry(radius, radius, height, 32, 1, true);
 
-    geometry.translate(0, height / 2, 0)
+    geometry.translate(0, height / 2, 0);
     const material = new THREE.ShaderMaterial({
         uniforms: {
             u_height: {
@@ -57,12 +57,12 @@ const Wall = (option = {}) => {
         side: THREE.DoubleSide,
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
-    })
-    const mesh = new THREE.Mesh(geometry, material)
+    });
+    const mesh = new THREE.Mesh(geometry, material);
 
-    mesh.renderOrder = renderOrder || 1
+    mesh.renderOrder = renderOrder || 1;
 
-    return mesh
-}
+    return mesh;
+};
 
-export default Wall
+export default Wall;

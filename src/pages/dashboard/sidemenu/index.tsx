@@ -1,49 +1,48 @@
-import { bgLayoutSet, routeTable } from '../../../common/routes.controller'
-import { CheckOutlined, CloseOutlined, DownOutlined, RightCircleTwoTone, SettingTwoTone } from '@ant-design/icons'
-import { Badge, Button, Card, Col, Form, Input, Radio, Row, Switch, Tree, Select, message } from 'antd'
-import { treeData } from 'mocks/routeData'
-import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import './style.css'
-import { confRouteLevel } from './conf'
-import api from './api'
+import { bgLayoutSet, routeTable } from "../../../common/routes.controller";
+import { CheckOutlined, CloseOutlined, SettingTwoTone } from "@ant-design/icons";
+import { Badge, Button, Card, Col, Form, Input, Radio, Row, Switch, Tree, Select, message } from "antd";
+import React, { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import "./style.css";
+import { confRouteLevel } from "./conf";
+import api from "./api";
 
-const { Option } = Select
+const { Option } = Select;
 
 interface OptionItem {
-    label: string
-    value: string | number
+    label: string;
+    value: string | number;
 }
 
 const SideMenu: React.FC = () => {
-    const [form] = Form.useForm()
-    const { t } = useTranslation()
+    const [form] = Form.useForm();
+    const { t } = useTranslation();
 
     // 设置背景归类
-    const [bgSortsStatus, setBgSortsStatus] = useState<boolean>(true)
+    const [bgSortsStatus, setBgSortsStatus] = useState<boolean>(true);
 
     // 设置为父还是组件
-    const [outletSet, setOutletSet] = useState<boolean>(true)
+    const [outletSet, setOutletSet] = useState<boolean>(true);
 
     // 路由的等级
-    const [routeLevel, setRouteLevel] = useState<number>(0)
+    const [routeLevel, setRouteLevel] = useState<number>(0);
 
     // 获取父路由
-    const [parentRouteList, setParentRouteList] = useState<OptionItem[]>([])
+    const [parentRouteList, setParentRouteList] = useState<OptionItem[]>([]);
 
     // style
     const layout = {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
-    }
+    };
     const tailLayout = {
         wrapperCol: { offset: 8, span: 16 },
-    }
+    };
 
     const onFinish = async (values: any) => {
-        console.log('Success:', values)
+        console.log("Success:", values);
 
-        const { menushow, pageLevel, key, label, path, outlet, casesensitive } = values
+        const { menushow, pageLevel, key, label, path, outlet, casesensitive } = values;
 
         const routeConf = {
             menushow,
@@ -53,106 +52,95 @@ const SideMenu: React.FC = () => {
             path,
             outlet,
             casesensitive,
-        }
+        };
 
-        console.log(routeConf)
-
-        const result = await api.createRoute(routeConf)
+        const result = await api.createRoute(routeConf);
 
         // console.log(result)
 
         if (result && Array.isArray(result) && result.length > 0) {
-            message.success('添加成功!')
+            message.success("添加成功!");
         }
-    }
-
-    const onFinishFailed = (errorInfo: any) => {
-        console.log('Failed:', errorInfo)
-    }
+    };
 
     const onReset = () => {
-        form.resetFields()
-    }
+        form.resetFields();
+    };
 
-    const onSelect = (selectedKeys: React.Key[], info: any) => {
-        console.log('selected', selectedKeys, info)
-    }
-
-    const queryExtraRoutes = async () => {
+    const queryExtraRoutes = useCallback(async () => {
         // const result = await api.queryRouteList()
-    }
+    }, []);
 
-    const queryParentRoutes = async () => {
+    const queryParentRoutes = useCallback(async () => {
         const result = await api.parentLists({
             parent: routeLevel - 1,
-        })
+        });
 
         if (result && Array.isArray(result) && result.length > 0) {
             const data: OptionItem[] = result?.map(ci => ({
                 label: ci?.name,
                 value: ci?.key,
-            }))
+            }));
 
-            setParentRouteList(data)
+            setParentRouteList(data);
         } else {
-            setParentRouteList([])
+            setParentRouteList([]);
         }
-    }
+    }, [routeLevel]);
 
     useEffect(() => {
-        queryExtraRoutes()
-    }, [])
+        queryExtraRoutes();
+    }, [queryExtraRoutes]);
 
     useEffect(() => {
-        queryParentRoutes()
-    }, [routeLevel])
+        queryParentRoutes();
+    }, [queryParentRoutes]);
 
     return (
         <>
-            <header className='SideMenu_header'>
+            <header className="SideMenu_header">
                 <span></span>
-                <h3>{t('sidemenu')}</h3>
+                <h3>{t("sidemenu")}</h3>
             </header>
 
             <Row gutter={24}>
                 <Col span={12}>
-                    <Badge.Ribbon text={t('routebadge.ribbon')}>
+                    <Badge.Ribbon text={t("routebadge.ribbon")}>
                         <Card
                             // hoverable
                             style={{
                                 margin: 12,
                                 height: 600,
-                                overflowY: 'scroll',
+                                overflowY: "scroll",
                             }}
                             title={
                                 <>
-                                    <div className='route_conf_card_title'>
+                                    <div className="route_conf_card_title">
                                         <SettingTwoTone />
                                         <h3
                                             style={{
-                                                textAlign: 'center',
+                                                textAlign: "center",
                                             }}
                                         >
-                                            {t('routecard.text')}
+                                            {t("routecard.text")}
                                         </h3>
                                     </div>
                                 </>
                             }
-                            size={'small'}
+                            size={"small"}
                         >
                             <Form
                                 {...layout}
                                 form={form}
-                                name='basic'
+                                name="basic"
                                 initialValues={{ routebgshowstatus: bgSortsStatus }}
                                 onFinish={onFinish}
-                                onFinishFailed={onFinishFailed}
-                                autoComplete='off'
+                                autoComplete="off"
                             >
                                 <Form.Item
-                                    name='routebgshowstatus'
-                                    label={t('routebgshowstatus')}
-                                    rules={[{ required: true, message: t('routebgshowstatus.text') }]}
+                                    name="routebgshowstatus"
+                                    label={t("routebgshowstatus")}
+                                    rules={[{ required: true, message: t("routebgshowstatus.text") }]}
                                 >
                                     <Switch
                                         checkedChildren={<CheckOutlined />}
@@ -164,13 +152,13 @@ const SideMenu: React.FC = () => {
 
                                 {bgSortsStatus && (
                                     <Form.Item
-                                        name='menushow'
-                                        label={t('routemenushow')}
-                                        rules={[{ required: true, message: t('routemenushow.text') }]}
+                                        name="menushow"
+                                        label={t("routemenushow")}
+                                        rules={[{ required: true, message: t("routemenushow.text") }]}
                                     >
-                                        <Select placeholder='Select'>
+                                        <Select placeholder="Select">
                                             {bgLayoutSet()?.map((ci, index) => (
-                                                <Option key={index + '_bglayout'} value={ci?.value}>
+                                                <Option key={index + "_bglayout"} value={ci?.value}>
                                                     {ci?.label}
                                                 </Option>
                                             ))}
@@ -179,21 +167,21 @@ const SideMenu: React.FC = () => {
                                 )}
 
                                 <Form.Item
-                                    name='pageLevel'
-                                    label={t('routepagelevel')}
-                                    rules={[{ required: true, message: t('routepagelevel.text') }]}
+                                    name="pageLevel"
+                                    label={t("routepagelevel")}
+                                    rules={[{ required: true, message: t("routepagelevel.text") }]}
                                 >
                                     <Select
-                                        placeholder='Select'
+                                        placeholder="Select"
                                         onSelect={_ => {
-                                            setRouteLevel(_)
+                                            setRouteLevel(_);
                                             if (_ === 2) {
-                                                setOutletSet(false)
+                                                setOutletSet(false);
                                             }
                                         }}
                                     >
                                         {confRouteLevel?.map((ci, index) => (
-                                            <Option key={index + '_confRoute'} value={ci?.value}>
+                                            <Option key={index + "_confRoute"} value={ci?.value}>
                                                 {ci?.label}
                                             </Option>
                                         ))}
@@ -202,13 +190,13 @@ const SideMenu: React.FC = () => {
 
                                 {routeLevel !== 0 && (
                                     <Form.Item
-                                        name='parent'
-                                        label={t('routepageParent')}
-                                        rules={[{ required: true, message: t('routepageParent.text') }]}
+                                        name="parent"
+                                        label={t("routepageParent")}
+                                        rules={[{ required: true, message: t("routepageParent.text") }]}
                                     >
-                                        <Select placeholder='Select'>
+                                        <Select placeholder="Select">
                                             {parentRouteList?.map((ci, index) => (
-                                                <Option key={index + '_confRoute'} value={ci?.value}>
+                                                <Option key={index + "_confRoute"} value={ci?.value}>
                                                     {ci?.label}
                                                 </Option>
                                             ))}
@@ -217,25 +205,25 @@ const SideMenu: React.FC = () => {
                                 )}
 
                                 <Form.Item
-                                    name='key'
-                                    label={t('routekey')}
-                                    rules={[{ required: true, message: t('routekey.text') }]}
+                                    name="key"
+                                    label={t("routekey")}
+                                    rules={[{ required: true, message: t("routekey.text") }]}
                                 >
                                     <Input />
                                 </Form.Item>
 
                                 <Form.Item
-                                    name='label'
-                                    label={t('routelabel')}
-                                    rules={[{ required: true, message: t('routelabel.text') }]}
+                                    name="label"
+                                    label={t("routelabel")}
+                                    rules={[{ required: true, message: t("routelabel.text") }]}
                                 >
                                     <Input />
                                 </Form.Item>
 
                                 <Form.Item
-                                    name='path'
-                                    label={t('routepath')}
-                                    rules={[{ required: true, message: t('routepath.text') }]}
+                                    name="path"
+                                    label={t("routepath")}
+                                    rules={[{ required: true, message: t("routepath.text") }]}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -258,61 +246,61 @@ const SideMenu: React.FC = () => {
 
                                 {outletSet && (
                                     <Form.Item
-                                        name='outlet'
-                                        label={t('routeoutlet')}
-                                        rules={[{ required: true, message: t('routeoutlet.text') }]}
+                                        name="outlet"
+                                        label={t("routeoutlet")}
+                                        rules={[{ required: true, message: t("routeoutlet.text") }]}
                                     >
                                         <Radio.Group
                                             options={[
                                                 {
-                                                    label: t('routeoutlet.text.radio.status.start'),
+                                                    label: t("routeoutlet.text.radio.status.start"),
                                                     value: true,
                                                 },
                                                 {
-                                                    label: t('routeoutlet.text.radio.status.close'),
+                                                    label: t("routeoutlet.text.radio.status.close"),
                                                     value: false,
                                                 },
                                             ]}
-                                            optionType={'button'}
-                                            buttonStyle={'solid'}
+                                            optionType={"button"}
+                                            buttonStyle={"solid"}
                                         />
                                     </Form.Item>
                                 )}
 
                                 <Form.Item
-                                    name='casesensitive'
-                                    label={t('routecasesensitive')}
-                                    rules={[{ required: true, message: t('routecasesensitive.text') }]}
+                                    name="casesensitive"
+                                    label={t("routecasesensitive")}
+                                    rules={[{ required: true, message: t("routecasesensitive.text") }]}
                                 >
                                     <Radio.Group
                                         options={[
                                             {
-                                                label: t('routecasesensitive.radio.status.start'),
+                                                label: t("routecasesensitive.radio.status.start"),
                                                 value: true,
                                             },
                                             {
-                                                label: t('routecasesensitive.radio.status.close'),
+                                                label: t("routecasesensitive.radio.status.close"),
                                                 value: false,
                                             },
                                         ]}
-                                        optionType={'button'}
-                                        buttonStyle={'solid'}
+                                        optionType={"button"}
+                                        buttonStyle={"solid"}
                                     />
                                 </Form.Item>
 
                                 <Form.Item {...tailLayout}>
-                                    <Button type='primary' htmlType='submit'>
-                                        {t('button.submit')}
+                                    <Button type="primary" htmlType="submit">
+                                        {t("button.submit")}
                                     </Button>
 
                                     <Button
                                         style={{
                                             marginLeft: 8,
                                         }}
-                                        htmlType='button'
+                                        htmlType="button"
                                         onClick={onReset}
                                     >
-                                        {t('button.reset')}
+                                        {t("button.reset")}
                                     </Button>
                                 </Form.Item>
                             </Form>
@@ -321,13 +309,13 @@ const SideMenu: React.FC = () => {
                 </Col>
 
                 <Col span={12}>
-                    <Badge.Ribbon text={t('routebadge.ribbonshow')} color='volcano'>
+                    <Badge.Ribbon text={t("routebadge.ribbonshow")} color="volcano">
                         <Card
-                            title={t('routetable.treedata')}
+                            title={t("routetable.treedata")}
                             headStyle={{
-                                display: 'flex',
-                                alignContent: 'center',
-                                justifyContent: 'center',
+                                display: "flex",
+                                alignContent: "center",
+                                justifyContent: "center",
                             }}
                             hoverable
                             style={{
@@ -341,7 +329,7 @@ const SideMenu: React.FC = () => {
                                 showLine
                                 showIcon
                                 defaultExpandAll
-                                onSelect={onSelect}
+                                // onSelect={onSelect}
                                 // switcherIcon={<DownOutlined />}
                                 // treeData={treeData}
                                 treeData={routeTable()}
@@ -351,7 +339,7 @@ const SideMenu: React.FC = () => {
                 </Col>
             </Row>
         </>
-    )
-}
+    );
+};
 
-export default SideMenu
+export default SideMenu;

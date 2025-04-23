@@ -3,4 +3,3 @@
 # shellcheck source=./_/husky.sh
 . "$(dirname "$0")/_/husky.sh"
 
-npx --no-install commitlint -e $HUSKY_GIT_PARAMS

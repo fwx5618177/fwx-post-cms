@@ -1,25 +1,25 @@
-import { Card, Col, Row } from 'antd'
-import { useRef } from 'react'
-import { useTranslation } from 'react-i18next'
-import { queryPathKey } from 'src/common/lib'
-import Instro from 'src/pages/components/instro'
-import EditorRich from './editor'
-import './richtext.css'
+import { Card, Col, Row } from "antd";
+import { useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { queryPathKey } from "src/common/lib";
+import Instro from "src/pages/components/instro";
+import EditorRich from "./editor";
+import "./richtext.css";
 
 const RichEditor = () => {
-    const { t } = useTranslation()
-    const showRef = useRef<HTMLDivElement>(null)
+    const { t } = useTranslation();
+    const showRef = useRef<HTMLDivElement>(null);
 
     const handleShow = (value: string) => {
-        ;(showRef.current as HTMLDivElement).innerHTML = value
-    }
+        (showRef.current as HTMLDivElement).innerHTML = value;
+    };
 
     return (
         <>
             <h3
                 style={{
                     margin: 0,
-                    textAlign: 'center',
+                    textAlign: "center",
                 }}
             >
                 Rich Text
@@ -32,7 +32,7 @@ const RichEditor = () => {
                     margin: 12,
                 }}
             >
-                {t('richeditor.title.wangeditor')}
+                {t("richeditor.title.wangeditor")}
             </h3>
 
             <Row
@@ -51,18 +51,18 @@ const RichEditor = () => {
                     <Card
                         style={{
                             height: 700,
-                            overflowY: 'scroll',
-                            wordBreak: 'break-all',
+                            overflowY: "scroll",
+                            wordBreak: "break-all",
                         }}
                         bordered={true}
                         hoverable
                     >
-                        <div className='performance_div' ref={showRef}></div>
+                        <div className="performance_div" ref={showRef}></div>
                     </Card>
                 </Col>
             </Row>
         </>
-    )
-}
+    );
+};
 
-export default RichEditor
+export default RichEditor;

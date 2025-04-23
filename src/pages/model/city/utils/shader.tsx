@@ -15,7 +15,7 @@ float lerp(float x, float y, float t) {
 #define PI 3.14159265359
 #define PI2 6.28318530718
 
-`
+`;
 const surroundLine = {
     // 顶点着色器
     vertexShader: `
@@ -69,11 +69,11 @@ const surroundLine = {
         gl_FragColor = vec4(vColor, uOpacity * uStartTime);
     }
     `,
-}
+};
 
 const Shader = {
     base,
     surroundLine,
-}
+};
 
-export default Shader
+export default Shader;
