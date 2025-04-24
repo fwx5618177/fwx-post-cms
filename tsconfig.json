@@ -10,13 +10,10 @@
         "forceConsistentCasingInFileNames": true,
         "baseUrl": ".",
         "paths": {
-            "@/*": ["src/*"],
-            "@components/*": ["src/components/*"],
-            "@pages/*": ["src/pages/*"],
-            "@assets/*": ["src/assets/*"],
-            "@utils/*": ["src/utils/*"]
-        }
+            "@/*": ["src/*"]
+        },
+        "noImplicitAny": true
     },
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "i18n/**/*", "mocks/**/*"],
     "exclude": ["node_modules", "dist"]
 }

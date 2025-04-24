@@ -1,10 +1,10 @@
+import React from "react";
 import { Row, Col, Input } from "antd";
 import { useRef } from "react";
 import * as marked from "marked";
+import styles from "@/styles/pages/markdown.module.scss";
 
-import "./markdown.css";
-
-const MarkdonwEditor = () => {
+const MarkdonwEditor: React.FC = () => {
     const showRef = useRef<HTMLDivElement>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -15,7 +15,7 @@ const MarkdonwEditor = () => {
     };
 
     return (
-        <>
+        <div className={styles.container}>
             <Row gutter={24}>
                 <Col span={12}>
                     <Input.TextArea
@@ -30,7 +30,7 @@ const MarkdonwEditor = () => {
                     <div className="markdown_editor_self" ref={showRef}></div>
                 </Col>
             </Row>
-        </>
+        </div>
     );
 };
 

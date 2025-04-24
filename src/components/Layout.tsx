@@ -6,6 +6,7 @@ import { Link, Outlet } from "react-router-dom";
 import { menusController } from "../common/routes.controller";
 import "./layout.css";
 import i18n, { multipleLanguages } from "../../i18n/index";
+import styles from "@/styles/layouts/main.module.scss";
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -29,12 +30,7 @@ const LayoutEle = () => {
     );
 
     return (
-        <Layout
-            style={{
-                height: "100vh",
-                width: "100%",
-            }}
-        >
+        <Layout className={styles.layout}>
             <Sider trigger={null} collapsible collapsed={collapsed}>
                 <div className="logo">
                     <h3
@@ -63,7 +59,7 @@ const LayoutEle = () => {
             </Sider>
             <Layout className="site-layout">
                 <Header
-                    className="site-layout-background"
+                    className={styles.header}
                     style={{
                         margin: 2,
                         padding: 0,
@@ -106,7 +102,7 @@ const LayoutEle = () => {
                         : null}
                 </Breadcrumb>
                 <Content
-                    className="site-layout-background"
+                    className={styles.content}
                     style={{
                         margin: 2,
                         overflowY: "scroll",
@@ -117,6 +113,7 @@ const LayoutEle = () => {
                     <Outlet />
                 </Content>
                 <Footer
+                    className={styles.footer}
                     style={{
                         textAlign: "center",
                         padding: 2,

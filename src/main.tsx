@@ -4,11 +4,11 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes } from "react-router-dom";
 import { ConfigProvider } from "antd";
 import "./index.css";
-import SpinLoading from "./loading/spin";
+import SpinLoading from "./components/loading/spin";
 import "../i18n/index";
+import "@/styles/base/global.module.scss";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-    // <React.StrictMode>
     <ConfigProvider>
         <BrowserRouter>
             <Suspense fallback={<SpinLoading />}>
@@ -16,5 +16,4 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
             </Suspense>
         </BrowserRouter>
     </ConfigProvider>,
-    // </React.StrictMode>,
 );

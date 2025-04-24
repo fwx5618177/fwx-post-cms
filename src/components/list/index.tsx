@@ -3,7 +3,7 @@ import { Button, Card, Col, Form, Input, List, message, Radio, Row } from "antd"
 import moment from "moment";
 import { useEffect, useState } from "react";
 import api from "./api";
-import "./list.css";
+import styles from "@/styles/pages/todoist.module.scss";
 
 interface Performance {
     title: string;
@@ -40,7 +40,7 @@ const ListCard = () => {
         }
     };
 
-    const handleDetail = async e => {
+    const handleDetail = async (e: { target: { value: any } }) => {
         const brief = e?.target?.value;
 
         const result = await api.queryId(brief);
@@ -60,7 +60,7 @@ const ListCard = () => {
     }, []);
 
     return (
-        <>
+        <div className={styles.container}>
             <h3
                 style={{
                     margin: 12,
@@ -143,7 +143,7 @@ const ListCard = () => {
                     </Card>
                 </Col>
             </Row>
-        </>
+        </div>
     );
 };
 

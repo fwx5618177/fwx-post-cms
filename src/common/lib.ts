@@ -2,7 +2,6 @@
  * 封装的基础库
  */
 import request from "./request";
-import crypt from "crypto-js";
 import { RcFile } from "antd/lib/upload";
 
 // 查询存在、修改

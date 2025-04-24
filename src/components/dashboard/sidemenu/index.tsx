@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import "./style.css";
 import { confRouteLevel } from "./conf";
 import api from "./api";
+import styles from "@/styles/pages/sidemenu.module.scss";
 
 const { Option } = Select;
 
@@ -97,7 +98,7 @@ const SideMenu: React.FC = () => {
     }, [queryParentRoutes]);
 
     return (
-        <>
+        <div className={styles.container}>
             <header className="SideMenu_header">
                 <span></span>
                 <h3>{t("sidemenu")}</h3>
@@ -338,7 +339,7 @@ const SideMenu: React.FC = () => {
                     </Badge.Ribbon>
                 </Col>
             </Row>
-        </>
+        </div>
     );
 };
 

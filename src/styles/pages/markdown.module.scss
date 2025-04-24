@@ -1,0 +1,29 @@
+.container {
+    padding: 24px;
+    background: #fff;
+    border-radius: 4px;
+
+    .editor {
+        height: 500px;
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+        overflow: hidden;
+
+        textarea {
+            height: 100%;
+            resize: none;
+            border: none;
+            padding: 16px;
+            font-family: monospace;
+        }
+    }
+
+    .preview {
+        height: 500px;
+        padding: 16px;
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+        overflow-y: auto;
+        background: #fafafa;
+    }
+}

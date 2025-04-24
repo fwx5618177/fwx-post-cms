@@ -70,9 +70,6 @@ pnpm-lock.yaml
 /.output.js
 .local
 
-# Storybook
-/storybook-static
-
 # Other
 .husky
 .github

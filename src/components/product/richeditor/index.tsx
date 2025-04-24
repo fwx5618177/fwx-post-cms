@@ -2,11 +2,13 @@ import { Card, Col, Row } from "antd";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { queryPathKey } from "src/common/lib";
-import Instro from "src/pages/components/instro";
+import Instro from "@/components/instro";
 import EditorRich from "./editor";
 import "./richtext.css";
+import React from "react";
+import styles from "@/styles/pages/richeditor.module.scss";
 
-const RichEditor = () => {
+const RichEditor: React.FC = () => {
     const { t } = useTranslation();
     const showRef = useRef<HTMLDivElement>(null);
 
@@ -15,7 +17,7 @@ const RichEditor = () => {
     };
 
     return (
-        <>
+        <div className={styles.container}>
             <h3
                 style={{
                     margin: 0,
@@ -61,7 +63,7 @@ const RichEditor = () => {
                     </Card>
                 </Col>
             </Row>
-        </>
+        </div>
     );
 };
 
