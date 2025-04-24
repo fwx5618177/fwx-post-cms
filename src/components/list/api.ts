@@ -1,4 +1,4 @@
-import { deleteRequest, get, post, put } from "src/common/lib";
+import { deleteRequest, get, post, put } from "@/request/lib";
 
 export default class api {
     static list = () => get("/api/todo/list");

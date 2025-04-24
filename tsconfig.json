@@ -10,7 +10,16 @@
         "forceConsistentCasingInFileNames": true,
         "baseUrl": ".",
         "paths": {
-            "@/*": ["src/*"]
+            "@components/*": ["./src/components/*"],
+            "@config/*": ["./src/config/*"],
+            "@pages/*": ["./src/pages/*"],
+            "@request/*": ["./src/request/*"],
+            "@utils/*": ["./src/utils/*"],
+            "@styles/*": ["./src/styles/*"],
+            "@services/*": ["./src/services/*"],
+            "@types/*": ["./src/types/*"],
+            "@layout/*": ["./src/layout/*"],
+            "@i18n/*": ["./i18n/*"]
         },
         "noImplicitAny": true
     },

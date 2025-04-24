@@ -1,4 +1,4 @@
-import { get, post } from "src/common/lib";
+import { get, post } from "@/request/lib";
 
 export default class api {
     static detail = params => get(`/api/content/detail/${params}`);

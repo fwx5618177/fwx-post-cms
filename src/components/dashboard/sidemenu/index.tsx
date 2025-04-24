@@ -1,4 +1,4 @@
-import { bgLayoutSet, routeTable } from "../../../common/routes.controller";
+import { bgLayoutSet, routeTable } from "../../../config/routes.controller";
 import { CheckOutlined, CloseOutlined, SettingTwoTone } from "@ant-design/icons";
 import { Badge, Button, Card, Col, Form, Input, Radio, Row, Switch, Tree, Select, message } from "antd";
 import React, { useEffect, useState, useCallback } from "react";

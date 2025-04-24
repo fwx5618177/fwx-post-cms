@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => {
     const isDev = mode === "development";
 
     return {
-        base: ".",
+        base: "./",
         plugins: [react()],
         define: {
             "process.env": {
@@ -24,14 +24,31 @@ export default defineConfig(({ mode }) => {
         },
         resolve: {
             alias: {
-                "@/": path.resolve(__dirname, "./src"),
+                "@components": path.resolve(__dirname, "./src/components"),
+                "@config": path.resolve(__dirname, "./src/config"),
+                "@pages": path.resolve(__dirname, "./src/pages"),
+                "@request": path.resolve(__dirname, "./src/request"),
+                "@utils": path.resolve(__dirname, "./src/utils"),
+                "@styles": path.resolve(__dirname, "./src/styles"),
+                "@services": path.resolve(__dirname, "./src/services"),
+                "@types": path.resolve(__dirname, "./src/types"),
+                "@layout": path.resolve(__dirname, "./src/layout"),
                 "@i18n": path.resolve(__dirname, "./i18n"),
-                "@mocks": path.resolve(__dirname, "./mocks"),
             },
         },
         css: {
             preprocessorOptions: {
-                scss: {},
+                less: {
+                    javascriptEnabled: true,
+                },
+                scss: {
+                    api: "modern-compiler",
+                    silenceDeprecations: ["legacy-js-api"],
+                    implementation: "sass",
+                    sassOptions: {
+                        outputStyle: "compressed",
+                    },
+                },
             },
         },
         server: {

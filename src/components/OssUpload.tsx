@@ -3,8 +3,8 @@ import { Button, message, Modal, Upload, UploadFile, UploadProps } from "antd";
 import { RcFile } from "antd/lib/upload/interface";
 import { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { BeforeUploadValueType, PostCosConf, uploadOSSDir, uploadStyle } from "src/common/interface";
-import { getBase64 } from "src/common/lib";
+import { BeforeUploadValueType, PostCosConf, uploadOSSDir, uploadStyle } from "@/request/interface";
+import { getBase64 } from "@/request/lib";
 import api from "./api";
 
 interface OSSUploadProps {

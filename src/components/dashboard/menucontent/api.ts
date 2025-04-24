@@ -2,7 +2,7 @@
  * API
  */
 
-import { get, post, put } from "src/common/lib";
+import { get, post, put } from "@/request/lib";
 
 class api {
     static queryRouteList = params => post("/api/route/list", params);

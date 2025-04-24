@@ -1,0 +1,80 @@
+.errorPage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    padding: 24px;
+}
+
+.errorContent {
+    background: #fff;
+    padding: 48px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.status {
+    font-size: 72px;
+    font-weight: 700;
+    color: #1890ff;
+    margin: 0 0 16px;
+    line-height: 1;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 16px;
+}
+
+.message {
+    font-size: 16px;
+    color: #666;
+    margin: 0 0 32px;
+    line-height: 1.5;
+}
+
+.backButton {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #1890ff;
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.3s;
+
+    &:hover {
+        background: #40a9ff;
+        transform: translateY(-2px);
+    }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+    .errorContent {
+        padding: 32px 24px;
+    }
+
+    .status {
+        font-size: 56px;
+    }
+
+    .title {
+        font-size: 20px;
+    }
+
+    .message {
+        font-size: 14px;
+    }
+
+    .backButton {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}

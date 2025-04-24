@@ -2,7 +2,7 @@
  * API
  */
 
-import { post } from "src/common/lib";
+import { post } from "@/request/lib";
 
 class api {
     static createRoute = params => post("/api/route/createRoute", params);
