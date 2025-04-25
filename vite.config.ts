@@ -50,10 +50,17 @@ export default defineConfig(({ mode }) => {
                     },
                 },
             },
+            modules: {
+                localsConvention: "camelCase",
+            },
         },
         server: {
             https: false,
             proxy: {},
+            watch: {
+                usePolling: true,
+                interval: 100,
+            },
         },
         build: {
             chunkSizeWarningLimit: 2000,

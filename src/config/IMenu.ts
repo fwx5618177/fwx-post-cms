@@ -1,12 +1,15 @@
+import { ReactNode } from "react";
+
 /**
  * 菜单项配置类型
  */
-export type MenuItem = {
+export interface MenuItem {
     key: string;
-    icon?: React.ReactNode;
+    icon?: ReactNode;
     label: string;
+    path?: string;
     children?: MenuItem[];
-};
+}
 
 /**
  * 菜单项配置

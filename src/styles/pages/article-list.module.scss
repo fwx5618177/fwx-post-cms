@@ -1,0 +1,197 @@
+.articleListPage {
+    padding: 24px;
+
+    .header {
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+
+            .searchInput {
+                width: 240px;
+                padding: 8px 12px;
+                border: 1px solid #d9d9d9;
+                border-radius: 4px;
+                font-size: 14px;
+                transition: all 0.3s;
+
+                &:focus {
+                    border-color: #1890ff;
+                    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+                    outline: none;
+                }
+            }
+
+            .addButton {
+                padding: 8px 16px;
+                background: #1890ff;
+                border: none;
+                border-radius: 4px;
+                color: #fff;
+                font-size: 14px;
+                cursor: pointer;
+                transition: all 0.3s;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+
+                &:hover {
+                    background: #40a9ff;
+                }
+
+                &:active {
+                    background: #096dd9;
+                }
+            }
+        }
+    }
+
+    .articleList {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+
+        .articleItem {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &:hover {
+                background: #fafafa;
+            }
+
+            .articleHeader {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 12px;
+
+                .title {
+                    font-size: 16px;
+                    font-weight: 500;
+                    color: #1a1a1a;
+                    margin: 0;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: #1890ff;
+                    }
+                }
+
+                .status {
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+
+                    &.published {
+                        background: #f6ffed;
+                        color: #52c41a;
+                        border: 1px solid #b7eb8f;
+                    }
+
+                    &.draft {
+                        background: #f5f5f5;
+                        color: #666;
+                        border: 1px solid #d9d9d9;
+                    }
+                }
+            }
+
+            .articleMeta {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                margin-bottom: 12px;
+
+                .metaItem {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    color: #666;
+                    font-size: 12px;
+                }
+            }
+
+            .articleActions {
+                display: flex;
+                gap: 12px;
+
+                button {
+                    padding: 4px 8px;
+                    border: 1px solid #d9d9d9;
+                    border-radius: 4px;
+                    background: transparent;
+                    font-size: 12px;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+
+                    &:hover {
+                        border-color: #1890ff;
+                        color: #1890ff;
+                    }
+
+                    &.delete {
+                        &:hover {
+                            border-color: #ff4d4f;
+                            color: #ff4d4f;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .pagination {
+        margin-top: 24px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+
+        .pageButton {
+            padding: 6px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            background: transparent;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+
+            &:hover {
+                border-color: #1890ff;
+                color: #1890ff;
+            }
+
+            &.active {
+                background: #1890ff;
+                border-color: #1890ff;
+                color: #fff;
+            }
+
+            &:disabled {
+                background: #f5f5f5;
+                border-color: #d9d9d9;
+                color: #d9d9d9;
+                cursor: not-allowed;
+            }
+        }
+    }
+}

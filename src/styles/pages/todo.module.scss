@@ -1,0 +1,196 @@
+.todoPage {
+    padding: 24px;
+
+    .header {
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+
+            .addButton {
+                padding: 8px 16px;
+                background: #1890ff;
+                border: none;
+                border-radius: 4px;
+                color: #fff;
+                font-size: 14px;
+                cursor: pointer;
+                transition: all 0.3s;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+
+                &:hover {
+                    background: #40a9ff;
+                }
+            }
+        }
+    }
+
+    .todoList {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+
+        .todoItem {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &:hover {
+                background: #fafafa;
+            }
+
+            &.completed {
+                .content {
+                    text-decoration: line-through;
+                    color: #999;
+                }
+            }
+
+            .checkbox {
+                width: 18px;
+                height: 18px;
+                border: 2px solid #d9d9d9;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.3s;
+                position: relative;
+
+                &:hover {
+                    border-color: #1890ff;
+                }
+
+                &.checked {
+                    background: #1890ff;
+                    border-color: #1890ff;
+
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        top: 2px;
+                        left: 5px;
+                        width: 4px;
+                        height: 8px;
+                        border: solid #fff;
+                        border-width: 0 2px 2px 0;
+                        transform: rotate(45deg);
+                    }
+                }
+            }
+
+            .content {
+                flex: 1;
+                font-size: 14px;
+                color: #1a1a1a;
+            }
+
+            .priority {
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+
+                &.high {
+                    background: #fff1f0;
+                    color: #ff4d4f;
+                    border: 1px solid #ffa39e;
+                }
+
+                &.medium {
+                    background: #fffbe6;
+                    color: #faad14;
+                    border: 1px solid #ffe58f;
+                }
+
+                &.low {
+                    background: #f6ffed;
+                    color: #52c41a;
+                    border: 1px solid #b7eb8f;
+                }
+            }
+
+            .dueDate {
+                font-size: 12px;
+                color: #666;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+
+                &.overdue {
+                    color: #ff4d4f;
+                }
+            }
+
+            .actions {
+                display: flex;
+                gap: 8px;
+                opacity: 0;
+                transition: opacity 0.3s;
+
+                button {
+                    padding: 4px 8px;
+                    border: 1px solid #d9d9d9;
+                    border-radius: 4px;
+                    background: transparent;
+                    font-size: 12px;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+
+                    &:hover {
+                        border-color: #1890ff;
+                        color: #1890ff;
+                    }
+
+                    &.delete {
+                        &:hover {
+                            border-color: #ff4d4f;
+                            color: #ff4d4f;
+                        }
+                    }
+                }
+            }
+
+            &:hover {
+                .actions {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    .empty {
+        padding: 48px;
+        text-align: center;
+        color: #999;
+
+        .emptyIcon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .emptyText {
+            font-size: 14px;
+        }
+    }
+}
