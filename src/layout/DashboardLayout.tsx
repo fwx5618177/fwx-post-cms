@@ -13,11 +13,34 @@ import styles from "@styles/layouts/dashboard.module.scss";
 import { getMenuItems } from "@config/menu.conf";
 import { routes } from "@config/routes.conf";
 import { MenuItem } from "@config/IMenu";
+import { IMenuBadge, IMenuTag } from "@config/IRoute";
 
 interface FlatMenuItem extends MenuItem {
     level: number;
     parentKey: string;
 }
+
+/**
+ * 徽章组件
+ */
+const MenuBadge: React.FC<{ badge: IMenuBadge }> = ({ badge }) => {
+    const badgeClass = `${styles.badge} ${styles[`badge${badge.type.charAt(0).toUpperCase() + badge.type.slice(1)}`]}`;
+
+    if (badge.dot) {
+        return <span className={`${badgeClass} ${styles.badgeDot}`} />;
+    }
+
+    return <span className={badgeClass}>{badge.count}</span>;
+};
+
+/**
+ * 标签组件
+ */
+const MenuTag: React.FC<{ tag: IMenuTag }> = ({ tag }) => {
+    const tagClass = `${styles.tag} ${styles[`tag${tag.type.charAt(0).toUpperCase() + tag.type.slice(1)}`]}`;
+
+    return <span className={tagClass}>{tag.text}</span>;
+};
 
 /**
  * 仪表盘布局组件
@@ -116,12 +139,12 @@ const DashboardLayout = () => {
         const isOpen = openKeys.includes(item.key);
         const isActive = selectedKey === item.key;
         const hasChildren = item.children && item.children.length > 0;
-        const shouldShow = !collapsed || item.level === 0;
 
-        if (!shouldShow) return null;
-
+        // 在这里不再阻止渲染子菜单，只是在展示时使用CSS隐藏
         const isVisible = item.level === 0 || item.parentKey === "" || openKeys.includes(item.parentKey);
         if (!isVisible) return null;
+
+        const showText = !collapsed || (collapsed && item.level === 0);
 
         return (
             <div key={item.key} className={`${styles.menuItem} ${styles[`level${item.level}`]}`}>
@@ -130,11 +153,17 @@ const DashboardLayout = () => {
                     onClick={() => handleMenuClick(item)}
                 >
                     <span className={styles.icon}>{item.icon}</span>
+
+                    {/* 使用css控制内容显示而非条件渲染 */}
                     <div className={styles.menuContent}>
                         <span>{item.label}</span>
-                        {hasChildren && (
-                            <RiArrowDownSLine className={`${styles.arrow} ${isOpen ? styles.arrowOpen : ""}`} />
-                        )}
+                        <div className={styles.menuExtra}>
+                            {item.badge && <MenuBadge badge={item.badge} />}
+                            {showText && item.tag && <MenuTag tag={item.tag} />}
+                            {hasChildren && showText && (
+                                <RiArrowDownSLine className={`${styles.arrow} ${isOpen ? styles.arrowOpen : ""}`} />
+                            )}
+                        </div>
                     </div>
                 </button>
             </div>

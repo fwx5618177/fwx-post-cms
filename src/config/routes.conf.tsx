@@ -39,6 +39,7 @@ export const routes: IRoutePage[] = [
         component: Pages.DashboardLayout,
         menuShow: true,
         auth: true,
+        badge: { type: "success", dot: true },
         children: [
             {
                 key: "dashboard-content",
@@ -58,6 +59,7 @@ export const routes: IRoutePage[] = [
         component: Pages.DashboardLayout,
         menuShow: true,
         auth: true,
+        tag: { type: "info", text: "推荐" },
         children: [
             {
                 key: "article",
@@ -67,6 +69,7 @@ export const routes: IRoutePage[] = [
                 component: Pages.ArticleLayout,
                 menuShow: true,
                 auth: true,
+                badge: { type: "primary", count: 5 },
                 children: [
                     {
                         key: "article-list",
@@ -76,6 +79,7 @@ export const routes: IRoutePage[] = [
                         component: Pages.ArticleList,
                         menuShow: true,
                         auth: true,
+                        badge: { type: "error", count: 3 },
                     },
                     {
                         key: "article-edit",
@@ -85,6 +89,7 @@ export const routes: IRoutePage[] = [
                         component: Pages.ArticleEdit,
                         menuShow: true,
                         auth: true,
+                        tag: { type: "warning", text: "新功能" },
                     },
                 ],
             },
@@ -96,6 +101,7 @@ export const routes: IRoutePage[] = [
                 component: Pages.Todo,
                 menuShow: true,
                 auth: true,
+                badge: { type: "warning", count: 10 },
             },
             {
                 key: "calendar",
@@ -154,6 +160,7 @@ export const routes: IRoutePage[] = [
                 component: Pages.Notification,
                 menuShow: true,
                 auth: true,
+                badge: { type: "error", count: 99 },
             },
             {
                 key: "message",
@@ -163,6 +170,7 @@ export const routes: IRoutePage[] = [
                 component: Pages.Message,
                 menuShow: true,
                 auth: true,
+                badge: { type: "primary", count: 7 },
             },
             {
                 key: "mail",
@@ -172,6 +180,7 @@ export const routes: IRoutePage[] = [
                 component: Pages.Mail,
                 menuShow: true,
                 auth: true,
+                tag: { type: "success", text: "已同步" },
             },
             {
                 key: "settings",

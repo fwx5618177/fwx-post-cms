@@ -8,6 +8,9 @@ $dark-text-secondary: #909296;
 $accent-color: #4dabf7;
 $accent-hover: #74c0fc;
 $danger-color: #ff6b6b;
+$success-color: #69db7c;
+$warning-color: #ffd43b;
+$info-color: #4dabf7;
 $header-height: 60px;
 $sider-width: 260px;
 $sider-collapsed-width: 70px;
@@ -180,6 +183,14 @@ $transition-duration: 0.2s;
 
                         span {
                             font-size: 0.875rem;
+                            @include transition(opacity);
+                        }
+
+                        .menuExtra {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            @include transition(opacity);
                         }
 
                         .arrow {
@@ -198,6 +209,91 @@ $transition-duration: 0.2s;
 
                         .arrow {
                             opacity: 1;
+                        }
+                    }
+
+                    // 徽章样式
+                    .badge {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        min-width: 18px;
+                        height: 18px;
+                        padding: 0 6px;
+                        font-size: 12px;
+                        line-height: 1;
+                        border-radius: 9px;
+                        font-weight: 600;
+                        color: white;
+                        position: relative;
+                        right: 0;
+                        top: 0;
+
+                        &.badgePrimary {
+                            background-color: $accent-color;
+                        }
+
+                        &.badgeSuccess {
+                            background-color: $success-color;
+                        }
+
+                        &.badgeWarning {
+                            background-color: $warning-color;
+                            color: #333;
+                        }
+
+                        &.badgeError {
+                            background-color: $danger-color;
+                        }
+
+                        &.badgeInfo {
+                            background-color: $info-color;
+                        }
+
+                        &.badgeDot {
+                            min-width: 8px;
+                            height: 8px;
+                            padding: 0;
+                            border-radius: 50%;
+                        }
+                    }
+
+                    // 标签样式
+                    .tag {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 2px 6px;
+                        font-size: 11px;
+                        line-height: 1;
+                        border-radius: 4px;
+                        font-weight: 500;
+                        white-space: nowrap;
+                        @include transition(opacity);
+
+                        &.tagPrimary {
+                            background-color: rgba($accent-color, 0.15);
+                            color: $accent-color;
+                        }
+
+                        &.tagSuccess {
+                            background-color: rgba($success-color, 0.15);
+                            color: $success-color;
+                        }
+
+                        &.tagWarning {
+                            background-color: rgba($warning-color, 0.15);
+                            color: $warning-color;
+                        }
+
+                        &.tagError {
+                            background-color: rgba($danger-color, 0.15);
+                            color: $danger-color;
+                        }
+
+                        &.tagInfo {
+                            background-color: rgba($info-color, 0.15);
+                            color: $info-color;
                         }
                     }
                 }
@@ -331,6 +427,37 @@ $transition-duration: 0.2s;
     }
 
     &.collapsed {
+        .sider {
+            width: $sider-collapsed-width;
+
+            .logo {
+                padding: 0;
+                justify-content: center;
+
+                h1 {
+                    opacity: 0;
+                    width: 0;
+                }
+            }
+
+            .menuItem {
+                .menuButton {
+                    .menuContent {
+                        span,
+                        .tag,
+                        .arrow {
+                            opacity: 0;
+                            pointer-events: none;
+                        }
+
+                        .badge {
+                            transform: translateX(10px);
+                        }
+                    }
+                }
+            }
+        }
+
         .main {
             margin-left: $sider-collapsed-width;
             width: calc(100% - $sider-collapsed-width);
@@ -346,6 +473,25 @@ $transition-duration: 0.2s;
         .sider:hover + .main {
             margin-left: $sider-width;
             width: calc(100% - $sider-width);
+        }
+
+        .sider:hover {
+            .menuItem {
+                .menuButton {
+                    .menuContent {
+                        span,
+                        .tag,
+                        .arrow {
+                            opacity: 1;
+                            pointer-events: auto;
+                        }
+
+                        .badge {
+                            transform: translateX(0);
+                        }
+                    }
+                }
+            }
         }
     }
 }

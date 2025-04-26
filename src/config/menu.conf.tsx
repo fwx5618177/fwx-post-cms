@@ -13,10 +13,12 @@ const processRouteToMenuItem = (route: IRoutePage, parentPath = ""): MenuItem =>
         : route.path;
 
     const menuItem: MenuItem = {
-        key: fullPath,
+        key: route.key || fullPath,
         icon: route.icon ? <route.icon /> : undefined,
         label: route.label,
         path: fullPath,
+        badge: route.badge,
+        tag: route.tag,
     };
 
     if (route.children?.length) {
