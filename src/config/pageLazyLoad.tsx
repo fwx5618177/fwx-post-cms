@@ -8,6 +8,8 @@ import { lazy } from "react";
 export const Pages = {
     // 布局组件
     DashboardLayout: lazy(() => import("../layout/DashboardLayout")),
+    ArticleLayout: lazy(() => import("../layout/ArticleLayout")),
+    UserLayout: lazy(() => import("../layout/UserLayout")),
 
     // 错误页面
     NotFound: lazy(() => import("../pages/404")),
@@ -21,12 +23,10 @@ export const Pages = {
     Dashboard: lazy(() => import("../pages/dashboard")),
 
     // 文章相关
-    Article: lazy(() => import("../pages/article")),
     ArticleList: lazy(() => import("../pages/article-list")),
     ArticleEdit: lazy(() => import("../pages/article-edit")),
 
     // 用户相关
-    User: lazy(() => import("../pages/user")),
     UserList: lazy(() => import("../pages/user-list")),
     UserProfile: lazy(() => import("../pages/user-profile")),
 

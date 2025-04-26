@@ -1,0 +1,147 @@
+// 主题变量
+$dark-bg: #1a1b1e;
+$dark-surface: #25262b;
+$dark-surface-hover: #2c2d31;
+$dark-border: rgba(255, 255, 255, 0.1);
+$dark-text: #c1c2c5;
+$dark-text-secondary: #909296;
+$accent-color: #4dabf7;
+$accent-hover: #74c0fc;
+$transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+$transition-duration: 0.2s;
+
+// 重用dashboard中的mixin
+@mixin transition($property: all) {
+    transition: $property $transition-duration $transition-timing;
+}
+
+@mixin flex-start {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.articleLayout {
+    background-color: $dark-bg;
+    border-radius: 8px;
+    min-height: calc(100vh - 100px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid $dark-border;
+
+    // 微妙的网格背景
+    &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        background-size: 24px 24px;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.4;
+    }
+}
+
+.layoutHeader {
+    @include flex-start;
+    gap: 16px;
+    padding: 20px 24px;
+    background-color: $dark-surface;
+    border-bottom: 1px solid $dark-border;
+    position: relative;
+    z-index: 2;
+}
+
+.headerIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    background-color: rgba($accent-color, 0.1);
+    color: $accent-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.headerContent {
+    flex: 1;
+}
+
+.headerTitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: white;
+}
+
+.headerDescription {
+    color: $dark-text-secondary;
+    margin: 4px 0 0;
+    font-size: 14px;
+}
+
+.layoutContent {
+    flex: 1;
+    padding: 24px;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+
+    // 内部布局过渡动画
+    & > * {
+        animation: fadeIn 0.25s $transition-timing;
+    }
+}
+
+.layoutFooter {
+    padding: 12px 24px;
+    border-top: 1px solid $dark-border;
+    background-color: $dark-surface;
+    position: relative;
+    z-index: 2;
+}
+
+.footerInfo {
+    @include flex-start;
+    gap: 8px;
+    color: $dark-text-secondary;
+    font-size: 13px;
+
+    svg {
+        font-size: 16px;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+    .layoutHeader {
+        padding: 16px 20px;
+    }
+
+    .layoutContent {
+        padding: 16px 20px;
+    }
+
+    .layoutFooter {
+        padding: 12px 20px;
+    }
+}

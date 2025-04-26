@@ -1,7 +1,21 @@
+// 暗黑主题变量
+$bg-color: #121212;
+$card-bg: #1e1e1e;
+$card-hover-bg: #2c2c2c;
+$text-primary: #e0e0e0;
+$text-secondary: #a0a0a0;
+$border-color: #333;
+$shadow-color: rgba(0, 0, 0, 0.3);
+$accent-color: #1890ff;
+$chart-bg: #252525;
+$hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+
 .dashboard {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    background: $bg-color;
+    padding: 24px;
 }
 
 .stats {
@@ -11,18 +25,19 @@
 }
 
 .statCard {
-    background: #fff;
+    background: $card-bg;
     border-radius: 8px;
     padding: 24px;
     display: flex;
     align-items: center;
     gap: 16px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 2px $shadow-color;
     transition: all 0.3s;
 
     &:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: $hover-shadow;
         transform: translateY(-2px);
+        background: $card-hover-bg;
     }
 }
 
@@ -34,8 +49,8 @@
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    color: #fff;
-    background: #1890ff;
+    color: $text-primary;
+    background: $accent-color;
 }
 
 .statContent {
@@ -44,14 +59,14 @@
 
 .statTitle {
     font-size: 14px;
-    color: #666;
+    color: $text-secondary;
     margin-bottom: 8px;
 }
 
 .statValue {
     font-size: 24px;
     font-weight: 600;
-    color: #333;
+    color: $text-primary;
 }
 
 .charts {
@@ -61,21 +76,22 @@
 }
 
 .chartCard {
-    background: #fff;
+    background: $card-bg;
     border-radius: 8px;
     padding: 24px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 2px $shadow-color;
     transition: all 0.3s;
 
     &:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: $hover-shadow;
+        background: $card-hover-bg;
     }
 }
 
 .chartTitle {
     font-size: 16px;
     font-weight: 600;
-    color: #333;
+    color: $text-primary;
     margin: 0 0 16px;
 }
 
@@ -84,9 +100,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fafafa;
+    background: $chart-bg;
     border-radius: 4px;
-    color: #999;
+    color: $text-secondary;
     font-size: 14px;
 }
 
@@ -97,21 +113,22 @@
 }
 
 .listCard {
-    background: #fff;
+    background: $card-bg;
     border-radius: 8px;
     padding: 24px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 2px $shadow-color;
     transition: all 0.3s;
 
     &:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: $hover-shadow;
+        background: $card-hover-bg;
     }
 }
 
 .listTitle {
     font-size: 16px;
     font-weight: 600;
-    color: #333;
+    color: $text-primary;
     margin: 0 0 16px;
 }
 
@@ -120,9 +137,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fafafa;
+    background: $chart-bg;
     border-radius: 4px;
-    color: #999;
+    color: $text-secondary;
     font-size: 14px;
 }
 

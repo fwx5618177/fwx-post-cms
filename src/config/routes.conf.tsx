@@ -64,7 +64,7 @@ export const routes: IRoutePage[] = [
                 label: "文章管理",
                 icon: RiArticleLine,
                 path: "article",
-                component: Pages.Article,
+                component: Pages.ArticleLayout,
                 menuShow: true,
                 auth: true,
                 children: [
@@ -122,7 +122,7 @@ export const routes: IRoutePage[] = [
                 label: "用户管理",
                 icon: RiUserLine,
                 path: "user",
-                component: Pages.User,
+                component: Pages.UserLayout,
                 menuShow: true,
                 auth: true,
                 children: [
