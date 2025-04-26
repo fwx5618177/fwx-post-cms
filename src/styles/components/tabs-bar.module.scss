@@ -1,0 +1,227 @@
+// 主题变量
+$primary-color: #339af0;
+$accent-color: #ff6b6b;
+$dark-bg: #25262b;
+$tab-default: #2c2e33;
+$tab-hover: #35363c;
+$tab-active: #3e4046;
+$dropdown-bg: #2c2e33;
+$dropdown-hover: #35363c;
+$text-color: #e9ecef;
+$text-secondary: #adb5bd;
+$border-color: rgba(255, 255, 255, 0.07);
+$shadow-color: rgba(0, 0, 0, 0.2);
+$border-radius: 8px;
+$transition-timing: cubic-bezier(0.25, 0.8, 0.25, 1);
+$transition-duration: 0.25s;
+
+// Mixins
+@mixin transition($property: all) {
+    transition: $property $transition-duration $transition-timing;
+}
+
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+}
+
+// 标签栏样式
+.tabsBar {
+    @include flex-center;
+    padding: 8px 16px 0;
+    height: 48px;
+    background-color: $dark-bg;
+    border-bottom: 1px solid $border-color;
+    scrollbar-width: thin;
+    scrollbar-color: #4a4b50 transparent;
+
+    // 使用一个内部容器来处理滚动，这样不会影响下拉菜单
+    position: relative;
+    display: flex;
+    overflow: visible; // 确保下拉菜单可见
+
+    .tabsList {
+        @include flex-center;
+        flex: 1;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        gap: 8px;
+        overflow-x: auto; // 只对标签列表应用滚动
+
+        &::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #4a4b50;
+            border-radius: $border-radius;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+    }
+
+    .tabItem {
+        @include flex-center;
+        height: 36px;
+        padding: 0 16px;
+        font-size: 13px;
+        cursor: pointer;
+        position: relative;
+        color: $text-secondary;
+        background-color: $tab-default;
+        border-radius: $border-radius $border-radius 0 0;
+        @include transition;
+        min-width: 120px;
+        max-width: 180px;
+        justify-content: center;
+        overflow: hidden;
+
+        &:hover {
+            color: $text-color;
+            background-color: $tab-hover;
+
+            .tabClose {
+                opacity: 1;
+            }
+        }
+
+        &.active {
+            color: $text-color;
+            background-color: $tab-active;
+            border-bottom: 2px solid $accent-color;
+
+            .tabTitle {
+                font-weight: 500;
+            }
+
+            .tabIcon {
+                color: $primary-color;
+            }
+        }
+
+        .tabIcon {
+            margin-right: 8px;
+            font-size: 16px;
+            @include flex-center;
+            color: inherit;
+        }
+
+        .tabTitle {
+            margin-right: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+        }
+
+        .tabClose {
+            @include flex-center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            opacity: 0.5;
+            @include transition;
+            margin-left: 4px;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.12);
+                color: $accent-color;
+                opacity: 1;
+            }
+        }
+    }
+
+    .tabsActions {
+        @include flex-center;
+        margin-left: 12px;
+        gap: 8px;
+        position: relative;
+        flex-shrink: 0; // 防止动作按钮被压缩
+
+        .dropdownContainer {
+            position: relative;
+            z-index: 100;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 36px; // 调整位置，使下拉菜单在按钮正下方
+            right: 0;
+            width: 180px;
+            background-color: $dropdown-bg;
+            border-radius: $border-radius;
+            box-shadow: 0 4px 12px $shadow-color;
+            z-index: 1000;
+            overflow: visible; // 确保下拉菜单内容可见
+            animation: fadeIn 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdownItem {
+            @include flex-center;
+            width: 100%;
+            padding: 10px 16px;
+            border: none;
+            background-color: transparent;
+            color: $text-secondary;
+            cursor: pointer;
+            text-align: left;
+            font-size: 13px;
+            @include transition;
+
+            &:hover {
+                background-color: $dropdown-hover;
+                color: $text-color;
+            }
+
+            svg {
+                margin-right: 10px;
+                font-size: 16px;
+            }
+
+            span {
+                flex: 1;
+            }
+        }
+
+        .tabAction {
+            @include flex-center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            cursor: pointer;
+            @include transition;
+            color: $text-secondary;
+            border: none;
+            background-color: $tab-default;
+
+            &:hover {
+                color: $text-color;
+                background-color: $tab-hover;
+            }
+
+            &:active {
+                background-color: $tab-active;
+                color: $primary-color;
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

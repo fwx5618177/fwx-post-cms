@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
     RiMenuFoldLine,
@@ -14,10 +14,13 @@ import { getMenuItems } from "@config/menu.conf";
 import { routes } from "@config/routes.conf";
 import { MenuItem } from "@config/IMenu";
 import { IMenuBadge, IMenuTag } from "@config/IRoute";
+import { TabsProvider, useTabsContext } from "../context/TabsContext";
+import TabsBar from "../components/TabsBar";
 
 interface FlatMenuItem extends MenuItem {
     level: number;
     parentKey: string;
+    path: string; // 确保path是必需的字符串
 }
 
 /**
@@ -43,29 +46,33 @@ const MenuTag: React.FC<{ tag: IMenuTag }> = ({ tag }) => {
 };
 
 /**
- * 仪表盘布局组件
- * @description 提供统一的仪表盘布局，包括侧边栏、顶部栏和内容区域
+ * 内部仪表盘布局组件
  */
-const DashboardLayout = () => {
+const DashboardLayoutInner: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [pinned, setPinned] = useState(false);
     const [openKeys, setOpenKeys] = useState<string[]>([]);
     const [selectedKey, setSelectedKey] = useState<string>("");
     const navigate = useNavigate();
     const location = useLocation();
+    const { addTab } = useTabsContext();
 
     // 获取扁平化的菜单项
     const flatMenuItems = React.useMemo(() => {
         const flatten = (items: MenuItem[], level = 0, parentKey = ""): FlatMenuItem[] => {
             return items.reduce((acc: FlatMenuItem[], item) => {
-                const flatItem: FlatMenuItem = {
-                    ...item,
-                    level,
-                    parentKey,
-                };
-                acc.push(flatItem);
-                if (item.children?.length) {
-                    acc.push(...flatten(item.children, level + 1, item.key));
+                if (item.path) {
+                    // 只处理有path的菜单项
+                    const flatItem: FlatMenuItem = {
+                        ...item,
+                        level,
+                        parentKey,
+                        path: item.path, // 确保path字段存在
+                    };
+                    acc.push(flatItem);
+                    if (item.children?.length) {
+                        acc.push(...flatten(item.children, level + 1, item.key));
+                    }
                 }
                 return acc;
             }, []);
@@ -73,19 +80,64 @@ const DashboardLayout = () => {
         return flatten(getMenuItems(routes));
     }, []);
 
-    // 初始化选中状态
-    React.useEffect(() => {
+    // 分拆useEffect：处理URL变化时的菜单项匹配
+    useEffect(() => {
+        // 找到与当前路径匹配的菜单项
         const matchingItem = flatMenuItems.find(item => item.path === location.pathname);
-        if (matchingItem) {
+        if (!matchingItem) return;
+
+        // 更新选中的菜单项
+        if (selectedKey !== matchingItem.key) {
             setSelectedKey(matchingItem.key);
-            // 展开所有父级菜单
-            let currentItem = matchingItem;
-            const parentKeys: string[] = [];
-            while (currentItem.parentKey) {
-                parentKeys.push(currentItem.parentKey);
-                currentItem = flatMenuItems.find(item => item.key === currentItem.parentKey) as FlatMenuItem;
-            }
-            setOpenKeys(prev => [...new Set([...prev, ...parentKeys])]);
+        }
+    }, [location.pathname, flatMenuItems, selectedKey]);
+
+    // 分拆useEffect：处理URL变化时的标签添加
+    useEffect(() => {
+        // 找到与当前路径匹配的菜单项
+        const matchingItem = flatMenuItems.find(item => item.path === location.pathname);
+        if (!matchingItem) return;
+
+        // 添加标签页
+        addTab({
+            key: matchingItem.key,
+            title: matchingItem.label,
+            path: matchingItem.path,
+            icon: matchingItem.icon,
+            closable: matchingItem.key !== "dashboard-content", // 仪表盘不可关闭
+        });
+    }, [location.pathname, flatMenuItems, addTab]);
+
+    // 分拆useEffect：处理URL变化时的父级菜单展开
+    useEffect(() => {
+        // 找到与当前路径匹配的菜单项
+        const matchingItem = flatMenuItems.find(item => item.path === location.pathname);
+        if (!matchingItem) return;
+
+        // 展开所有父级菜单，使用函数式更新避免依赖循环
+        let currentItem = matchingItem;
+        const parentKeys: string[] = [];
+
+        while (currentItem.parentKey) {
+            parentKeys.push(currentItem.parentKey);
+            const parent = flatMenuItems.find(item => item.key === currentItem.parentKey);
+            if (!parent) break;
+            currentItem = parent as FlatMenuItem;
+        }
+
+        // 只在有新的父级菜单需要展开时更新
+        if (parentKeys.length > 0) {
+            setOpenKeys(prev => {
+                // 将新的父级菜单与当前展开的菜单合并，去重
+                const newKeys = [...new Set([...prev, ...parentKeys])];
+
+                // 如果没有变化，返回原数组避免重渲染
+                if (newKeys.length === prev.length && newKeys.every(key => prev.includes(key))) {
+                    return prev;
+                }
+
+                return newKeys;
+            });
         }
     }, [location.pathname, flatMenuItems]);
 
@@ -114,10 +166,20 @@ const DashboardLayout = () => {
                 });
             } else if (item.path) {
                 setSelectedKey(item.key);
+
+                // 添加标签页
+                addTab({
+                    key: item.key,
+                    title: item.label,
+                    path: item.path,
+                    icon: item.icon,
+                    closable: item.key !== "dashboard-content", // 仪表盘不可关闭
+                });
+
                 navigate(item.path);
             }
         },
-        [navigate, flatMenuItems],
+        [navigate, flatMenuItems, addTab],
     );
 
     // 处理折叠按钮点击
@@ -201,11 +263,26 @@ const DashboardLayout = () => {
                         </button>
                     </div>
                 </header>
+
+                <TabsBar />
+
                 <div className={styles.content}>
                     <Outlet />
                 </div>
             </main>
         </div>
+    );
+};
+
+/**
+ * 仪表盘布局组件
+ * @description 提供统一的仪表盘布局，包括侧边栏、顶部栏和内容区域
+ */
+const DashboardLayout = () => {
+    return (
+        <TabsProvider>
+            <DashboardLayoutInner />
+        </TabsProvider>
     );
 };
 
