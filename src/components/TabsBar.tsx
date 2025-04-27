@@ -13,11 +13,25 @@ import { useNavigate } from "react-router-dom";
 import styles from "@styles/components/tabs-bar.module.scss";
 
 const TabsBar: React.FC = () => {
-    const { state, removeTab, removeOtherTabs, removeAllTabs, setActiveTab } = useTabsContext();
+    const { state, removeTab, removeOtherTabs, removeAllTabs, setActiveTab, updateTabClosability } = useTabsContext();
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const moreButtonRef = useRef<HTMLButtonElement>(null);
+
+    // 判断当前激活的标签是否可关闭
+    const isActiveTabClosable = useCallback(() => {
+        if (state.tabs.length <= 1) return false;
+        if (!state.activeTab) return false;
+
+        const activeTab = state.tabs.find(tab => tab.key === state.activeTab);
+        return activeTab?.closable !== false;
+    }, [state.tabs, state.activeTab]);
+
+    // 当标签列表或活动标签变化时，更新标签的可关闭状态
+    useEffect(() => {
+        updateTabClosability();
+    }, [state.tabs.length, state.activeTab, updateTabClosability]);
 
     const handleTabClick = useCallback(
         (tab: TabItem) => {
@@ -32,9 +46,18 @@ const TabsBar: React.FC = () => {
     const handleRemoveTab = useCallback(
         (e: React.MouseEvent, key: string) => {
             e.stopPropagation(); // 阻止冒泡，避免触发tabClick
+
+            // 查找要关闭的标签
+            const tab = state.tabs.find(t => t.key === key);
+
+            // 如果标签不存在或者明确标记为不可关闭，不进行关闭操作
+            if (!tab || tab.closable === false) {
+                return;
+            }
+
             removeTab(key);
         },
-        [removeTab],
+        [removeTab, state.tabs],
     );
 
     const handleContextMenu = useCallback(
@@ -48,12 +71,16 @@ const TabsBar: React.FC = () => {
         [removeOtherTabs],
     );
 
-    const handleCloseAllTabs = useCallback(() => {
-        if (state.tabs.length > 0 && window.confirm("确定要关闭所有标签页吗？")) {
-            removeAllTabs();
-        }
-        setShowDropdown(false);
-    }, [removeAllTabs, state.tabs.length]);
+    const handleCloseAllTabs = useCallback(
+        (e: React.MouseEvent) => {
+            e.stopPropagation(); // 阻止冒泡
+            if (state.tabs.length > 0 && window.confirm("确定要关闭所有标签页吗？")) {
+                removeAllTabs();
+            }
+            setShowDropdown(false);
+        },
+        [removeAllTabs, state.tabs.length],
+    );
 
     const handleToggleFullscreen = useCallback(() => {
         if (!document.fullscreenElement) {
@@ -103,12 +130,22 @@ const TabsBar: React.FC = () => {
         };
     }, [showDropdown]); // 添加依赖项
 
-    const handlePinCurrentTab = useCallback((e: React.MouseEvent) => {
-        e.stopPropagation(); // 阻止冒泡
-        // 实现固定当前标签页的逻辑
-        console.log("固定当前标签页");
-        setShowDropdown(false);
-    }, []);
+    const handlePinCurrentTab = useCallback(
+        (e: React.MouseEvent) => {
+            e.stopPropagation(); // 阻止冒泡
+            // 实现固定当前标签页的逻辑 - 通过将closable设置为false来实现
+            if (state.activeTab) {
+                // 查找当前标签
+                const currentTab = state.tabs.find(tab => tab.key === state.activeTab);
+                if (currentTab) {
+                    // 切换固定状态
+                    updateTabClosability();
+                }
+            }
+            setShowDropdown(false);
+        },
+        [state.activeTab, state.tabs, updateTabClosability],
+    );
 
     const handleCloseOtherTabs = useCallback(
         (e: React.MouseEvent) => {
@@ -125,14 +162,17 @@ const TabsBar: React.FC = () => {
         (e: React.MouseEvent) => {
             e.stopPropagation(); // 阻止冒泡
             if (state.activeTab) {
-                removeTab(state.activeTab);
-                setShowDropdown(false);
+                const currentTab = state.tabs.find(tab => tab.key === state.activeTab);
+                if (currentTab && currentTab.closable !== false) {
+                    removeTab(state.activeTab);
+                }
             }
+            setShowDropdown(false);
         },
-        [removeTab, state.activeTab],
+        [removeTab, state.activeTab, state.tabs],
     );
 
-    // 如果没有标签，不渲染组件
+    // 如果没有标签，不渲染组件（理论上这种情况不会发生，因为我们总是保持至少一个标签）
     if (!state.tabs.length) return null;
 
     return (
@@ -148,7 +188,9 @@ const TabsBar: React.FC = () => {
                     >
                         {tab.icon && <span className={styles.tabIcon}>{tab.icon}</span>}
                         <span className={styles.tabTitle}>{tab.title}</span>
-                        {tab.closable !== false && (
+
+                        {/* 仅当有多个标签或者标签被标记为可关闭时显示关闭按钮 */}
+                        {state.tabs.length > 1 && tab.closable !== false && (
                             <span
                                 className={styles.tabClose}
                                 onClick={e => handleRemoveTab(e, tab.key)}
@@ -177,7 +219,12 @@ const TabsBar: React.FC = () => {
                                 <RiPushpinFill />
                                 <span>固定当前标签</span>
                             </button>
-                            <button className={styles.dropdownItem} onClick={handleCloseCurrentTab} type="button">
+                            <button
+                                className={`${styles.dropdownItem} ${!isActiveTabClosable() ? styles.disabled : ""}`}
+                                onClick={isActiveTabClosable() ? handleCloseCurrentTab : undefined}
+                                type="button"
+                                disabled={!isActiveTabClosable()}
+                            >
                                 <RiCloseLine />
                                 <span>关闭当前标签</span>
                             </button>
@@ -185,7 +232,12 @@ const TabsBar: React.FC = () => {
                                 <RiCloseFill />
                                 <span>关闭其他标签</span>
                             </button>
-                            <button className={styles.dropdownItem} onClick={handleCloseAllTabs} type="button">
+                            <button
+                                className={`${styles.dropdownItem} ${state.tabs.length <= 1 ? styles.disabled : ""}`}
+                                onClick={state.tabs.length > 1 ? handleCloseAllTabs : undefined}
+                                type="button"
+                                disabled={state.tabs.length <= 1}
+                            >
                                 <RiCloseCircleLine />
                                 <span>关闭所有标签</span>
                             </button>
