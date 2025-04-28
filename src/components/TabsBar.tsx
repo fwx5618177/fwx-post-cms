@@ -150,17 +150,7 @@ const TabsBar: React.FC = () => {
             disabled: state.tabs.length <= 1,
         },
     ];
-    const handleDropdownSelect = useCallback(
-        (item: DropdownItem) => {
-            if (item.key === "pin") pinTab(state.activeTab!);
-            if (item.key === "unpin") unpinTab(state.activeTab!);
-            if (item.key === "closeCurrent") handleCloseCurrentTab();
-            if (item.key === "closeOthers") handleCloseOtherTabs();
-            if (item.key === "closeAll") handleCloseAllTabs();
-            setShowDropdown(false);
-        },
-        [state.activeTab, pinTab, unpinTab],
-    );
+
     const handleDropdownClose = useCallback(() => setShowDropdown(false), []);
 
     // 关闭当前/其他/所有tab
@@ -182,6 +172,18 @@ const TabsBar: React.FC = () => {
             removeAllTabs();
         }
     }, [removeAllTabs, state.tabs.length]);
+
+    const handleDropdownSelect = useCallback(
+        (item: DropdownItem) => {
+            if (item.key === "pin") pinTab(state.activeTab!);
+            if (item.key === "unpin") unpinTab(state.activeTab!);
+            if (item.key === "closeCurrent") handleCloseCurrentTab();
+            if (item.key === "closeOthers") handleCloseOtherTabs();
+            if (item.key === "closeAll") handleCloseAllTabs();
+            setShowDropdown(false);
+        },
+        [state.activeTab, pinTab, unpinTab, handleCloseCurrentTab, handleCloseOtherTabs, handleCloseAllTabs],
+    );
 
     // 全屏切换
     const handleToggleFullscreen = useCallback(() => {
