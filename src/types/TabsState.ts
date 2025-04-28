@@ -7,6 +7,7 @@ export interface TabItem {
     icon?: ReactNode;
     closable?: boolean;
     timestamp?: number;
+    pinned?: boolean;
 }
 
 // 导航信息接口
@@ -32,4 +33,6 @@ export type TabsAction =
     | { type: "PUSH_TO_HISTORY"; payload: { key: string } }
     | { type: "POP_FROM_HISTORY" }
     | { type: "SET_TAB_CLOSABLE"; payload: { key: string; closable: boolean } }
-    | { type: "CLEAR_NAVIGATION" };
+    | { type: "CLEAR_NAVIGATION" }
+    | { type: "PIN_TAB"; payload: { key: string } }
+    | { type: "UNPIN_TAB"; payload: { key: string } };

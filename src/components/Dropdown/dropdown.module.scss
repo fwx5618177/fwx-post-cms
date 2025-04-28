@@ -1,0 +1,260 @@
+.dropdown {
+    position: fixed;
+    z-index: 2000;
+    background: #2c2e33;
+    color: #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    min-width: 120px;
+    padding: 6px 0;
+    font-size: 14px;
+    user-select: none;
+    overflow: auto;
+    max-height: 320px;
+    outline: none;
+
+    &.small {
+        min-width: 140px;
+        width: 140px;
+        font-size: 13px;
+    }
+
+    &.medium {
+        min-width: 160px;
+        width: 160px;
+        font-size: 14px;
+    }
+
+    &.large {
+        min-width: 200px;
+        width: 200px;
+        font-size: 16px;
+    }
+
+    .dropdownArrow {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        pointer-events: none;
+        z-index: 1;
+
+        &.top {
+            left: 50%;
+            top: 100%;
+            transform: translateX(-50%) rotate(180deg);
+        }
+
+        &.topLeft {
+            left: 16px;
+            top: 100%;
+            transform: rotate(180deg);
+        }
+
+        &.topRight {
+            right: 16px;
+            top: 100%;
+            transform: rotate(180deg);
+        }
+
+        &.bottom {
+            left: 50%;
+            bottom: 100%;
+            transform: translateX(-50%);
+        }
+
+        &.bottomLeft {
+            left: 16px;
+            bottom: 100%;
+        }
+
+        &.bottomRight {
+            right: 16px;
+            bottom: 100%;
+        }
+
+        &.left {
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+        }
+
+        &.right {
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+        }
+
+        svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+            fill: #2c2e33;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.12));
+        }
+    }
+
+    .dropdownList {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        max-height: inherit;
+        overflow-y: auto;
+    }
+
+    .dropdownItem {
+        display: flex;
+        align-items: center;
+        padding: 10px 20px;
+        cursor: pointer;
+        color: #e9ecef;
+        background: transparent;
+        transition: background 0.2s, color 0.2s;
+        border: none;
+        width: 100%;
+        text-align: left;
+        font-family: inherit;
+        list-style: none;
+
+        &:hover:not(.disabled),
+        &.active:not(.disabled) {
+            background: #35363c;
+            color: #ffd666;
+        }
+
+        &.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+
+            &:hover {
+                background: transparent;
+                color: #e9ecef;
+            }
+        }
+    }
+}
+
+.fadeIn {
+    animation: dropdownFadeIn 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fadeOut {
+    animation: dropdownFadeOut 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes dropdownFadeOut {
+    from {
+        opacity: 1;
+        transform: none;
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+.dropdownGroupLabel {
+    font-size: 12px;
+    color: #adb5bd;
+    padding: 6px 20px 2px 20px;
+    font-weight: 500;
+    pointer-events: none;
+}
+
+.dropdownItem.active:not(.disabled) {
+    background: #35363c;
+    color: #ffd666;
+}
+
+.dropdownDivider {
+    height: 1px;
+    background: #36373a;
+    margin: 4px 0;
+    border: none;
+}
+
+.dropdown.contextMenu {
+    border-radius: 5px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
+    padding: 2px 0;
+    min-width: 120px;
+}
+
+.dropdown.contextMenu .dropdownItem {
+    padding: 7px 16px;
+    font-size: 13px;
+}
+
+.dropdown.contextMenu .dropdownGroupLabel {
+    padding: 4px 16px 2px 16px;
+    font-size: 11px;
+}
+
+.dropdown.contextMenu .dropdownDivider {
+    margin: 2px 0;
+}
+
+.dropdownItemIcon {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.dropdownItemWithChildren {
+    position: relative;
+    padding-right: 32px !important;
+}
+
+.dropdownSubmenu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    margin-left: 2px;
+    z-index: 2100;
+    min-width: 140px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+.dropdownShortcut {
+    margin-left: auto;
+    color: #adb5bd;
+    font-size: 12px;
+    padding-left: 16px;
+    white-space: nowrap;
+}
+
+.dropdownLoading {
+    margin-left: 8px;
+    font-size: 12px;
+    color: #ffd666;
+    animation: dropdownLoadingSpin 1s linear infinite;
+    display: inline-block;
+}
+
+@keyframes dropdownLoadingSpin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.dropdownItemSubArrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #adb5bd;
+}

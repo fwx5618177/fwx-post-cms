@@ -268,6 +268,26 @@ export const routes: IRoutePage[] = [
             },
         ],
     },
+    {
+        key: "components",
+        label: "组件",
+        icon: RiAppsLine,
+        path: "/components",
+        component: Pages.DashboardLayout,
+        menuShow: true,
+        auth: false,
+        children: [
+            {
+                key: "dropdown-demo",
+                label: "Dropdown",
+                icon: RiAppsLine,
+                path: "dropdown",
+                component: Pages.DropdownDemo,
+                menuShow: true,
+                auth: false,
+            },
+        ],
+    },
     // 通配符路由放在最后
     {
         key: "not-found",

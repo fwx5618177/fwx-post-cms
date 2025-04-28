@@ -42,4 +42,7 @@ export const Pages = {
     // 认证相关
     Login: lazy(() => import("../pages/login")),
     Register: lazy(() => import("../pages/register")),
+
+    // 组件演示
+    DropdownDemo: lazy(() => import("../pages/dropdown-demo")),
 };

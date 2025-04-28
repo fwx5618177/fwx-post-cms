@@ -171,24 +171,39 @@ const tabsReducer = (state: TabsState, action: TabsAction): TabsState => {
         }
 
         case "REMOVE_ALL_TABS": {
-            // 删除所有标签，然后添加仪表盘
+            // 只保留 pinned tab
+            const pinnedTabs = state.tabs.filter(tab => tab.pinned);
+            // 如果没有 pinned tab，保留仪表盘
+            if (pinnedTabs.length === 0) {
+                return {
+                    ...state,
+                    tabs: [
+                        {
+                            key: state.dashboardKey,
+                            title: "仪表盘",
+                            path: "/dashboard",
+                            closable: false, // 设置为不可关闭，因为这是唯一的标签
+                            timestamp: Date.now(),
+                        },
+                    ],
+                    activeTab: state.dashboardKey,
+                    tabToNavigate: {
+                        key: state.dashboardKey,
+                        path: "/dashboard",
+                    },
+                    tabHistory: [], // 清空历史记录
+                };
+            }
+            // 否则保留所有 pinned tab，激活第一个 pinned tab
             return {
                 ...state,
-                tabs: [
-                    {
-                        key: state.dashboardKey,
-                        title: "仪表盘",
-                        path: "/dashboard",
-                        closable: false, // 设置为不可关闭，因为这是唯一的标签
-                        timestamp: Date.now(),
-                    },
-                ],
-                activeTab: state.dashboardKey,
+                tabs: pinnedTabs,
+                activeTab: pinnedTabs[0].key,
                 tabToNavigate: {
-                    key: state.dashboardKey,
-                    path: "/dashboard",
+                    key: pinnedTabs[0].key,
+                    path: pinnedTabs[0].path,
                 },
-                tabHistory: [], // 清空历史记录
+                tabHistory: [],
             };
         }
 
@@ -278,6 +293,40 @@ const tabsReducer = (state: TabsState, action: TabsAction): TabsState => {
             };
         }
 
+        case "PIN_TAB": {
+            const { key } = action.payload;
+            const tabToPin = state.tabs.find(tab => tab.key === key);
+            if (!tabToPin || tabToPin.pinned) return state;
+            // 设为 pinned，并移到最前面
+            const newTabs = [
+                { ...tabToPin, pinned: true, closable: false },
+                ...state.tabs.filter(tab => tab.key !== key),
+            ];
+            return {
+                ...state,
+                tabs: newTabs,
+            };
+        }
+
+        case "UNPIN_TAB": {
+            const { key } = action.payload;
+            const tabToUnpin = state.tabs.find(tab => tab.key === key);
+            if (!tabToUnpin || !tabToUnpin.pinned) return state;
+            // 设为未 pinned，并移到第一个未 pinned 的tab后面
+            const tabsWithout = state.tabs.filter(tab => tab.key !== key);
+            const firstUnpinnedIdx = tabsWithout.findIndex(tab => !tab.pinned);
+            const insertIdx = firstUnpinnedIdx === -1 ? tabsWithout.length : firstUnpinnedIdx;
+            const newTabs = [
+                ...tabsWithout.slice(0, insertIdx),
+                { ...tabToUnpin, pinned: false, closable: true },
+                ...tabsWithout.slice(insertIdx),
+            ];
+            return {
+                ...state,
+                tabs: newTabs,
+            };
+        }
+
         default:
             return state;
     }
@@ -296,6 +345,8 @@ interface TabsContextValue {
     setTabClosable: (key: string, closable: boolean) => void;
     updateTabClosability: () => void; // 新增方法：更新标签关闭状态
     generateTabKey: (path: string, title: string) => string; // 新增：生成唯一Key
+    pinTab: (key: string) => void;
+    unpinTab: (key: string) => void;
 }
 
 const TabsContext = createContext<TabsContextValue>({
@@ -309,6 +360,8 @@ const TabsContext = createContext<TabsContextValue>({
     setTabClosable: () => {},
     updateTabClosability: () => {},
     generateTabKey: () => "",
+    pinTab: () => {},
+    unpinTab: () => {},
 });
 
 // 创建Provider组件
@@ -422,6 +475,15 @@ export const TabsProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         [state.tabs],
     );
 
+    // 固定标签
+    const pinTab = useCallback((key: string) => {
+        dispatch({ type: "PIN_TAB", payload: { key } });
+    }, []);
+    // 取消固定标签
+    const unpinTab = useCallback((key: string) => {
+        dispatch({ type: "UNPIN_TAB", payload: { key } });
+    }, []);
+
     return (
         <TabsContext.Provider
             value={{
@@ -435,6 +497,8 @@ export const TabsProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 setTabClosable,
                 updateTabClosability,
                 generateTabKey,
+                pinTab,
+                unpinTab,
             }}
         >
             {children}
