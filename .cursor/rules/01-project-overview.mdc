@@ -1,0 +1,30 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 项目概览
+
+这是一个基于 React 的内容管理系统（CMS），使用 TypeScript 和 Vite 构建。该应用程序采用模块化架构，具有清晰的关注点分离。
+
+## 入口文件
+- [main.tsx](mdc:src/main.tsx) - 应用程序主入口
+- [App.tsx](mdc:src/App.tsx) - React 根组件
+
+## 核心配置
+- [vite.config.ts](mdc:vite.config.ts) - Vite 构建和开发配置
+- [tsconfig.json](mdc:tsconfig.json) - TypeScript 配置
+- [.eslintrc](mdc:.eslintrc) - ESLint 规则和配置
+- [.prettierrc](mdc:.prettierrc) - 代码格式化规则
+
+## 项目结构
+- `/src/components` - 可复用的 React 组件
+- `/src/pages` - 页面组件和路由
+- `/src/context` - React Context 提供者
+- `/src/layout` - 布局组件和模板
+- `/src/styles` - 全局样式和主题定义
+- `/src/utils` - 工具函数和辅助方法
+- `/src/services` - API 服务和数据获取
+- `/src/types` - TypeScript 类型定义
+- `/src/config` - 应用程序配置
+- `/src/request` - API 请求处理和配置
