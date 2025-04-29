@@ -1,129 +1,370 @@
+// Variables
+$primary-color: #6366f1;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$error-color: #ef4444;
+
+// Social colors
+$google-color: #ea4335;
+$github-color: #24292e;
+$gitlab-color: #fc6d26;
+$wechat-color: #07c160;
+$qq-color: #12b7f5;
+$sso-color: #ff6b6b;
+$phone-color: #38b2ac;
+
+@use "sass:color";
+
 .loginPage {
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f0f2f5;
-    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 
-    .loginCard {
-        width: 100%;
-        max-width: 400px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        padding: 32px;
+    @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+    }
 
-        .header {
-            text-align: center;
-            margin-bottom: 32px;
+    .imageSection {
+        position: relative;
+        background-size: cover;
+        background-position: center;
 
-            .logo {
-                font-size: 28px;
-                color: #1890ff;
-                margin-bottom: 16px;
-            }
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
+        }
 
-            h1 {
-                font-size: 24px;
-                font-weight: 600;
-                color: #1a1a1a;
-                margin-bottom: 8px;
+        .brandContent {
+            position: relative;
+            z-index: 1;
+            padding: 48px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            color: white;
+
+            h2 {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 1rem;
+                line-height: 1.2;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }
 
             p {
-                color: #666;
-                font-size: 14px;
+                font-size: 1.125rem;
+                max-width: 32rem;
+                margin-bottom: 2rem;
+                line-height: 1.6;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            display: none;
+        }
+    }
+
+    .formSection {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 48px;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+
+        .header {
+            margin-bottom: 48px;
+
+            h1 {
+                font-size: 2rem;
+                font-weight: 700;
+                color: $text-primary;
+                margin-bottom: 1rem;
+            }
+
+            p {
+                color: $text-secondary;
+                font-size: 1rem;
             }
         }
 
         .form {
-            .formItem {
+            max-width: 400px;
+            width: 100%;
+
+            .inputGroup {
                 margin-bottom: 24px;
 
                 label {
                     display: block;
-                    margin-bottom: 8px;
-                    color: #1a1a1a;
-                    font-size: 14px;
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    color: $text-primary;
+                    margin-bottom: 0.5rem;
                 }
 
                 input {
                     width: 100%;
-                    padding: 8px 12px;
-                    border: 1px solid #d9d9d9;
-                    border-radius: 4px;
-                    font-size: 14px;
-                    transition: all 0.3s;
+                    padding: 0.75rem 1rem;
+                    border: 2px solid #e5e7eb;
+                    border-radius: 0.5rem;
+                    background-color: rgba(255, 255, 255, 0.8);
+                    backdrop-filter: blur(8px);
+                    font-size: 1rem;
+                    transition: all 0.2s ease;
 
                     &:focus {
-                        border-color: #1890ff;
-                        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
                         outline: none;
+                        border-color: $primary-color;
+                        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+                    }
+
+                    &::placeholder {
+                        color: #9ca3af;
                     }
                 }
-            }
 
-            .remember {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 24px;
-
-                label {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    color: #666;
-                    font-size: 14px;
-                    cursor: pointer;
-                }
-
-                a {
-                    color: #1890ff;
-                    font-size: 14px;
-                    text-decoration: none;
-
-                    &:hover {
-                        color: #40a9ff;
-                    }
+                .error {
+                    color: $error-color;
+                    font-size: 0.875rem;
+                    margin-top: 0.5rem;
                 }
             }
 
             .submitButton {
                 width: 100%;
-                padding: 8px 16px;
-                background: #1890ff;
+                padding: 0.875rem 1.5rem;
+                background: $primary-color;
+                color: white;
                 border: none;
-                border-radius: 4px;
-                color: #fff;
-                font-size: 16px;
+                border-radius: 0.5rem;
+                font-size: 1rem;
+                font-weight: 500;
                 cursor: pointer;
-                transition: all 0.3s;
+                transition: all 0.2s ease;
 
                 &:hover {
-                    background: #40a9ff;
+                    background: color.adjust($primary-color, $lightness: -5%);
                 }
 
                 &:active {
-                    background: #096dd9;
+                    transform: translateY(1px);
+                }
+
+                &:disabled {
+                    opacity: 0.7;
+                    cursor: not-allowed;
+                }
+            }
+        }
+
+        .socialLogin {
+            margin-top: 32px;
+            width: 100%;
+            max-width: 400px;
+
+            .divider {
+                display: flex;
+                align-items: center;
+                margin: 24px 0;
+                color: $text-secondary;
+                font-size: 0.875rem;
+
+                &::before,
+                &::after {
+                    content: "";
+                    flex: 1;
+                    height: 1px;
+                    background-color: #e5e7eb;
+                }
+
+                span {
+                    padding: 0 16px;
+                }
+            }
+
+            .socialButtons {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+
+                button {
+                    position: relative;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    padding: 0.75rem 1.25rem;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 0.5rem;
+                    background: rgba(255, 255, 255, 0.8);
+                    color: $text-primary;
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    overflow: hidden;
+
+                    svg {
+                        width: 20px;
+                        height: 20px;
+                        margin-right: 12px;
+                        transition: transform 0.3s ease;
+                    }
+
+                    span {
+                        position: relative;
+                        z-index: 1;
+                        color: $text-primary;
+                    }
+
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                    }
+
+                    &:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+                        svg {
+                            transform: scale(1.1);
+                        }
+                    }
+
+                    &:active {
+                        transform: translateY(0);
+                    }
+
+                    // Google button
+                    &.google {
+                        svg {
+                            color: $google-color;
+                        }
+
+                        &::before {
+                            background: linear-gradient(45deg, rgba($google-color, 0.1), rgba($google-color, 0));
+                        }
+
+                        &:hover::before {
+                            opacity: 1;
+                        }
+                    }
+
+                    // GitHub button
+                    &.github {
+                        svg {
+                            color: $github-color;
+                        }
+
+                        &::before {
+                            background: linear-gradient(45deg, rgba($github-color, 0.1), rgba($github-color, 0));
+                        }
+
+                        &:hover::before {
+                            opacity: 1;
+                        }
+                    }
+
+                    // GitLab button
+                    &.gitlab {
+                        svg {
+                            color: $gitlab-color;
+                        }
+
+                        &::before {
+                            background: linear-gradient(45deg, rgba($gitlab-color, 0.1), rgba($gitlab-color, 0));
+                        }
+
+                        &:hover::before {
+                            opacity: 1;
+                        }
+                    }
+
+                    // WeChat button
+                    &.wechat {
+                        svg {
+                            color: $wechat-color;
+                        }
+
+                        &::before {
+                            background: linear-gradient(45deg, rgba($wechat-color, 0.1), rgba($wechat-color, 0));
+                        }
+
+                        &:hover::before {
+                            opacity: 1;
+                        }
+                    }
+
+                    // QQ button
+                    &.qq {
+                        svg {
+                            color: $qq-color;
+                        }
+
+                        &::before {
+                            background: linear-gradient(45deg, rgba($qq-color, 0.1), rgba($qq-color, 0));
+                        }
+
+                        &:hover::before {
+                            opacity: 1;
+                        }
+                    }
+
+                    // SSO button
+                    &.sso {
+                        svg {
+                            color: $sso-color;
+                        }
+
+                        &::before {
+                            background: linear-gradient(45deg, rgba($sso-color, 0.1), rgba($sso-color, 0));
+                        }
+
+                        &:hover::before {
+                            opacity: 1;
+                        }
+                    }
+
+                    // Phone button
+                    &.phone {
+                        svg {
+                            color: $phone-color;
+                        }
+
+                        &::before {
+                            background: linear-gradient(45deg, rgba($phone-color, 0.1), rgba($phone-color, 0));
+                        }
+
+                        &:hover::before {
+                            opacity: 1;
+                        }
+                    }
                 }
             }
         }
 
         .footer {
-            margin-top: 24px;
+            margin-top: 32px;
             text-align: center;
-            color: #666;
-            font-size: 14px;
+            font-size: 0.875rem;
+            color: $text-secondary;
 
             a {
-                color: #1890ff;
+                color: $primary-color;
                 text-decoration: none;
-                margin-left: 4px;
+                font-weight: 500;
 
                 &:hover {
-                    color: #40a9ff;
+                    text-decoration: underline;
                 }
             }
         }

@@ -1,0 +1,15 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 标准设计准则
+
+## 样式
+- 必须使用 xx.module.scss
+- 所有的 scss 文件都必须写到 `src/styles` 文件下
+- scss 文件内容必须保持内嵌的结构化
+- scss 禁止导入其他文件
+
+## 开发
+- 禁止用 antd 组件

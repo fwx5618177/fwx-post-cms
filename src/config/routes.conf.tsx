@@ -20,6 +20,7 @@ import {
     RiAppsLine,
     RiLayoutLine,
     RiAlertLine,
+    RiLockPasswordLine,
 } from "react-icons/ri";
 import { Pages } from "./pageLazyLoad";
 /**
@@ -202,24 +203,6 @@ export const routes: IRoutePage[] = [
             },
         ],
     },
-    {
-        key: "login",
-        label: "登录",
-        icon: RiLoginBoxLine,
-        path: "/login",
-        component: Pages.Login,
-        menuShow: false,
-        auth: false,
-    },
-    {
-        key: "register",
-        label: "注册",
-        icon: RiUserAddLine,
-        path: "/register",
-        component: Pages.Register,
-        menuShow: false,
-        auth: false,
-    },
     // 错误页面路由组
     {
         key: "error",
@@ -287,6 +270,34 @@ export const routes: IRoutePage[] = [
                 auth: false,
             },
         ],
+    },
+
+    {
+        key: "login",
+        label: "登录",
+        icon: RiLoginBoxLine,
+        path: "/login",
+        component: Pages.Login,
+        menuShow: false,
+        auth: false,
+    },
+    {
+        key: "register",
+        label: "注册",
+        icon: RiUserAddLine,
+        path: "/register",
+        component: Pages.Register,
+        menuShow: false,
+        auth: false,
+    },
+    {
+        key: "forgot-password",
+        label: "忘记密码",
+        icon: RiLockPasswordLine,
+        path: "/forgot-password",
+        component: Pages.ForgotPassword,
+        menuShow: false,
+        auth: false,
     },
     // 通配符路由放在最后
     {
