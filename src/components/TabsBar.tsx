@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useRef, useEffect } from "react";
+import React, { useCallback, useState, useRef, useEffect, useMemo } from "react";
 import { useTabsContext } from "../context/TabsContext";
 import { TabItem } from "../types/TabsState";
 import {
@@ -60,21 +60,108 @@ const TabsBar: React.FC = () => {
         [removeTab, state.tabs],
     );
 
+    // 关闭当前/其他/所有tab
+    const handleCloseCurrentTab = useCallback(() => {
+        if (state.activeTab) {
+            const currentTab = state.tabs.find(tab => tab.key === state.activeTab);
+            if (currentTab && currentTab.closable !== false) {
+                removeTab(state.activeTab);
+            }
+        }
+    }, [removeTab, state.activeTab, state.tabs]);
+
+    const handleCloseOtherTabs = useCallback(() => {
+        if (state.activeTab) {
+            removeOtherTabs(state.activeTab);
+        }
+    }, [removeOtherTabs, state.activeTab]);
+
+    const handleCloseAllTabs = useCallback(() => {
+        if (state.tabs.length > 0 && window.confirm("确定要关闭所有标签页吗？")) {
+            removeAllTabs();
+        }
+    }, [removeAllTabs, state.tabs.length]);
+
+    // 全屏切换
+    const handleToggleFullscreen = useCallback(() => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.error(`无法进入全屏模式: ${err.message}`);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }, []);
+
     // 右键菜单
     const handleContextMenu = useCallback((e: React.MouseEvent, tab: TabItem) => {
         e.preventDefault();
         setContextMenu({ visible: true, x: e.clientX, y: e.clientY, tab });
     }, []);
+
     const handleContextMenuClose = useCallback(() => setContextMenu(v => ({ ...v, visible: false })), []);
+    const handleDropdownClose = useCallback(() => setShowDropdown(false), []);
+
+    // 统一管理所有操作的集中Map
+    const actionMap = useMemo(() => {
+        // 定义统一的操作对象
+        return {
+            // 右键菜单和标签上下文相关操作
+            pin: (tabKey?: string) => tabKey && pinTab(tabKey),
+            unpin: (tabKey?: string) => tabKey && unpinTab(tabKey),
+            close: (tabKey?: string) => tabKey && removeTab(tabKey),
+
+            // 全局操作
+            pinActive: () => state.activeTab && pinTab(state.activeTab),
+            unpinActive: () => state.activeTab && unpinTab(state.activeTab),
+            closeCurrent: handleCloseCurrentTab,
+            closeOthers: handleCloseOtherTabs,
+            closeAll: handleCloseAllTabs,
+            toggleFullscreen: handleToggleFullscreen,
+        };
+    }, [
+        pinTab,
+        unpinTab,
+        removeTab,
+        state.activeTab,
+        handleCloseCurrentTab,
+        handleCloseOtherTabs,
+        handleCloseAllTabs,
+        handleToggleFullscreen,
+    ]);
+
+    // 处理右键菜单选择
     const handleContextMenuSelect = useCallback(
         (item: DropdownItem) => {
             if (!contextMenu.tab) return;
-            if (item.key === "pin") pinTab(contextMenu.tab.key);
-            if (item.key === "unpin") unpinTab(contextMenu.tab.key);
+
+            const actionKey = item.key as keyof typeof actionMap;
+            const action = actionMap[actionKey];
+            if (action) {
+                action(contextMenu.tab.key);
+            }
+
             setContextMenu(v => ({ ...v, visible: false }));
         },
-        [contextMenu.tab, pinTab, unpinTab],
+        [contextMenu.tab, actionMap],
     );
+
+    // 处理下拉菜单选择
+    const handleDropdownSelect = useCallback(
+        (item: DropdownItem) => {
+            const actionKey = item.key as keyof typeof actionMap;
+            const action = actionMap[actionKey];
+            if (action) {
+                action();
+            }
+            setShowDropdown(false);
+        },
+        [actionMap],
+    );
+
+    // 右键菜单项
     const contextMenuItems: DropdownItem[] = contextMenu.tab
         ? [
               contextMenu.tab.pinned
@@ -103,7 +190,7 @@ const TabsBar: React.FC = () => {
     const dropdownItems: DropdownItem[] = [
         state.activeTab && state.tabs.find(tab => tab.key === state.activeTab)?.pinned
             ? {
-                  key: "unpin",
+                  key: "unpinActive",
                   label: (
                       <>
                           <RiPushpin2Fill style={{ marginRight: 8 }} />
@@ -112,7 +199,7 @@ const TabsBar: React.FC = () => {
                   ),
               }
             : {
-                  key: "pin",
+                  key: "pinActive",
                   label: (
                       <>
                           <RiPushpinFill style={{ marginRight: 8 }} />
@@ -151,54 +238,6 @@ const TabsBar: React.FC = () => {
         },
     ];
 
-    const handleDropdownClose = useCallback(() => setShowDropdown(false), []);
-
-    // 关闭当前/其他/所有tab
-    const handleCloseCurrentTab = useCallback(() => {
-        if (state.activeTab) {
-            const currentTab = state.tabs.find(tab => tab.key === state.activeTab);
-            if (currentTab && currentTab.closable !== false) {
-                removeTab(state.activeTab);
-            }
-        }
-    }, [removeTab, state.activeTab, state.tabs]);
-    const handleCloseOtherTabs = useCallback(() => {
-        if (state.activeTab) {
-            removeOtherTabs(state.activeTab);
-        }
-    }, [removeOtherTabs, state.activeTab]);
-    const handleCloseAllTabs = useCallback(() => {
-        if (state.tabs.length > 0 && window.confirm("确定要关闭所有标签页吗？")) {
-            removeAllTabs();
-        }
-    }, [removeAllTabs, state.tabs.length]);
-
-    const handleDropdownSelect = useCallback(
-        (item: DropdownItem) => {
-            if (item.key === "pin") pinTab(state.activeTab!);
-            if (item.key === "unpin") unpinTab(state.activeTab!);
-            if (item.key === "closeCurrent") handleCloseCurrentTab();
-            if (item.key === "closeOthers") handleCloseOtherTabs();
-            if (item.key === "closeAll") handleCloseAllTabs();
-            setShowDropdown(false);
-        },
-        [state.activeTab, pinTab, unpinTab, handleCloseCurrentTab, handleCloseOtherTabs, handleCloseAllTabs],
-    );
-
-    // 全屏切换
-    const handleToggleFullscreen = useCallback(() => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-                console.error(`无法进入全屏模式: ${err.message}`);
-            });
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-    }, []);
-
-    // 渲染顺序：pinned tab在前，普通tab在后
     const sortedTabs = [...state.tabs.filter(tab => tab.pinned), ...state.tabs.filter(tab => !tab.pinned)];
 
     if (!state.tabs.length) return null;
@@ -249,7 +288,7 @@ const TabsBar: React.FC = () => {
                     <button
                         ref={moreButtonRef}
                         className={styles.tabAction}
-                        onClick={e => setShowDropdown(v => !v)}
+                        onClick={() => setShowDropdown(v => !v)}
                         type="button"
                         title="菜单"
                     >
