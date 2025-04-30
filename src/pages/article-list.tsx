@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "@styles/pages/article-list.module.scss";
 import { FaSearch, FaFilter, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Table, { ColumnType, SortState } from "../components/Table";
 
 interface Article {
     id: number;
@@ -18,38 +19,54 @@ const ArticleList = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [selectedStatus, setSelectedStatus] = useState("all");
+    const [loading, setLoading] = useState(false);
+    const [articles, setArticles] = useState<Article[]>([]);
 
-    // Mock data
-    const articles: Article[] = [
-        {
-            id: 1,
-            title: "Getting Started with React",
-            category: "Frontend",
-            status: "published",
-            author: "John Doe",
-            publishDate: "2024-03-15",
-            views: 1234,
-        },
-        {
-            id: 2,
-            title: "Advanced TypeScript Tips",
-            category: "Programming",
-            status: "draft",
-            author: "Jane Smith",
-            publishDate: "2024-03-14",
-            views: 856,
-        },
-        {
-            id: 3,
-            title: "Node.js Best Practices",
-            category: "Backend",
-            status: "published",
-            author: "Mike Johnson",
-            publishDate: "2024-03-13",
-            views: 2341,
-        },
-        // Add more mock articles as needed
-    ];
+    // Fetch articles
+    useEffect(() => {
+        const fetchArticles = async () => {
+            try {
+                setLoading(true);
+                // TODO: Replace with actual API call
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+                setArticles([
+                    {
+                        id: 1,
+                        title: "Getting Started with React",
+                        category: "Frontend",
+                        status: "published",
+                        author: "John Doe",
+                        publishDate: "2024-03-15",
+                        views: 1234,
+                    },
+                    {
+                        id: 2,
+                        title: "Advanced TypeScript Tips",
+                        category: "Programming",
+                        status: "draft",
+                        author: "Jane Smith",
+                        publishDate: "2024-03-14",
+                        views: 856,
+                    },
+                    {
+                        id: 3,
+                        title: "Node.js Best Practices",
+                        category: "Backend",
+                        status: "published",
+                        author: "Mike Johnson",
+                        publishDate: "2024-03-13",
+                        views: 2341,
+                    },
+                ]);
+            } catch (error) {
+                console.error("Failed to fetch articles:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchArticles();
+    }, []);
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
@@ -73,22 +90,85 @@ const ArticleList = () => {
         return matchesSearch && matchesCategory && matchesStatus;
     });
 
-    const handleEdit = (id: number) => {
-        navigate(`/content/article/edit/${id}?mode=edit`);
+    const handleEdit = (record: Article) => {
+        navigate(`/content/article/edit/${record.id}?mode=edit`);
     };
 
-    const handleDelete = (id: number) => {
-        console.log("Delete article:", id);
+    const handleDelete = (record: Article) => {
+        console.log("Delete article:", record);
         // TODO: Implement delete functionality
     };
 
-    const handleView = (id: number) => {
-        navigate(`/content/article/edit/${id}?mode=view`);
+    const handleView = (record: Article) => {
+        navigate(`/content/article/edit/${record.id}?mode=view`);
     };
 
     const handleCreate = () => {
         navigate("/content/article/edit");
     };
+
+    const handleTableChange = (_pagination: any, _filters: any, sorter: SortState<Article>) => {
+        console.log("Table changed:", { pagination: _pagination, filters: _filters, sorter });
+        // TODO: Implement sorting logic
+    };
+
+    const columns: ColumnType<Article>[] = [
+        {
+            title: "Title",
+            dataIndex: "title",
+            key: "title",
+            sortable: true,
+        },
+        {
+            title: "Category",
+            dataIndex: "category",
+            key: "category",
+            sortable: true,
+        },
+        {
+            title: "Status",
+            dataIndex: "status",
+            key: "status",
+            render: (value: Article["status"]) => <span className={`${styles.status} ${styles[value]}`}>{value}</span>,
+        },
+        {
+            title: "Author",
+            dataIndex: "author",
+            key: "author",
+        },
+        {
+            title: "Date",
+            dataIndex: "publishDate",
+            key: "publishDate",
+            sortable: true,
+        },
+        {
+            title: "Views",
+            dataIndex: "views",
+            key: "views",
+            align: "right",
+            sortable: true,
+        },
+        {
+            title: "Actions",
+            dataIndex: "id",
+            key: "actions",
+            width: 150,
+            render: (_: any, record: Article) => (
+                <div className={styles.actions}>
+                    <button onClick={() => handleView(record)} title="View">
+                        <FaEye />
+                    </button>
+                    <button onClick={() => handleEdit(record)} title="Edit">
+                        <FaEdit />
+                    </button>
+                    <button onClick={() => handleDelete(record)} title="Delete">
+                        <FaTrash />
+                    </button>
+                </div>
+            ),
+        },
+    ];
 
     return (
         <div className={styles.articleListPage}>
@@ -128,39 +208,15 @@ const ArticleList = () => {
                 </div>
             </div>
 
-            <div className={styles.articleList}>
-                <div className={styles.tableHeader}>
-                    <div className={styles.title}>Title</div>
-                    <div className={styles.category}>Category</div>
-                    <div className={styles.status}>Status</div>
-                    <div className={styles.author}>Author</div>
-                    <div className={styles.date}>Date</div>
-                    <div className={styles.views}>Views</div>
-                    <div className={styles.actions}>Actions</div>
-                </div>
-
-                {filteredArticles.map(article => (
-                    <div key={article.id} className={styles.articleItem}>
-                        <div className={styles.title}>{article.title}</div>
-                        <div className={styles.category}>{article.category}</div>
-                        <div className={`${styles.status} ${styles[article.status]}`}>{article.status}</div>
-                        <div className={styles.author}>{article.author}</div>
-                        <div className={styles.date}>{article.publishDate}</div>
-                        <div className={styles.views}>{article.views}</div>
-                        <div className={styles.actions}>
-                            <button onClick={() => handleView(article.id)} title="View">
-                                <FaEye />
-                            </button>
-                            <button onClick={() => handleEdit(article.id)} title="Edit">
-                                <FaEdit />
-                            </button>
-                            <button onClick={() => handleDelete(article.id)} title="Delete">
-                                <FaTrash />
-                            </button>
-                        </div>
-                    </div>
-                ))}
-            </div>
+            <Table<Article>
+                columns={columns}
+                dataSource={filteredArticles}
+                loading={loading}
+                bordered
+                striped
+                rowKey="id"
+                onChange={handleTableChange}
+            />
         </div>
     );
 };

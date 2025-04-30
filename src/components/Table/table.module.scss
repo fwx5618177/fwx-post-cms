@@ -1,0 +1,151 @@
+// Colors
+$bg-primary: #1a1b1e;
+$bg-secondary: #2c2d31;
+$bg-tertiary: #3a3b3f;
+$text-primary: #ffffff;
+$text-secondary: #9ca3af;
+$border-color: rgba(255, 255, 255, 0.1);
+$hover-color: #3f4046;
+$accent-color: #6366f1;
+$stripe-color: rgba(255, 255, 255, 0.02);
+
+// Mixins
+@mixin hover-transition {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tableWrapper {
+    position: relative;
+    width: 100%;
+    overflow: auto;
+    border-radius: 0.5rem;
+    background-color: $bg-secondary;
+}
+
+.loadingMask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba($bg-primary, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: $text-primary;
+
+    &.bordered {
+        th,
+        td {
+            border: 1px solid $border-color;
+        }
+    }
+
+    &.striped {
+        tbody tr:nth-child(odd) {
+            background-color: $stripe-color;
+        }
+    }
+
+    thead {
+        background-color: $bg-tertiary;
+
+        tr {
+            th {
+                padding: 1rem;
+                font-weight: 600;
+                color: $text-secondary;
+                text-align: left;
+                border-bottom: 2px solid $border-color;
+                white-space: nowrap;
+
+                &.sortable {
+                    cursor: pointer;
+                    user-select: none;
+                    @include hover-transition;
+
+                    &:hover {
+                        background-color: $hover-color;
+                        color: $text-primary;
+
+                        .sortIcon {
+                            opacity: 1;
+                        }
+                    }
+                }
+
+                .headerCell {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+
+                    .sortIcon {
+                        width: 0.875rem;
+                        height: 0.875rem;
+                        opacity: 0.5;
+                        @include hover-transition;
+                    }
+                }
+            }
+        }
+    }
+
+    tbody {
+        tr {
+            @include hover-transition;
+
+            &:hover {
+                background-color: $hover-color !important;
+            }
+
+            td {
+                padding: 1rem;
+                border-bottom: 1px solid $border-color;
+                @include hover-transition;
+            }
+        }
+    }
+}
+
+.empty {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: $text-secondary;
+
+    .emptyText {
+        font-size: 0.875rem;
+    }
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+    .tableWrapper {
+        border-radius: 0;
+    }
+
+    .table {
+        thead {
+            tr {
+                th {
+                    padding: 0.75rem;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    padding: 0.75rem;
+                }
+            }
+        }
+    }
+}
