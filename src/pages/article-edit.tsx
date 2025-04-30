@@ -17,6 +17,8 @@ import {
     FaDesktop,
     FaMobileAlt,
     FaCheck,
+    FaTimes,
+    FaExclamationTriangle,
 } from "react-icons/fa";
 
 interface ArticleForm {
@@ -32,6 +34,7 @@ type EditMode = "view" | "edit";
 type PreviewMode = "none" | "desktop" | "mobile";
 
 type PublishStep = "draft" | "review" | "confirm" | "published";
+type PublishStatus = "idle" | "loading" | "success" | "error";
 
 interface PublishStepInfo {
     title: string;
@@ -83,6 +86,9 @@ const ArticleEdit = () => {
     const [customCategory, setCustomCategory] = useState("");
     const [previewMode, setPreviewMode] = useState<PreviewMode>("none");
     const [publishStep, setPublishStep] = useState<PublishStep>("draft");
+    const [publishStatus, setPublishStatus] = useState<PublishStatus>("idle");
+    const [publishError, setPublishError] = useState<string>("");
+    const [changedFields, setChangedFields] = useState<string[]>([]);
 
     const categories = ["Technology", "Programming", "Design", "Business", "Other"];
 
@@ -175,6 +181,32 @@ const ArticleEdit = () => {
         setPublishStep(step);
         if (step === "review") {
             handleModeChange("view");
+            // 记录变更的字段
+            const changes: string[] = [];
+            if (article.title) changes.push("title");
+            if (article.content) changes.push("content");
+            if (article.category) changes.push("category");
+            if (article.tags.length > 0) changes.push("tags");
+            if (article.coverImage) changes.push("coverImage");
+            if (article.excerpt) changes.push("excerpt");
+            setChangedFields(changes);
+        }
+    };
+
+    const handleApproveReview = () => {
+        handlePublishStepChange("confirm");
+    };
+
+    const handlePublish = async () => {
+        try {
+            setPublishStatus("loading");
+            // TODO: 实际的发布 API 调用
+            await new Promise(resolve => setTimeout(resolve, 2000)); // 模拟 API 调用
+            setPublishStatus("success");
+            handlePublishStepChange("published");
+        } catch (error) {
+            setPublishStatus("error");
+            setPublishError(error instanceof Error ? error.message : "Failed to publish article");
         }
     };
 
@@ -230,6 +262,281 @@ const ArticleEdit = () => {
                 })}
             </div>
         );
+    };
+
+    const renderStepContent = () => {
+        switch (publishStep) {
+            case "draft":
+                return (
+                    <div className={styles.mainContent}>
+                        <div className={styles.editorContainer}>
+                            {!isViewMode && (
+                                <div className={styles.toolbar}>
+                                    <button onClick={() => handleToolbarAction("bold")} title="Bold">
+                                        <FaBold />
+                                    </button>
+                                    <button onClick={() => handleToolbarAction("italic")} title="Italic">
+                                        <FaItalic />
+                                    </button>
+                                    <button onClick={() => handleToolbarAction("underline")} title="Underline">
+                                        <FaUnderline />
+                                    </button>
+                                    <button onClick={() => handleToolbarAction("strikethrough")} title="Strikethrough">
+                                        <FaStrikethrough />
+                                    </button>
+                                    <div className={styles.divider} />
+                                    <button onClick={() => handleToolbarAction("list")} title="List">
+                                        <FaListUl />
+                                    </button>
+                                    <button onClick={() => handleToolbarAction("quote")} title="Quote">
+                                        <FaQuoteRight />
+                                    </button>
+                                    <button onClick={() => handleToolbarAction("code")} title="Code">
+                                        <FaCode />
+                                    </button>
+                                    <button onClick={() => handleToolbarAction("image")} title="Image">
+                                        <FaImage />
+                                    </button>
+                                    <button onClick={() => handleToolbarAction("link")} title="Link">
+                                        <FaLink />
+                                    </button>
+                                </div>
+                            )}
+                            <div className={styles.editor}>
+                                <textarea
+                                    name="content"
+                                    value={article.content}
+                                    onChange={handleInputChange}
+                                    placeholder="Write your article content here..."
+                                    readOnly={isViewMode}
+                                />
+                                {previewMode !== "none" && renderPreview()}
+                            </div>
+                        </div>
+
+                        <div className={styles.sidebar}>
+                            <div className={styles.sidebarSection}>
+                                <h3>Article Settings</h3>
+
+                                <div className={styles.formGroup}>
+                                    <label>Category</label>
+                                    {isViewMode ? (
+                                        <input
+                                            type="text"
+                                            value={article.category}
+                                            readOnly
+                                            className={styles.viewInput}
+                                        />
+                                    ) : (
+                                        <div className={styles.categoryInput}>
+                                            <select
+                                                name="category"
+                                                value={
+                                                    categories.includes(article.category) ? article.category : "custom"
+                                                }
+                                                onChange={handleCategoryChange}
+                                            >
+                                                <option value="">Select Category</option>
+                                                {categories.map(cat => (
+                                                    <option key={cat} value={cat}>
+                                                        {cat}
+                                                    </option>
+                                                ))}
+                                                <option value="custom">Custom Category</option>
+                                            </select>
+                                            {(!categories.includes(article.category) || customCategory) && (
+                                                <input
+                                                    type="text"
+                                                    value={customCategory || article.category}
+                                                    onChange={handleCustomCategoryChange}
+                                                    placeholder="Enter custom category"
+                                                    className={styles.customCategoryInput}
+                                                />
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label>Tags</label>
+                                    {!isViewMode && (
+                                        <div className={styles.tagInput}>
+                                            <input
+                                                type="text"
+                                                value={currentTag}
+                                                onChange={e => setCurrentTag(e.target.value)}
+                                                onKeyDown={handleTagInput}
+                                                placeholder="Add tags..."
+                                            />
+                                        </div>
+                                    )}
+                                    <div className={styles.tagList}>
+                                        {article.tags.map(tag => (
+                                            <span key={tag} className={styles.tag}>
+                                                {tag}
+                                                {!isViewMode && <button onClick={() => removeTag(tag)}>&times;</button>}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label>Cover Image URL</label>
+                                    <input
+                                        type="text"
+                                        name="coverImage"
+                                        value={article.coverImage}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter image URL"
+                                        readOnly={isViewMode}
+                                    />
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label>Excerpt</label>
+                                    <textarea
+                                        name="excerpt"
+                                        value={article.excerpt}
+                                        onChange={handleInputChange}
+                                        placeholder="Write a brief excerpt..."
+                                        rows={4}
+                                        readOnly={isViewMode}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            case "review":
+                return (
+                    <div className={styles.reviewContent}>
+                        <div className={styles.changesOverview}>
+                            <h3>Changes Overview</h3>
+                            <div className={styles.changesList}>
+                                {changedFields.map(field => (
+                                    <div key={field} className={styles.changeItem}>
+                                        <FaCheck className={styles.changeIcon} />
+                                        <span className={styles.fieldName}>{field}</span>
+                                        has been updated
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className={styles.previewContent}>
+                            <h1>{article.title}</h1>
+                            <div className={styles.articleMeta}>
+                                <span className={styles.category}>{article.category}</span>
+                                {article.tags.map(tag => (
+                                    <span key={tag} className={styles.tag}>
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                            <div className={styles.content}>{article.content}</div>
+                        </div>
+                        <div className={styles.reviewActions}>
+                            <button className={styles.rejectButton} onClick={() => handlePublishStepChange("draft")}>
+                                <FaTimes /> Back to Edit
+                            </button>
+                            <button className={styles.approveButton} onClick={handleApproveReview}>
+                                <FaCheck /> Approve & Continue
+                            </button>
+                        </div>
+                    </div>
+                );
+
+            case "confirm":
+                return (
+                    <div className={styles.confirmContent}>
+                        <div className={styles.confirmationDetails}>
+                            <h3>Please Confirm Article Details</h3>
+                            <div className={styles.detailsList}>
+                                <div className={styles.detailItem}>
+                                    <strong>Title:</strong> {article.title}
+                                </div>
+                                <div className={styles.detailItem}>
+                                    <strong>Category:</strong> {article.category}
+                                </div>
+                                <div className={styles.detailItem}>
+                                    <strong>Tags:</strong> {article.tags.join(", ")}
+                                </div>
+                                <div className={styles.detailItem}>
+                                    <strong>Content Length:</strong> {article.content.length} characters
+                                </div>
+                            </div>
+                            <div className={styles.confirmWarning}>
+                                <FaExclamationTriangle />
+                                <p>
+                                    Please note that once published, the article will be immediately visible to readers.
+                                </p>
+                            </div>
+                        </div>
+                        <div className={styles.confirmActions}>
+                            <button className={styles.backButton} onClick={() => handlePublishStepChange("review")}>
+                                <FaArrowLeft /> Back to Review
+                            </button>
+                            <button
+                                className={`${styles.publishButton} ${
+                                    publishStatus === "loading" ? styles.loading : ""
+                                }`}
+                                onClick={handlePublish}
+                                disabled={publishStatus === "loading"}
+                            >
+                                <FaCheck /> {publishStatus === "loading" ? "Publishing..." : "Publish Now"}
+                            </button>
+                        </div>
+                    </div>
+                );
+
+            case "published":
+                return (
+                    <div className={styles.publishedContent}>
+                        {publishStatus === "success" ? (
+                            <div className={styles.successMessage}>
+                                <div className={styles.successIcon}>
+                                    <FaCheck />
+                                </div>
+                                <h2>Article Published Successfully!</h2>
+                                <p>Your article is now live and available to readers.</p>
+                                <div className={styles.publishedActions}>
+                                    <button
+                                        className={styles.viewButton}
+                                        onClick={() => {
+                                            // TODO: Navigate to published article view
+                                            navigate(`/content/article/edit/${id}?mode=view`);
+                                        }}
+                                    >
+                                        <FaEye /> View Article
+                                    </button>
+                                    <button className={styles.backToListButton} onClick={handleBack}>
+                                        <FaArrowLeft /> Back to List
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className={styles.errorMessage}>
+                                <div className={styles.errorIcon}>
+                                    <FaTimes />
+                                </div>
+                                <h2>Publication Failed</h2>
+                                <p>{publishError || "An error occurred while publishing your article."}</p>
+                                <div className={styles.errorActions}>
+                                    <button className={styles.retryButton} onClick={handlePublish}>
+                                        Try Again
+                                    </button>
+                                    <button
+                                        className={styles.backButton}
+                                        onClick={() => handlePublishStepChange("confirm")}
+                                    >
+                                        Back to Confirmation
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+        }
     };
 
     return (
@@ -313,138 +620,7 @@ const ArticleEdit = () => {
             </div>
 
             {renderPublishSteps()}
-
-            <div className={styles.mainContent}>
-                <div className={styles.editorContainer}>
-                    {!isViewMode && (
-                        <div className={styles.toolbar}>
-                            <button onClick={() => handleToolbarAction("bold")} title="Bold">
-                                <FaBold />
-                            </button>
-                            <button onClick={() => handleToolbarAction("italic")} title="Italic">
-                                <FaItalic />
-                            </button>
-                            <button onClick={() => handleToolbarAction("underline")} title="Underline">
-                                <FaUnderline />
-                            </button>
-                            <button onClick={() => handleToolbarAction("strikethrough")} title="Strikethrough">
-                                <FaStrikethrough />
-                            </button>
-                            <div className={styles.divider} />
-                            <button onClick={() => handleToolbarAction("list")} title="List">
-                                <FaListUl />
-                            </button>
-                            <button onClick={() => handleToolbarAction("quote")} title="Quote">
-                                <FaQuoteRight />
-                            </button>
-                            <button onClick={() => handleToolbarAction("code")} title="Code">
-                                <FaCode />
-                            </button>
-                            <button onClick={() => handleToolbarAction("image")} title="Image">
-                                <FaImage />
-                            </button>
-                            <button onClick={() => handleToolbarAction("link")} title="Link">
-                                <FaLink />
-                            </button>
-                        </div>
-                    )}
-                    <div className={styles.editor}>
-                        <textarea
-                            name="content"
-                            value={article.content}
-                            onChange={handleInputChange}
-                            placeholder="Write your article content here..."
-                            readOnly={isViewMode}
-                        />
-                        {previewMode !== "none" && renderPreview()}
-                    </div>
-                </div>
-
-                <div className={styles.sidebar}>
-                    <div className={styles.sidebarSection}>
-                        <h3>Article Settings</h3>
-
-                        <div className={styles.formGroup}>
-                            <label>Category</label>
-                            {isViewMode ? (
-                                <input type="text" value={article.category} readOnly className={styles.viewInput} />
-                            ) : (
-                                <div className={styles.categoryInput}>
-                                    <select
-                                        name="category"
-                                        value={categories.includes(article.category) ? article.category : "custom"}
-                                        onChange={handleCategoryChange}
-                                    >
-                                        <option value="">Select Category</option>
-                                        {categories.map(cat => (
-                                            <option key={cat} value={cat}>
-                                                {cat}
-                                            </option>
-                                        ))}
-                                        <option value="custom">Custom Category</option>
-                                    </select>
-                                    {(!categories.includes(article.category) || customCategory) && (
-                                        <input
-                                            type="text"
-                                            value={customCategory || article.category}
-                                            onChange={handleCustomCategoryChange}
-                                            placeholder="Enter custom category"
-                                            className={styles.customCategoryInput}
-                                        />
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className={styles.formGroup}>
-                            <label>Tags</label>
-                            {!isViewMode && (
-                                <div className={styles.tagInput}>
-                                    <input
-                                        type="text"
-                                        value={currentTag}
-                                        onChange={e => setCurrentTag(e.target.value)}
-                                        onKeyDown={handleTagInput}
-                                        placeholder="Add tags..."
-                                    />
-                                </div>
-                            )}
-                            <div className={styles.tagList}>
-                                {article.tags.map(tag => (
-                                    <span key={tag} className={styles.tag}>
-                                        {tag}
-                                        {!isViewMode && <button onClick={() => removeTag(tag)}>&times;</button>}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className={styles.formGroup}>
-                            <label>Cover Image URL</label>
-                            <input
-                                type="text"
-                                name="coverImage"
-                                value={article.coverImage}
-                                onChange={handleInputChange}
-                                placeholder="Enter image URL"
-                                readOnly={isViewMode}
-                            />
-                        </div>
-
-                        <div className={styles.formGroup}>
-                            <label>Excerpt</label>
-                            <textarea
-                                name="excerpt"
-                                value={article.excerpt}
-                                onChange={handleInputChange}
-                                placeholder="Write a brief excerpt..."
-                                rows={4}
-                                readOnly={isViewMode}
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {renderStepContent()}
         </div>
     );
 };
