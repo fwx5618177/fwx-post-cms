@@ -4,6 +4,37 @@ import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 import Loading from "../Loading";
 import { ColumnType, TableProps, SortState } from "./types";
 
+const EmptyIcon = () => (
+    <svg
+        width="64"
+        height="64"
+        viewBox="0 0 64 64"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={styles.emptyIcon}
+    >
+        <path
+            d="M32 52C43.0457 52 52 43.0457 52 32C52 20.9543 43.0457 12 32 12C20.9543 12 12 20.9543 12 32C12 43.0457 20.9543 52 32 52Z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeDasharray="4 4"
+        />
+        <path
+            d="M32 36C34.2091 36 36 34.2091 36 32C36 29.7909 34.2091 28 32 28C29.7909 28 28 29.7909 28 32C28 34.2091 29.7909 36 32 36Z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+        <path d="M32 24V25" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M32 39V40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M24 32H25" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M39 32H40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
+
 const Table = <T extends Record<string, any>>({
     columns,
     dataSource,
@@ -95,7 +126,8 @@ const Table = <T extends Record<string, any>>({
         if (loading) return null;
         return (
             <div className={styles.empty}>
-                {typeof emptyText === "string" ? <div className={styles.emptyText}>{emptyText}</div> : emptyText}
+                <EmptyIcon />
+                <div className={styles.emptyText}>{typeof emptyText === "string" ? emptyText : emptyText}</div>
             </div>
         );
     };
@@ -135,11 +167,6 @@ const Table = <T extends Record<string, any>>({
 
     return (
         <div className={styles.tableWrapper} style={style}>
-            {loading && (
-                <div className={styles.loadingMask}>
-                    <Loading />
-                </div>
-            )}
             <div
                 className={styles.scrollContainer}
                 data-has-scroll={!!scroll?.y}
@@ -152,18 +179,7 @@ const Table = <T extends Record<string, any>>({
                 }
             >
                 <div className={styles.innerContainer}>
-                    <table
-                        className={tableClasses}
-                        style={{
-                            width:
-                                typeof scroll?.x === "number"
-                                    ? `${scroll.x}px`
-                                    : typeof scroll?.x === "string"
-                                    ? scroll.x
-                                    : "100%",
-                            minWidth: "800px",
-                        }}
-                    >
+                    <table className={tableClasses}>
                         {showHeader && (
                             <thead data-sticky={sticky}>
                                 <tr>
@@ -195,7 +211,13 @@ const Table = <T extends Record<string, any>>({
                             </thead>
                         )}
                         <tbody>
-                            {dataSource.length > 0 ? (
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={columns.length} className={styles.loadingCell}>
+                                        <Loading />
+                                    </td>
+                                </tr>
+                            ) : dataSource.length > 0 ? (
                                 dataSource.map((record, index) => (
                                     <tr key={getRowKey(record, index)} {...(onRow?.(record, index) || {})}>
                                         {columns.map((column, columnIndex) => {

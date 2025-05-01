@@ -81,6 +81,7 @@ $fixed-border-color: rgba(255, 255, 255, 0.12);
 
 .table {
     width: 100%;
+    height: 100%;
     min-width: 800px;
     border-collapse: separate;
     border-spacing: 0;
@@ -267,12 +268,35 @@ $fixed-border-color: rgba(255, 255, 255, 0.12);
 }
 
 .empty {
-    padding: 2rem 1rem;
+    padding: 3rem 1rem;
     text-align: center;
     color: $text-secondary;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+    .emptyIcon {
+        color: $text-secondary;
+        opacity: 0.5;
+    }
 
     .emptyText {
         font-size: 0.875rem;
+    }
+}
+
+.loadingCell {
+    height: 100px;
+    text-align: center;
+    background: transparent !important;
+
+    // 确保loading内容垂直居中
+    > div {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 
