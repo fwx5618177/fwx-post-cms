@@ -12,6 +12,14 @@ interface Article {
     author: string;
     publishDate: string;
     views: number;
+    description: string;
+    tags: string[];
+    priority: number;
+    lastModified: string;
+    wordCount: number;
+    readTime: number;
+    likes: number;
+    comments: number;
 }
 
 const ArticleList = () => {
@@ -27,37 +35,83 @@ const ArticleList = () => {
         const fetchArticles = async () => {
             try {
                 setLoading(true);
-                // TODO: Replace with actual API call
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-                setArticles([
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                const mockArticles: Article[] = [
                     {
                         id: 1,
-                        title: "Getting Started with React",
+                        title: "Getting Started with React - A Comprehensive Guide for Beginners",
                         category: "Frontend",
                         status: "published",
                         author: "John Doe",
                         publishDate: "2024-03-15",
+                        lastModified: "2024-03-16",
                         views: 1234,
+                        description:
+                            "Learn the basics of React and start building your first application with this comprehensive guide.",
+                        tags: ["React", "JavaScript", "Web Development"],
+                        priority: 9,
+                        wordCount: 2500,
+                        readTime: 12,
+                        likes: 45,
+                        comments: 12,
                     },
                     {
                         id: 2,
-                        title: "Advanced TypeScript Tips",
+                        title: "Advanced TypeScript Tips and Best Practices for Large Scale Applications",
                         category: "Programming",
                         status: "draft",
                         author: "Jane Smith",
                         publishDate: "2024-03-14",
+                        lastModified: "2024-03-15",
                         views: 856,
+                        description:
+                            "Deep dive into TypeScript features and patterns that will help you build better applications.",
+                        tags: ["TypeScript", "Programming", "Best Practices"],
+                        priority: 7,
+                        wordCount: 3200,
+                        readTime: 16,
+                        likes: 32,
+                        comments: 8,
                     },
                     {
                         id: 3,
-                        title: "Node.js Best Practices",
+                        title: "Node.js Best Practices - Performance Optimization Guide",
                         category: "Backend",
                         status: "published",
                         author: "Mike Johnson",
                         publishDate: "2024-03-13",
+                        lastModified: "2024-03-14",
                         views: 2341,
+                        description: "Learn how to optimize your Node.js applications for better performance.",
+                        tags: ["Node.js", "Performance", "Backend"],
+                        priority: 8,
+                        wordCount: 4100,
+                        readTime: 20,
+                        likes: 67,
+                        comments: 15,
                     },
-                ]);
+                    // Add more mock data to demonstrate scrolling
+                    ...Array.from({ length: 50 }, (_, i) => ({
+                        id: i + 4,
+                        title: `Sample Article ${i + 4}`,
+                        category: ["Frontend", "Backend", "Programming"][i % 3],
+                        status: ["published", "draft", "archived"][i % 3] as Article["status"],
+                        author: ["John Doe", "Jane Smith", "Mike Johnson"][i % 3],
+                        publishDate: "2024-03-" + String(12 - (i % 12)).padStart(2, "0"),
+                        lastModified: "2024-03-" + String(13 - (i % 12)).padStart(2, "0"),
+                        views: Math.floor(Math.random() * 5000),
+                        description: `This is a sample article ${i + 4} description.`,
+                        tags: ["Sample", `Tag${i + 1}`],
+                        priority: Math.floor(Math.random() * 10) + 1,
+                        wordCount: Math.floor(Math.random() * 5000) + 1000,
+                        readTime: Math.floor(Math.random() * 25) + 5,
+                        likes: Math.floor(Math.random() * 100),
+                        comments: Math.floor(Math.random() * 30),
+                    })),
+                ];
+
+                setArticles(mockArticles);
             } catch (error) {
                 console.error("Failed to fetch articles:", error);
             } finally {
@@ -109,7 +163,13 @@ const ArticleList = () => {
 
     const handleTableChange = (_pagination: any, _filters: any, sorter: SortState<Article>) => {
         console.log("Table changed:", { pagination: _pagination, filters: _filters, sorter });
-        // TODO: Implement sorting logic
+    };
+
+    const getRowClassName = (record: Article, index: number) => {
+        const classes = [];
+        if (record.priority > 8) classes.push(styles.highPriority);
+        if (record.status === "archived") classes.push(styles.archivedRow);
+        return classes.join(" ");
     };
 
     const columns: ColumnType<Article>[] = [
@@ -118,29 +178,119 @@ const ArticleList = () => {
             dataIndex: "title",
             key: "title",
             sortable: true,
+            fixed: "left",
+            width: 120,
+            render: (value, record) => (
+                <div
+                    style={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        maxWidth: "280px",
+                        cursor: "pointer",
+                    }}
+                    title={record.description}
+                >
+                    {value}
+                    {record.priority > 8 && (
+                        <span
+                            style={{
+                                marginLeft: "8px",
+                                color: "#ef4444",
+                                fontSize: "0.75rem",
+                            }}
+                        >
+                            ★
+                        </span>
+                    )}
+                </div>
+            ),
         },
         {
             title: "Category",
             dataIndex: "category",
             key: "category",
             sortable: true,
+            width: 120,
+            align: "center",
+            render: value => (
+                <span
+                    style={{
+                        padding: "2px 8px",
+                        borderRadius: "4px",
+                        backgroundColor: "rgba(99, 102, 241, 0.1)",
+                        color: "#6366f1",
+                        fontSize: "0.875rem",
+                    }}
+                >
+                    {value}
+                </span>
+            ),
         },
         {
             title: "Status",
             dataIndex: "status",
             key: "status",
+            width: 120,
+            align: "center",
             render: (value: Article["status"]) => <span className={`${styles.status} ${styles[value]}`}>{value}</span>,
         },
         {
             title: "Author",
             dataIndex: "author",
             key: "author",
+            width: 150,
+            render: value => (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div
+                        style={{
+                            width: "24px",
+                            height: "24px",
+                            borderRadius: "50%",
+                            backgroundColor: "#6366f1",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "white",
+                            fontSize: "0.75rem",
+                        }}
+                    >
+                        {value.charAt(0)}
+                    </div>
+                    {value}
+                </div>
+            ),
         },
         {
             title: "Date",
             dataIndex: "publishDate",
             key: "publishDate",
             sortable: true,
+            width: 120,
+            align: "center",
+        },
+        {
+            title: "Last Modified",
+            dataIndex: "lastModified",
+            key: "lastModified",
+            width: 120,
+            align: "center",
+        },
+        {
+            title: "Words",
+            dataIndex: "wordCount",
+            key: "wordCount",
+            width: 100,
+            align: "right",
+            render: value => `${(value / 1000).toFixed(1)}k`,
+        },
+        {
+            title: "Read Time",
+            dataIndex: "readTime",
+            key: "readTime",
+            width: 100,
+            align: "right",
+            render: value => `${value} min`,
         },
         {
             title: "Views",
@@ -148,12 +298,31 @@ const ArticleList = () => {
             key: "views",
             align: "right",
             sortable: true,
+            width: 100,
+            render: value => (
+                <span style={{ color: value > 1000 ? "#6366f1" : "inherit" }}>{value.toLocaleString()}</span>
+            ),
+        },
+        {
+            title: "Engagement",
+            dataIndex: "likes",
+            key: "engagement",
+            width: 120,
+            align: "center",
+            render: (_, record) => (
+                <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+                    <span title="Likes">❤️ {record.likes}</span>
+                    <span title="Comments">💬 {record.comments}</span>
+                </div>
+            ),
         },
         {
             title: "Actions",
             dataIndex: "id",
             key: "actions",
+            fixed: "right",
             width: 150,
+            align: "center",
             render: (_: any, record: Article) => (
                 <div className={styles.actions}>
                     <button onClick={() => handleView(record)} title="View">
@@ -212,10 +381,16 @@ const ArticleList = () => {
                 columns={columns}
                 dataSource={filteredArticles}
                 loading={loading}
-                bordered
                 striped
                 rowKey="id"
                 onChange={handleTableChange}
+                sticky
+                scroll={{ x: 1600, y: 800 }}
+                onRow={(record, index) => ({
+                    onClick: () => console.log("Row clicked:", record),
+                    onMouseEnter: () => console.log("Mouse enter:", record),
+                    className: getRowClassName(record, index),
+                })}
             />
         </div>
     );

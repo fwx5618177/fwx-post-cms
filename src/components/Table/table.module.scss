@@ -1,13 +1,16 @@
 // Colors
 $bg-primary: #1a1b1e;
-$bg-secondary: #2c2d31;
-$bg-tertiary: #3a3b3f;
-$text-primary: #ffffff;
+$bg-secondary: #1f2023;
+$bg-tertiary: #2e3033;
+$bg-fixed: #1d1e22; // 固定列的背景色
+$text-primary: #e6e7e9;
 $text-secondary: #9ca3af;
-$border-color: rgba(255, 255, 255, 0.1);
-$hover-color: #3f4046;
+$border-color: rgba(255, 255, 255, 0.08);
+$divider-color: rgba(255, 255, 255, 0.06);
+$hover-color: rgba(255, 255, 255, 0.04);
 $accent-color: #6366f1;
 $stripe-color: rgba(255, 255, 255, 0.02);
+$fixed-border-color: rgba(255, 255, 255, 0.12);
 
 // Mixins
 @mixin hover-transition {
@@ -17,9 +20,49 @@ $stripe-color: rgba(255, 255, 255, 0.02);
 .tableWrapper {
     position: relative;
     width: 100%;
-    overflow: auto;
-    border-radius: 0.5rem;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: 0.25rem;
     background-color: $bg-secondary;
+}
+
+.scrollContainer {
+    position: relative;
+    height: 800px; // 默认高度
+
+    &[data-has-scroll="true"] {
+        height: var(--table-height);
+    }
+}
+
+.innerContainer {
+    height: 100%;
+    overflow: auto;
+    position: relative; // 为固定列提供定位上下文
+
+    // 滚动条样式
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-corner {
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: $border-color;
+        border-radius: 4px;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    }
 }
 
 .loadingMask {
@@ -38,9 +81,11 @@ $stripe-color: rgba(255, 255, 255, 0.02);
 
 .table {
     width: 100%;
+    min-width: 800px;
     border-collapse: separate;
     border-spacing: 0;
     color: $text-primary;
+    table-layout: fixed;
 
     &.bordered {
         th,
@@ -60,12 +105,28 @@ $stripe-color: rgba(255, 255, 255, 0.02);
 
         tr {
             th {
-                padding: 1rem;
-                font-weight: 600;
+                position: relative;
+                padding: 0.75rem 1rem;
+                font-weight: 500;
+                font-size: 0.875rem;
                 color: $text-secondary;
                 text-align: left;
-                border-bottom: 2px solid $border-color;
+                border-bottom: 1px solid $border-color;
                 white-space: nowrap;
+                background-color: inherit;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                // Add divider between header cells
+                &:not(:last-child)::after {
+                    content: "";
+                    position: absolute;
+                    right: 0;
+                    top: 25%;
+                    height: 50%;
+                    width: 1px;
+                    background-color: $divider-color;
+                }
 
                 &.sortable {
                     cursor: pointer;
@@ -78,6 +139,7 @@ $stripe-color: rgba(255, 255, 255, 0.02);
 
                         .sortIcon {
                             opacity: 1;
+                            color: $text-primary;
                         }
                     }
                 }
@@ -86,13 +148,64 @@ $stripe-color: rgba(255, 255, 255, 0.02);
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
+                    justify-content: inherit;
 
                     .sortIcon {
-                        width: 0.875rem;
-                        height: 0.875rem;
+                        width: 0.75rem;
+                        height: 0.75rem;
                         opacity: 0.5;
+                        color: $text-secondary;
                         @include hover-transition;
                     }
+                }
+
+                &[data-align="center"] {
+                    text-align: center;
+
+                    .headerCell {
+                        justify-content: center;
+                    }
+                }
+
+                &[data-align="right"] {
+                    text-align: right;
+
+                    .headerCell {
+                        justify-content: flex-end;
+                    }
+                }
+
+                // 固定列样式
+                &[data-fixed] {
+                    position: sticky;
+                    background-color: $bg-fixed;
+                    z-index: 3;
+
+                    &[data-fixed="left"] {
+                        border-right: 1px solid $fixed-border-color;
+                        box-shadow: 6px 0 6px -4px rgba(0, 0, 0, 0.15);
+                    }
+
+                    &[data-fixed="right"] {
+                        border-left: 1px solid $fixed-border-color;
+                        box-shadow: -6px 0 6px -4px rgba(0, 0, 0, 0.15);
+                    }
+                }
+            }
+        }
+
+        // 固定表头
+        &[data-sticky="true"] {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+
+            th {
+                background-color: $bg-tertiary;
+
+                &[data-fixed] {
+                    background-color: $bg-fixed;
+                    z-index: 4;
                 }
             }
         }
@@ -103,20 +216,58 @@ $stripe-color: rgba(255, 255, 255, 0.02);
             @include hover-transition;
 
             &:hover {
-                background-color: $hover-color !important;
+                background-color: $hover-color;
+
+                td[data-fixed] {
+                    background-color: mix($hover-color, $bg-fixed, 50%);
+                }
+            }
+
+            &:last-child td {
+                border-bottom: none;
             }
 
             td {
-                padding: 1rem;
+                padding: 0.75rem 1rem;
                 border-bottom: 1px solid $border-color;
+                font-size: 0.875rem;
+                background-color: inherit;
                 @include hover-transition;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+
+                &[data-align="center"] {
+                    text-align: center;
+                }
+
+                &[data-align="right"] {
+                    text-align: right;
+                }
+
+                // 固定列样式
+                &[data-fixed] {
+                    position: sticky;
+                    background-color: $bg-fixed;
+                    z-index: 1;
+
+                    &[data-fixed="left"] {
+                        border-right: 1px solid $fixed-border-color;
+                        box-shadow: 6px 0 6px -4px rgba(0, 0, 0, 0.15);
+                    }
+
+                    &[data-fixed="right"] {
+                        border-left: 1px solid $fixed-border-color;
+                        box-shadow: -6px 0 6px -4px rgba(0, 0, 0, 0.15);
+                    }
+                }
             }
         }
     }
 }
 
 .empty {
-    padding: 3rem 1rem;
+    padding: 2rem 1rem;
     text-align: center;
     color: $text-secondary;
 
@@ -135,7 +286,7 @@ $stripe-color: rgba(255, 255, 255, 0.02);
         thead {
             tr {
                 th {
-                    padding: 0.75rem;
+                    padding: 0.625rem;
                 }
             }
         }
@@ -143,7 +294,7 @@ $stripe-color: rgba(255, 255, 255, 0.02);
         tbody {
             tr {
                 td {
-                    padding: 0.75rem;
+                    padding: 0.625rem;
                 }
             }
         }
