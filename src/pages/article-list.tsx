@@ -307,7 +307,7 @@ const ArticleList = () => {
             title: "Engagement",
             dataIndex: "likes",
             key: "engagement",
-            width: 120,
+            width: 220,
             align: "center",
             render: (_, record) => (
                 <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
