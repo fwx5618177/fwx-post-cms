@@ -1,8 +1,18 @@
 import React from "react";
 import styles from "./table.module.scss";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
-import Loading from "../Loading";
+// import Loading from "../Loading"; // 不再使用原来的 Loading
 import { ColumnType, TableProps, SortState } from "./types";
+
+const WaveLoading = () => (
+    <div className={styles.waveLoading}>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+);
 
 const EmptyIcon = () => (
     <svg
@@ -214,7 +224,7 @@ const Table = <T extends Record<string, any>>({
                             {loading ? (
                                 <tr>
                                     <td colSpan={columns.length} className={styles.loadingCell}>
-                                        <Loading />
+                                        <WaveLoading />
                                     </td>
                                 </tr>
                             ) : dataSource.length > 0 ? (

@@ -179,7 +179,7 @@ const ArticleList = () => {
             key: "title",
             sortable: true,
             fixed: "left",
-            width: 120,
+            width: 320,
             render: (value, record) => (
                 <div
                     style={{
@@ -211,7 +211,7 @@ const ArticleList = () => {
             dataIndex: "category",
             key: "category",
             sortable: true,
-            width: 120,
+            width: 220,
             align: "center",
             render: value => (
                 <span
