@@ -20,6 +20,7 @@ interface Article {
     readTime: number;
     likes: number;
     comments: number;
+    children?: Article[];
 }
 
 const ArticleList = () => {
@@ -29,13 +30,16 @@ const ArticleList = () => {
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [loading, setLoading] = useState(false);
     const [articles, setArticles] = useState<Article[]>([]);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [total, setTotal] = useState(123);
 
     // Fetch articles
     useEffect(() => {
         const fetchArticles = async () => {
             try {
                 setLoading(true);
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                await new Promise(resolve => setTimeout(resolve, 500));
 
                 const mockArticles: Article[] = [
                     {
@@ -55,6 +59,44 @@ const ArticleList = () => {
                         readTime: 12,
                         likes: 45,
                         comments: 12,
+                        children: [
+                            {
+                                id: 101,
+                                title: "React useState Deep Dive",
+                                category: "Frontend",
+                                status: "published",
+                                author: "John Doe",
+                                publishDate: "2024-03-15",
+                                lastModified: "2024-03-16",
+                                views: 234,
+                                description: "A deep dive into useState hook.",
+                                tags: ["React", "Hooks"],
+                                priority: 7,
+                                wordCount: 1200,
+                                readTime: 6,
+                                likes: 12,
+                                comments: 3,
+                                children: [
+                                    {
+                                        id: 201,
+                                        title: "React useState Advanced Patterns",
+                                        category: "Frontend",
+                                        status: "draft",
+                                        author: "John Doe",
+                                        publishDate: "2024-03-15",
+                                        lastModified: "2024-03-16",
+                                        views: 54,
+                                        description: "Advanced patterns for useState.",
+                                        tags: ["React", "Hooks"],
+                                        priority: 5,
+                                        wordCount: 800,
+                                        readTime: 4,
+                                        likes: 2,
+                                        comments: 0,
+                                    },
+                                ],
+                            },
+                        ],
                     },
                     {
                         id: 2,
@@ -112,6 +154,7 @@ const ArticleList = () => {
                 ];
 
                 setArticles(mockArticles);
+                setTotal(123);
             } catch (error) {
                 console.error("Failed to fetch articles:", error);
             } finally {
@@ -120,7 +163,7 @@ const ArticleList = () => {
         };
 
         fetchArticles();
-    }, []);
+    }, [page, pageSize, searchTerm, selectedCategory, selectedStatus]);
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
@@ -386,6 +429,21 @@ const ArticleList = () => {
                 onChange={handleTableChange}
                 sticky
                 scroll={{ x: 1600, y: 800 }}
+                treeChildrenKey="children"
+                rowIndent={24}
+                pagination={{
+                    current: page,
+                    pageSize,
+                    total,
+                    onChange: (p, ps) => {
+                        setPage(p);
+                        setPageSize(ps);
+                    },
+                    onPageSizeChange: (p, ps) => {
+                        setPage(p);
+                        setPageSize(ps);
+                    },
+                }}
                 onRow={(record, index) => ({
                     onClick: () => console.log("Row clicked:", record),
                     onMouseEnter: () => console.log("Mouse enter:", record),

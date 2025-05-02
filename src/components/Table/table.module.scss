@@ -336,6 +336,30 @@ $fixed-border-color: rgba(255, 255, 255, 0.12);
                         animation-delay: 0.6s;
                     }
                 }
+
+                .treeParentRow {
+                    // 可选：加粗或特殊色
+                }
+
+                .treeChildRow {
+                    background: rgba(99, 102, 241, 0.04);
+
+                    // 可选：左侧竖线
+                    td:first-child {
+                        border-left: 2px solid $accent-color;
+                    }
+                }
+
+                .treeExpandIcon {
+                    display: flex;
+                    align-items: center;
+                    color: $accent-color;
+                    transition: color 0.2s;
+
+                    &:hover {
+                        color: lighten($accent-color, 10%);
+                    }
+                }
             }
         }
     }
@@ -366,6 +390,92 @@ $fixed-border-color: rgba(255, 255, 255, 0.12);
                     }
                 }
             }
+        }
+    }
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2rem;
+    margin: 1.5rem 0 0 0;
+    font-size: 0.95rem;
+    user-select: none;
+
+    .paginationInfo {
+        color: $text-secondary;
+        font-size: 0.93rem;
+
+        b {
+            color: $accent-color;
+            font-weight: 600;
+        }
+    }
+
+    .paginationControls {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .pageBtn {
+        min-width: 2.1em;
+        height: 2.1em;
+        padding: 0 0.5em;
+        margin: 0 0.1em;
+        border: none;
+        border-radius: 0.4em;
+        background: transparent;
+        color: $text-primary;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background 0.18s, color 0.18s;
+
+        &:hover:not(:disabled) {
+            background: $hover-color;
+            color: $accent-color;
+        }
+
+        &:disabled {
+            color: $text-secondary;
+            background: none;
+            cursor: not-allowed;
+        }
+
+        &.active {
+            background: $accent-color;
+            color: #fff;
+            font-weight: 600;
+            cursor: default;
+            box-shadow: 0 2px 8px 0 rgba($accent-color, 0.08);
+        }
+    }
+
+    .pageEllipsis {
+        display: inline-block;
+        min-width: 2em;
+        text-align: center;
+        color: $text-secondary;
+        font-size: 1.1em;
+        pointer-events: none;
+    }
+
+    .pageSizeSelect {
+        margin-left: 1em;
+        padding: 0.3em 1.5em 0.3em 0.7em;
+        border-radius: 0.4em;
+        border: 1px solid $border-color;
+        background: $bg-secondary;
+        color: $text-primary;
+        font-size: 0.97em;
+        outline: none;
+        cursor: pointer;
+        transition: border 0.18s;
+
+        &:hover,
+        &:focus {
+            border-color: $accent-color;
         }
     }
 }

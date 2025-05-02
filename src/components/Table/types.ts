@@ -120,6 +120,21 @@ export interface TableProps<T> {
         x?: number | true;
         y?: number;
     };
+    /**
+     * Tree table support
+     * @param treeChildrenKey children field name, default 'children'
+     * @param rowIndent indent px per level, default 24
+     * @param expandedRowKeys expanded row keys (controlled)
+     * @param onExpand (expandedKeys, expanded, record) => void
+     */
+    treeChildrenKey?: string;
+    rowIndent?: number;
+    expandedRowKeys?: string[];
+    onExpand?: (expandedKeys: string[], expanded: boolean, record: T) => void;
+    /**
+     * 分页配置
+     */
+    pagination?: PaginationConfig | false;
 }
 
 /**
@@ -131,4 +146,24 @@ export interface SortState<T> {
     field: keyof T;
     /** 排序的方向 */
     order: "ascend" | "descend" | undefined;
+}
+
+/**
+ * 分页配置
+ */
+export interface PaginationConfig {
+    /** 当前页码（从1开始） */
+    current?: number;
+    /** 每页条数 */
+    pageSize?: number;
+    /** 总记录数 */
+    total?: number;
+    /** 可选的每页条数 */
+    pageSizeOptions?: number[];
+    /** 页码改变时回调 (page, pageSize) */
+    onChange?: (page: number, pageSize: number) => void;
+    /** 每页条数改变时回调 (page, pageSize) */
+    onPageSizeChange?: (page: number, pageSize: number) => void;
+    /** 是否隐藏分页 */
+    hideOnSinglePage?: boolean;
 }
