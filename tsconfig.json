@@ -19,7 +19,8 @@
             "@services/*": ["./src/services/*"],
             "@types/*": ["./src/types/*"],
             "@layout/*": ["./src/layout/*"],
-            "@i18n/*": ["./i18n/*"]
+            "@i18n/*": ["./i18n/*"],
+            "@settings/*": ["./src/settings/*"]
         },
         "noImplicitAny": true
     },

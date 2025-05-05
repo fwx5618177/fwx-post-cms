@@ -21,7 +21,7 @@ export interface TabsState {
     activeTab: string;
     tabHistory: string[];
     dashboardKey: string;
-    tabToNavigate?: TabNavigationInfo; // 可选属性，用于记录需要导航的tab信息
+    tabToNavigate?: TabNavigationInfo;
 }
 
 export type TabsAction =

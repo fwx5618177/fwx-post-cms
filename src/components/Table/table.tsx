@@ -1,49 +1,10 @@
 import React from "react";
 import styles from "./table.module.scss";
-import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
-// import Loading from "../Loading"; // 不再使用原来的 Loading
+import { FaSort, FaSortUp, FaSortDown, FaExclamationTriangle, FaInbox } from "react-icons/fa";
+import Loading from "../Loading";
 import { ColumnType, TableProps, SortState } from "./types";
 
-const WaveLoading = () => (
-    <div className={styles.waveLoading}>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-);
-
-const EmptyIcon = () => (
-    <svg
-        width="64"
-        height="64"
-        viewBox="0 0 64 64"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className={styles.emptyIcon}
-    >
-        <path
-            d="M32 52C43.0457 52 52 43.0457 52 32C52 20.9543 43.0457 12 32 12C20.9543 12 12 20.9543 12 32C12 43.0457 20.9543 52 32 52Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeDasharray="4 4"
-        />
-        <path
-            d="M32 36C34.2091 36 36 34.2091 36 32C36 29.7909 34.2091 28 32 28C29.7909 28 28 29.7909 28 32C28 34.2091 29.7909 36 32 36Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        />
-        <path d="M32 24V25" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M32 39V40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M24 32H25" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M39 32H40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-);
+const EmptyIcon = () => <FaInbox className={styles.emptyIcon} size={64} />;
 
 const defaultPageSizeOptions = [10, 20, 50, 100, 200];
 
@@ -84,6 +45,7 @@ const Table = <T extends Record<string, any>>({
     expandedRowKeys: controlledExpandedRowKeys,
     onExpand,
     pagination: paginationProp = false,
+    isError = false,
 }: TableProps<T>) => {
     const [uncontrolledExpanded, setUncontrolledExpanded] = React.useState<string[]>([]);
     const expandedRowKeys = controlledExpandedRowKeys ?? uncontrolledExpanded;
@@ -344,53 +306,60 @@ const Table = <T extends Record<string, any>>({
                 }
             >
                 <div className={styles.innerContainer}>
-                    <table className={tableClasses}>
-                        {showHeader && (
-                            <thead data-sticky={sticky}>
-                                <tr>
-                                    {columns.map((column, index) => {
-                                        const fixed = column.fixed === true ? "left" : column.fixed;
-                                        const fixedPosition = getFixedPosition(index, fixed);
-                                        return (
-                                            <th
-                                                key={column.key || String(column.dataIndex) || index}
-                                                style={{
-                                                    width: column.width,
-                                                    minWidth: column.width,
-                                                    left: fixed === "left" ? fixedPosition : undefined,
-                                                    right: fixed === "right" ? fixedPosition : undefined,
-                                                }}
-                                                className={column.sortable ? styles.sortable : ""}
-                                                onClick={() => handleSort(column)}
-                                                data-align={column.align}
-                                                data-fixed={fixed}
-                                            >
-                                                <div className={styles.headerCell}>
-                                                    {column.title}
-                                                    {renderSortIcon(column)}
-                                                </div>
-                                            </th>
-                                        );
-                                    })}
-                                </tr>
-                            </thead>
-                        )}
-                        <tbody>
-                            {loading ? (
-                                <tr>
-                                    <td colSpan={columns.length} className={styles.loadingCell}>
-                                        <WaveLoading />
-                                    </td>
-                                </tr>
-                            ) : pagedData.length > 0 ? (
-                                renderRows(pagedData)
-                            ) : (
-                                <tr>
-                                    <td colSpan={columns.length}>{renderEmpty()}</td>
-                                </tr>
+                    {isError ? (
+                        <div className={styles.errorState}>
+                            <FaExclamationTriangle size={48} color="#ef4444" style={{ marginBottom: 12 }} />
+                            <div className={styles.errorText}>加载失败，请重试</div>
+                        </div>
+                    ) : (
+                        <table className={tableClasses}>
+                            {showHeader && (
+                                <thead data-sticky={sticky}>
+                                    <tr>
+                                        {columns.map((column, index) => {
+                                            const fixed = column.fixed === true ? "left" : column.fixed;
+                                            const fixedPosition = getFixedPosition(index, fixed);
+                                            return (
+                                                <th
+                                                    key={column.key || String(column.dataIndex) || index}
+                                                    style={{
+                                                        width: column.width,
+                                                        minWidth: column.width,
+                                                        left: fixed === "left" ? fixedPosition : undefined,
+                                                        right: fixed === "right" ? fixedPosition : undefined,
+                                                    }}
+                                                    className={column.sortable ? styles.sortable : ""}
+                                                    onClick={() => handleSort(column)}
+                                                    data-align={column.align}
+                                                    data-fixed={fixed}
+                                                >
+                                                    <div className={styles.headerCell}>
+                                                        {column.title}
+                                                        {renderSortIcon(column)}
+                                                    </div>
+                                                </th>
+                                            );
+                                        })}
+                                    </tr>
+                                </thead>
                             )}
-                        </tbody>
-                    </table>
+                            <tbody>
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan={columns.length} className={styles.loadingCell}>
+                                            <Loading type="wave" />
+                                        </td>
+                                    </tr>
+                                ) : pagedData.length > 0 ? (
+                                    renderRows(pagedData)
+                                ) : (
+                                    <tr>
+                                        <td colSpan={columns.length}>{renderEmpty()}</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </div>
             {/* 分页区 */}

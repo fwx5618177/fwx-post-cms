@@ -135,6 +135,8 @@ export interface TableProps<T> {
      * 分页配置
      */
     pagination?: PaginationConfig | false;
+    /** 新增：错误态支持 */
+    isError?: boolean;
 }
 
 /**

@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // Colors
 $bg-primary: #1a1b1e;
 $bg-secondary: #1f2023;
@@ -267,7 +269,6 @@ $fixed-border-color: rgba(255, 255, 255, 0.12);
                     }
                 }
 
-                // Empty State
                 .empty {
                     padding: 3rem 1rem;
                     text-align: center;
@@ -338,13 +339,13 @@ $fixed-border-color: rgba(255, 255, 255, 0.12);
                 }
 
                 .treeParentRow {
-                    // 可选：加粗或特殊色
+                    background: rgba(99, 102, 241, 0.08);
+                    font-weight: 500;
                 }
 
                 .treeChildRow {
                     background: rgba(99, 102, 241, 0.04);
 
-                    // 可选：左侧竖线
                     td:first-child {
                         border-left: 2px solid $accent-color;
                     }
@@ -478,4 +479,24 @@ $fixed-border-color: rgba(255, 255, 255, 0.12);
             border-color: $accent-color;
         }
     }
+}
+
+.errorState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 240px;
+    height: 100%;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.05);
+    border-radius: 0.5rem;
+    margin: 2rem 0;
+}
+
+.errorText {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+    color: #ef4444;
 }

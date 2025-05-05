@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from "axios";
-import { message } from "antd";
+// import { message } from "antd";
 import { IResponseData } from "./IRequest";
 import { ErrorMessageMap } from "./ErrorMessageMap";
 
@@ -46,7 +46,7 @@ instance.interceptors.request.use(
     },
     error => {
         // 请求错误处理
-        message.error("请求发送失败，请检查网络连接");
+        // message.error("请求发送失败，请检查网络连接");
         return Promise.reject(error);
     },
 );
@@ -66,7 +66,7 @@ instance.interceptors.response.use(
                 return data.data;
             }
             // 如果是错误状态码，显示对应错误信息
-            message.error(ErrorMessageMap[status]);
+            // message.error(ErrorMessageMap[status]);
             return Promise.reject(new Error(ErrorMessageMap[status]));
         }
 
@@ -78,7 +78,7 @@ instance.interceptors.response.use(
         // 处理特殊状态码
         if (data.code === 401) {
             // 未登录或 token 过期
-            message.error(ErrorMessageMap[401]);
+            // message.error(ErrorMessageMap[401]);
             // 清除本地 token
             localStorage.removeItem("token");
             // 跳转到登录页
@@ -88,12 +88,12 @@ instance.interceptors.response.use(
 
         // 处理其他业务错误
         if (data.code in ErrorMessageMap) {
-            message.error(ErrorMessageMap[data.code]);
+            // message.error(ErrorMessageMap[data.code]);
             return Promise.reject(new Error(ErrorMessageMap[data.code]));
         }
 
         // 其他错误
-        message.error(data.message || "请求失败");
+        // message.error(data.message || "请求失败");
         return Promise.reject(new Error(data.message || "请求失败"));
     },
     error => {
@@ -103,7 +103,7 @@ instance.interceptors.response.use(
             const { status } = response;
             // 使用 ErrorMessageMap 获取错误信息
             const errorMessage = ErrorMessageMap[status] || "请求失败";
-            message.error(errorMessage);
+            // message.error(errorMessage);
 
             // 处理特定状态码
             if (status === 401) {
@@ -113,9 +113,9 @@ instance.interceptors.response.use(
         } else {
             // 处理网络错误
             if (error.message.includes("timeout")) {
-                message.error("请求超时，请重试");
+                // message.error("请求超时，请重试");
             } else {
-                message.error("网络错误，请检查网络连接");
+                // message.error("网络错误，请检查网络连接");
             }
         }
         return Promise.reject(error);

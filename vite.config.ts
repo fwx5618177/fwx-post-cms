@@ -34,6 +34,7 @@ export default defineConfig(({ mode }) => {
                 "@types": path.resolve(__dirname, "./src/types"),
                 "@layout": path.resolve(__dirname, "./src/layout"),
                 "@i18n": path.resolve(__dirname, "./i18n"),
+                "@settings": path.resolve(__dirname, "./src/settings"),
             },
         },
         css: {
