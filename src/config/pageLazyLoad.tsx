@@ -46,4 +46,7 @@ export const Pages = {
 
     // 组件演示
     DropdownDemo: lazy(() => import("../pages/dropdown-demo")),
+
+    // 新增：邮件模板编辑
+    MailTemplateEdit: lazy(() => import("../pages/mail-template-edit")),
 };

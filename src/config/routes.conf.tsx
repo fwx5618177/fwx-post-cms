@@ -193,6 +193,15 @@ export const routes: IRoutePage[] = [
                 tag: { type: "success", text: "已同步" },
             },
             {
+                key: "mail-template-edit",
+                label: "邮件模板编辑",
+                icon: RiMailLine,
+                path: "mail-template-edit",
+                component: Pages.MailTemplateEdit,
+                menuShow: true,
+                auth: true,
+            },
+            {
                 key: "settings",
                 label: "设置",
                 icon: RiSettingsLine,
