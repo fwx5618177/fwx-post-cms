@@ -1,0 +1,825 @@
+@use "sass:color";
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #404040;
+    background-color: #252526;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: #9e9e9e;
+    font-size: 0.875rem;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #1e1e1e;
+    border-bottom: 1px solid #404040;
+    gap: 6px;
+    flex-wrap: wrap;
+    position: relative;
+
+    .toolbarButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 6px;
+        background-color: transparent;
+        border: none;
+        color: #9e9e9e;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        position: relative;
+
+        &:hover {
+            background-color: rgba(74, 107, 255, 0.15);
+            color: #e1e1e1;
+        }
+
+        &.active {
+            background-color: #4a6bff;
+            color: #ffffff;
+        }
+
+        &:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    .separator {
+        width: 1px;
+        height: 24px;
+        background-color: #404040;
+        margin: 0 6px;
+    }
+
+    .colorControls {
+        display: flex;
+        gap: 12px;
+        margin-left: 12px;
+        padding-left: 12px;
+        border-left: 1px solid #404040;
+    }
+
+    .colorPicker {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        background-color: rgba(64, 64, 64, 0.3);
+        transition: background-color 0.15s ease;
+
+        &:hover {
+            background-color: rgba(74, 107, 255, 0.1);
+        }
+
+        svg {
+            width: 16px;
+            height: 16px;
+            color: #9e9e9e;
+        }
+
+        input[type="color"] {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 4px;
+            background: none;
+            cursor: pointer;
+            padding: 0;
+
+            &::-webkit-color-swatch-wrapper {
+                padding: 2px;
+                border-radius: 4px;
+            }
+
+            &::-webkit-color-swatch {
+                border: none;
+                border-radius: 2px;
+            }
+        }
+    }
+
+    .languageSelect {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: #1e1e1e;
+        border: 1px solid #404040;
+        border-top: none;
+        border-radius: 0 0 8px 8px;
+        padding: 20px;
+        z-index: 1000;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+
+        .languageGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            max-height: 240px;
+            overflow-y: auto;
+
+            .languageButton {
+                padding: 12px 16px;
+                background-color: #252526;
+                border: 1px solid #404040;
+                border-radius: 6px;
+                color: #e1e1e1;
+                cursor: pointer;
+                transition: all 0.15s ease;
+                font-size: 0.875rem;
+                font-weight: 500;
+
+                &:hover {
+                    background-color: #4a6bff;
+                    color: #ffffff;
+                }
+            }
+        }
+    }
+}
+
+// 气泡菜单样式
+.bubbleMenu {
+    display: flex;
+    background-color: #1e1e1e;
+    border: 1px solid #404040;
+    border-radius: 8px;
+    padding: 6px;
+    gap: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+
+    button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: none;
+        background: transparent;
+        color: #9e9e9e;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: all 0.15s ease;
+
+        &:hover {
+            background-color: rgba(74, 107, 255, 0.15);
+            color: #e1e1e1;
+        }
+
+        &.active {
+            background-color: #4a6bff;
+            color: #ffffff;
+        }
+
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+}
+
+// 浮动菜单样式
+.floatingMenu {
+    display: flex;
+    background-color: #1e1e1e;
+    border: 1px solid #404040;
+    border-radius: 8px;
+    padding: 6px;
+    gap: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+
+    button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: none;
+        background: transparent;
+        color: #9e9e9e;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: all 0.15s ease;
+
+        &:hover {
+            background-color: rgba(74, 107, 255, 0.15);
+            color: #e1e1e1;
+        }
+
+        &.active {
+            background-color: #4a6bff;
+            color: #ffffff;
+        }
+
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+}
+
+.editor {
+    flex: 1;
+    overflow-y: auto;
+    background-color: #252526;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: rgba(45, 45, 48, 0.5);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #404040;
+        border-radius: 4px;
+
+        &:hover {
+            background-color: #555555;
+        }
+    }
+
+    :global(.ProseMirror) {
+        padding: 32px;
+        outline: none;
+        color: #e1e1e1;
+        font-size: 1rem;
+        line-height: 1.7;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+        // 焦点样式
+        &.has-focus {
+            outline: none;
+        }
+
+        // 标题样式 - 更现代的设计
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin: 32px 0 20px 0;
+            color: #e1e1e1;
+            background: linear-gradient(135deg, #e1e1e1 0%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin: 28px 0 18px 0;
+            color: #e1e1e1;
+            border-bottom: 2px solid rgba(74, 107, 255, 0.3);
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            font-size: 1.375rem;
+            font-weight: 600;
+            margin: 24px 0 16px 0;
+            color: #e1e1e1;
+        }
+
+        h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 24px 0 16px 0;
+            color: #e1e1e1;
+        }
+
+        h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 24px 0 16px 0;
+            color: #e1e1e1;
+        }
+
+        h6 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin: 24px 0 16px 0;
+            color: #9e9e9e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        // 段落样式
+        p {
+            margin: 18px 0;
+            color: #e1e1e1;
+
+            &.is-editor-empty:first-child::before {
+                content: attr(data-placeholder);
+                float: left;
+                color: #6c757d;
+                pointer-events: none;
+                height: 0;
+                font-style: italic;
+            }
+        }
+
+        // 列表样式 - 更现代的设计
+        ul,
+        ol {
+            padding-left: 28px;
+            margin: 20px 0;
+
+            li {
+                margin: 6px 0;
+                color: #e1e1e1;
+                position: relative;
+
+                &::marker {
+                    color: #4a6bff;
+                }
+            }
+        }
+
+        ul li::marker {
+            content: "▸ ";
+            font-weight: bold;
+        }
+
+        // 任务列表样式 - 修复对齐问题
+        ul[data-type="taskList"] {
+            list-style: none;
+            padding-left: 0;
+            margin: 20px 0;
+
+            // 嵌套任务列表
+            ul[data-type="taskList"] {
+                margin: 8px 0 8px 24px;
+                border-left: 2px solid rgba(74, 107, 255, 0.2);
+                padding-left: 12px;
+            }
+        }
+
+        .taskItem {
+            display: flex;
+            align-items: flex-start;
+            padding: 6px 0;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+            margin: 2px 0;
+            line-height: 1.5;
+
+            &:hover {
+                background-color: rgba(74, 107, 255, 0.05);
+            }
+
+            label {
+                flex: 0 0 auto;
+                margin-right: 8px;
+                user-select: none;
+                display: flex;
+                align-items: center;
+                line-height: 1.5;
+                height: 24px;
+
+                input[type="checkbox"] {
+                    width: 16px;
+                    height: 16px;
+                    margin: 0;
+                    accent-color: #4a6bff;
+                    border-radius: 3px;
+                    cursor: pointer;
+                }
+            }
+
+            > div {
+                flex: 1;
+                line-height: 1.5;
+
+                p {
+                    margin: 0;
+                    line-height: 1.5;
+                    color: #e1e1e1;
+                }
+            }
+
+            // 已完成任务的样式
+            &[data-checked="true"] {
+                > div {
+                    opacity: 0.6;
+
+                    p {
+                        text-decoration: line-through;
+                        color: #9e9e9e;
+                    }
+                }
+            }
+        }
+
+        // 引用样式 - 现代化设计
+        blockquote {
+            border-left: 4px solid #4a6bff;
+            padding: 16px 20px;
+            margin: 28px 0;
+            background: linear-gradient(135deg, rgba(30, 30, 30, 0.8) 0%, rgba(42, 42, 42, 0.8) 100%);
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #c1c1c1;
+            position: relative;
+
+            &::before {
+                content: '"';
+                font-size: 4rem;
+                color: rgba(74, 107, 255, 0.2);
+                position: absolute;
+                top: -10px;
+                left: 20px;
+                line-height: 1;
+            }
+        }
+
+        // 代码样式 - 现代化设计
+        code {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+            color: #4a6bff;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: "Fira Code", "Monaco", "Menlo", "Courier New", monospace;
+            font-size: 0.875em;
+            border: 1px solid rgba(74, 107, 255, 0.2);
+        }
+
+        // 代码块样式 - 重新设计
+        pre {
+            background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 28px 0;
+            overflow-x: auto;
+            border: 1px solid #404040;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+            &.hljs {
+                background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
+            }
+
+            code {
+                background: none;
+                padding: 0;
+                color: #e1e1e1;
+                font-size: 0.875rem;
+                white-space: pre;
+                font-family: "Fira Code", "Monaco", "Menlo", "Courier New", monospace;
+                border: none;
+            }
+
+            // 代码块语言标识 - 现代化设计
+            &[data-language]::before {
+                content: attr(data-language);
+                position: absolute;
+                top: 12px;
+                right: 16px;
+                font-size: 0.75rem;
+                color: #9e9e9e;
+                text-transform: uppercase;
+                font-family: "Monaco", "Menlo", "Courier New", monospace;
+                background: linear-gradient(135deg, rgba(30, 30, 30, 0.9) 0%, rgba(42, 42, 42, 0.9) 100%);
+                padding: 4px 8px;
+                border-radius: 4px;
+                border: 1px solid #404040;
+                letter-spacing: 0.5px;
+                font-weight: 500;
+            }
+
+            // 代码块选中状态
+            &.ProseMirror-selectednode {
+                outline: 2px solid #4a6bff;
+                outline-offset: 2px;
+                box-shadow: 0 0 0 4px rgba(74, 107, 255, 0.2);
+            }
+
+            // 滚动条样式
+            &::-webkit-scrollbar {
+                height: 8px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background-color: #2d2d30;
+                border-radius: 4px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: linear-gradient(90deg, #404040 0%, #555555 100%);
+                border-radius: 4px;
+
+                &:hover {
+                    background: linear-gradient(90deg, #555555 0%, #666666 100%);
+                }
+            }
+        }
+
+        // highlight.js 语法高亮样式 - 基于 VS Code Dark+ 主题
+        :global(.hljs) {
+            display: block;
+            overflow-x: auto;
+            background: transparent;
+            color: #e1e1e1;
+        }
+
+        :global(.hljs-comment),
+        :global(.hljs-quote) {
+            color: #6a9955;
+            font-style: italic;
+        }
+
+        :global(.hljs-variable),
+        :global(.hljs-template-variable),
+        :global(.hljs-attribute),
+        :global(.hljs-tag),
+        :global(.hljs-name),
+        :global(.hljs-regexp),
+        :global(.hljs-link),
+        :global(.hljs-selector-id),
+        :global(.hljs-selector-class) {
+            color: #9cdcfe;
+        }
+
+        :global(.hljs-number),
+        :global(.hljs-meta),
+        :global(.hljs-built_in),
+        :global(.hljs-builtin-name),
+        :global(.hljs-literal),
+        :global(.hljs-type),
+        :global(.hljs-params) {
+            color: #b5cea8;
+        }
+
+        :global(.hljs-string),
+        :global(.hljs-symbol),
+        :global(.hljs-bullet) {
+            color: #ce9178;
+        }
+
+        :global(.hljs-title),
+        :global(.hljs-section) {
+            color: #dcdcaa;
+        }
+
+        :global(.hljs-keyword),
+        :global(.hljs-selector-tag) {
+            color: #c586c0;
+        }
+
+        :global(.hljs-subst) {
+            color: #d4d4d4;
+        }
+
+        :global(.hljs-formula) {
+            background-color: #2d2d30;
+        }
+
+        :global(.hljs-addition) {
+            background-color: #1f4f1f;
+            color: #a6e3a1;
+        }
+
+        :global(.hljs-deletion) {
+            background-color: #4f1f1f;
+            color: #f38ba8;
+        }
+
+        :global(.hljs-strong) {
+            font-weight: bold;
+        }
+
+        :global(.hljs-emphasis) {
+            font-style: italic;
+        }
+
+        // 特定语言的样式增强
+        :global(.hljs-tag .hljs-name) {
+            color: #569cd6;
+        }
+
+        :global(.hljs-tag .hljs-attr) {
+            color: #9cdcfe;
+        }
+
+        :global(.hljs-tag .hljs-string) {
+            color: #ce9178;
+        }
+
+        :global(.hljs-doctag) {
+            color: #569cd6;
+        }
+
+        :global(.hljs-class .hljs-title) {
+            color: #4ec9b0;
+        }
+
+        :global(.hljs-function .hljs-title) {
+            color: #dcdcaa;
+        }
+
+        :global(.hljs-variable.language_) {
+            color: #569cd6;
+        }
+
+        :global(.hljs-operator) {
+            color: #d4d4d4;
+        }
+
+        :global(.hljs-punctuation) {
+            color: #d4d4d4;
+        }
+
+        // 高亮样式 - 现代化设计
+        mark {
+            background: linear-gradient(135deg, rgba(255, 235, 59, 0.3) 0%, rgba(255, 193, 7, 0.4) 100%);
+            border-radius: 3px;
+            padding: 2px 4px;
+            border: 1px solid rgba(255, 193, 7, 0.2);
+        }
+
+        // 链接样式 - 现代化设计
+        a {
+            color: #4a6bff;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+
+            &::after {
+                content: "";
+                position: absolute;
+                bottom: -1px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: linear-gradient(135deg, #4a6bff 0%, #6366f1 100%);
+                transition: width 0.3s;
+            }
+
+            &:hover {
+                color: #6366f1;
+
+                &::after {
+                    width: 100%;
+                }
+            }
+        }
+
+        // 图片样式 - 现代化设计
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+
+            &:hover {
+                transform: scale(1.02);
+            }
+        }
+
+        // 表格样式 - 现代化设计
+        table {
+            border-collapse: collapse;
+            margin: 28px 0;
+            width: 100%;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+            th,
+            td {
+                border: 1px solid #404040;
+                padding: 12px 16px;
+                text-align: left;
+                color: #e1e1e1;
+                transition: background-color 0.2s;
+            }
+
+            th {
+                background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+                font-weight: 600;
+                color: #e1e1e1;
+                text-transform: uppercase;
+                font-size: 0.875rem;
+                letter-spacing: 0.5px;
+            }
+
+            tr:hover {
+                background: linear-gradient(135deg, rgba(74, 107, 255, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
+            }
+        }
+
+        // 水平分隔线 - 现代化设计
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(135deg, transparent 0%, #4a6bff 50%, transparent 100%);
+            margin: 40px 0;
+            border-radius: 2px;
+        }
+
+        // 文本对齐
+        .has-text-align-left {
+            text-align: left;
+        }
+
+        .has-text-align-center {
+            text-align: center;
+        }
+
+        .has-text-align-right {
+            text-align: right;
+        }
+
+        .has-text-align-justify {
+            text-align: justify;
+        }
+
+        // 上标下标样式
+        sub {
+            vertical-align: sub;
+            font-size: 0.75em;
+        }
+
+        sup {
+            vertical-align: super;
+            font-size: 0.75em;
+        }
+    }
+
+    .placeholder {
+        padding: 32px;
+        color: #9e9e9e;
+        text-align: center;
+
+        p {
+            margin-bottom: 20px;
+            color: #e1e1e1;
+        }
+
+        code {
+            display: block;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+            border-radius: 8px;
+            color: #4a6bff;
+            margin: 20px 0;
+            font-family: "Monaco", "Menlo", "Courier New", monospace;
+            font-size: 0.875rem;
+            border: 1px solid #404040;
+        }
+    }
+}
+
+// 状态栏样式 - 现代化设计
+.statusBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+    border-top: 1px solid #404040;
+    font-size: 0.75rem;
+    color: #9e9e9e;
+    backdrop-filter: blur(8px);
+
+    .stats {
+        display: flex;
+        gap: 20px;
+        font-weight: 500;
+
+        span {
+            padding: 4px 8px;
+            background-color: rgba(74, 107, 255, 0.1);
+            border-radius: 4px;
+            border: 1px solid rgba(74, 107, 255, 0.2);
+        }
+    }
+}

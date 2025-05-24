@@ -26,6 +26,7 @@ export const Pages = {
     ArticleList: lazy(() => import("../pages/article-list")),
     ArticleEdit: lazy(() => import("../pages/article-edit")),
     ArticleEditMilkdown: lazy(() => import("../pages/article-edit-milkdown")),
+    ArticleEditTiptap: lazy(() => import("../pages/article-edit-tiptap")),
     // 用户相关
     UserList: lazy(() => import("../pages/user-list")),
     UserProfile: lazy(() => import("../pages/user-profile")),
