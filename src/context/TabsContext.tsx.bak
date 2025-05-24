@@ -27,26 +27,8 @@ const tabsReducer = (state: TabsState, action: TabsAction): TabsState => {
         case "ADD_TAB": {
             const { payload } = action;
 
-            // 首先检查是否已存在具有相同路径或相同key的标签
-            const existingTabByPath = state.tabs.find(tab => tab.path === payload.path);
-            const existingTabByKey = state.tabs.find(tab => tab.key === payload.key);
-
-            // 使用路径找到的标签，如果有的话
-            const existingTab = existingTabByPath;
-
-            // 如果找到相同key的标签但不是相同路径的标签，这是一个错误情况
-            // 我们应该避免添加相同key的不同标签
-            if (existingTabByKey && !existingTabByPath) {
-                // 如果是仪表盘，使用现有标签，避免重复
-                if (payload.key === "dashboard" || payload.key === "dashboard-content") {
-                    return {
-                        ...state,
-                        activeTab: existingTabByKey.key,
-                    };
-                }
-                // 否则，使用路径生成一个新的唯一key
-                payload.key = `${payload.path.replace(/[^a-zA-Z0-9]/g, "_")}_${Date.now()}`;
-            }
+            // 首先检查是否已存在具有相同路径的标签
+            const existingTab = state.tabs.find(tab => tab.path === payload.path);
 
             // 如果找到相同路径的标签，并且它已经是激活标签，直接返回当前状态
             if (existingTab && state.activeTab === existingTab.key) {

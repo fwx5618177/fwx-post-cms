@@ -101,6 +101,15 @@ export const routes: IRoutePage[] = [
                         auth: true,
                         tag: { type: "warning", text: "新功能" },
                     },
+                    {
+                        key: "article-edit-milkdown",
+                        label: "文章编辑-milkdown",
+                        icon: RiFileTextLine,
+                        path: "edit-milkdown",
+                        component: Pages.ArticleEditMilkdown,
+                        menuShow: true,
+                        auth: true,
+                    },
                 ],
             },
             {

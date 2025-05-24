@@ -20,7 +20,7 @@ import TabsBar from "../components/TabsBar";
 interface FlatMenuItem extends MenuItem {
     level: number;
     parentKey: string;
-    path: string; // 确保path是必需的字符串
+    path: string;
 }
 
 /**
@@ -80,6 +80,13 @@ const DashboardLayoutInner: React.FC = () => {
         return flatten(getMenuItems(routes));
     }, []);
 
+    // 当访问根路径时，重定向到仪表盘页面
+    useEffect(() => {
+        if (location.pathname === "/") {
+            navigate("/dashboard");
+        }
+    }, [location.pathname, navigate]);
+
     // 分拆useEffect：处理URL变化时的菜单项匹配
     useEffect(() => {
         // 找到与当前路径匹配的菜单项
@@ -98,14 +105,26 @@ const DashboardLayoutInner: React.FC = () => {
         const matchingItem = flatMenuItems.find(item => item.path === location.pathname);
         if (!matchingItem) return;
 
-        // 添加标签页
-        addTab({
-            key: matchingItem.key,
-            title: matchingItem.label,
-            path: matchingItem.path,
-            icon: matchingItem.icon,
-            closable: matchingItem.key !== "dashboard-content", // 仪表盘不可关闭
-        });
+        // 处理仪表盘路径的特殊情况，避免重复添加
+        if (matchingItem.key === "dashboard-content" && location.pathname === "/dashboard") {
+            // 使用全局定义的dashboard key而不是dashboard-content
+            addTab({
+                key: "dashboard", // 与初始状态一致的key
+                title: matchingItem.label,
+                path: matchingItem.path,
+                icon: matchingItem.icon,
+                closable: false,
+            });
+        } else {
+            // 添加标签页
+            addTab({
+                key: matchingItem.key,
+                title: matchingItem.label,
+                path: matchingItem.path,
+                icon: matchingItem.icon,
+                closable: matchingItem.key !== "dashboard-content", // 仪表盘不可关闭
+            });
+        }
     }, [location.pathname, flatMenuItems, addTab]);
 
     // 分拆useEffect：处理URL变化时的父级菜单展开
@@ -167,14 +186,25 @@ const DashboardLayoutInner: React.FC = () => {
             } else if (item.path) {
                 setSelectedKey(item.key);
 
-                // 添加标签页
-                addTab({
-                    key: item.key,
-                    title: item.label,
-                    path: item.path,
-                    icon: item.icon,
-                    closable: item.key !== "dashboard-content", // 仪表盘不可关闭
-                });
+                // 添加标签页 - 仪表盘路径特殊处理
+                if (item.key === "dashboard-content" && item.path === "/dashboard") {
+                    // 使用全局定义的dashboard key
+                    addTab({
+                        key: "dashboard", // 与初始状态一致的key
+                        title: item.label,
+                        path: item.path,
+                        icon: item.icon,
+                        closable: false,
+                    });
+                } else {
+                    addTab({
+                        key: item.key,
+                        title: item.label,
+                        path: item.path,
+                        icon: item.icon,
+                        closable: item.key !== "dashboard-content", // 仪表盘不可关闭
+                    });
+                }
 
                 navigate(item.path);
             }

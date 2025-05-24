@@ -50,6 +50,10 @@
         ]
     },
     "dependencies": {
+        "@milkdown/crepe": "^7.9.1",
+        "@milkdown/kit": "^7.9.1",
+        "@milkdown/prose": "^7.9.1",
+        "@milkdown/react": "^7.9.1",
         "@monaco-editor/react": "^4.7.0",
         "@tanstack/react-query": "^5.75.2",
         "@types/classnames": "^2.3.4",
