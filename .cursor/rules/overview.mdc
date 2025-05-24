@@ -1,7 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 # 标准设计准则
 
@@ -10,6 +10,7 @@ alwaysApply: false
 - 所有的 scss 文件都必须写到 `src/styles` 文件下
 - scss 文件内容必须保持内嵌的结构化
 - scss 禁止导入其他文件
+- scss 已经废除了 darken 的写法，要改成引入 @use "sass:color"; color.adjust的写法
 
 ## 开发
 - 禁止用 antd 组件
