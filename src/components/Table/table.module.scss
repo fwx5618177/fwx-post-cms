@@ -1,4 +1,4 @@
-@use "sass:color";
+@use "sass:color" as *;
 
 // Colors
 $bg-primary: #1a1b1e;
@@ -358,7 +358,7 @@ $fixed-border-color: rgba(255, 255, 255, 0.12);
                     transition: color 0.2s;
 
                     &:hover {
-                        color: lighten($accent-color, 10%);
+                        color: color.adjust($accent-color, $lightness: 10%);
                     }
                 }
             }
