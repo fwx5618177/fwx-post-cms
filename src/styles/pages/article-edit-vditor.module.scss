@@ -1,0 +1,294 @@
+@use "sass:color";
+
+$primary-color: #007bff;
+$success-color: #28a745;
+$info-color: #17a2b8;
+$warning-color: #ffc107;
+$danger-color: #dc3545;
+$dark-color: #1a1a1a;
+$light-color: #2d2d2d;
+$border-color: #404040;
+$text-color: #e0e0e0;
+
+.container {
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid $border-color;
+
+        h1 {
+            margin: 0;
+            color: $text-color;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+
+            .modeInfo {
+                padding: 6px 12px;
+                background: color.adjust($info-color, $lightness: 45%);
+                border-radius: 4px;
+                font-size: 14px;
+                color: $info-color;
+                border: 1px solid color.adjust($info-color, $lightness: 30%);
+
+                span {
+                    font-weight: 500;
+                }
+            }
+
+            .button {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 8px 16px;
+                border: 1px solid $border-color;
+                background: $light-color;
+                color: $text-color;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.2s ease;
+
+                &:hover:not(:disabled) {
+                    background: color.adjust($light-color, $lightness: 5%);
+                    border-color: color.adjust($border-color, $lightness: 10%);
+                }
+
+                &:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+
+                &.primary {
+                    background: $primary-color;
+                    color: #ffffff;
+                    border-color: $primary-color;
+
+                    &:hover:not(:disabled) {
+                        background: color.adjust($primary-color, $lightness: -5%);
+                        border-color: color.adjust($primary-color, $lightness: -5%);
+                    }
+                }
+
+                &.info {
+                    background: $info-color;
+                    color: #ffffff;
+                    border-color: $info-color;
+
+                    &:hover:not(:disabled) {
+                        background: color.adjust($info-color, $lightness: -5%);
+                        border-color: color.adjust($info-color, $lightness: -5%);
+                    }
+                }
+            }
+        }
+    }
+
+    .editorWrapper {
+        position: relative;
+        min-height: 600px;
+
+        .vditorContainer {
+            width: 100%;
+            height: 100%;
+        }
+
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(26, 26, 26, 0.9);
+            z-index: 1000;
+
+            .spinner {
+                width: 40px;
+                height: 40px;
+                border: 4px solid $border-color;
+                border-top: 4px solid $primary-color;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-bottom: 12px;
+            }
+
+            span {
+                color: $text-color;
+                font-size: 14px;
+                font-weight: 500;
+            }
+        }
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+// 移动端响应式
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .controls {
+                width: 100%;
+                justify-content: flex-start;
+                gap: 8px;
+
+                .button {
+                    padding: 6px 12px;
+                    font-size: 13px;
+                }
+
+                .modeInfo {
+                    font-size: 13px;
+                    padding: 4px 8px;
+                }
+            }
+        }
+
+        .editorWrapper {
+            min-height: 500px;
+        }
+    }
+}
+
+// 自定义 Vditor 样式覆盖 - 深色主题
+:global {
+    .vditor {
+        border-radius: 6px !important;
+
+        .vditor-toolbar {
+            border-bottom: 1px solid $border-color !important;
+            background: $light-color !important;
+
+            .vditor-tooltipped {
+                color: $text-color !important;
+
+                &:hover {
+                    background: color.adjust($light-color, $lightness: 5%) !important;
+                }
+            }
+
+            .vditor-toolbar__divider {
+                background: $border-color !important;
+            }
+        }
+
+        .vditor-content {
+            background: $dark-color !important;
+        }
+
+        .vditor-sv,
+        .vditor-ir {
+            .vditor-reset {
+                background: $dark-color !important;
+                color: $text-color !important;
+                font-family: "JetBrains Mono", "Fira Code", Monaco, monospace !important;
+                padding: 0.5em !important;
+            }
+
+            textarea {
+                // background: $dark-color !important;
+                color: $text-color !important;
+                border: none !important;
+            }
+
+            .vditor-sv__marker,
+            .vditor-ir__marker {
+                color: $text-color !important;
+                font-size: 18px !important;
+                padding: 0.2em 0.2em 0.2em 0 !important;
+            }
+
+            .vditor-ir__preview {
+                padding: 0.5em !important;
+                border-radius: 6px !important;
+            }
+        }
+
+        .vditor-reset {
+            color: $text-color !important;
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                color: $text-color !important;
+                border-bottom-color: $border-color !important;
+            }
+
+            blockquote {
+                padding: 1em !important;
+                border-left-color: $border-color !important;
+                background: color.adjust($dark-color, $lightness: 2%) !important;
+                color: $text-color !important;
+            }
+
+            table {
+                th,
+                td,
+                tr {
+                    border-color: $border-color !important;
+                }
+
+                th,
+                tr {
+                    background: $light-color !important;
+                }
+            }
+
+            code {
+                background: $light-color !important;
+                color: #f8f8f2 !important;
+            }
+
+            pre {
+                background: $light-color !important;
+
+                code {
+                    background: transparent !important;
+                }
+            }
+
+            hr {
+                border-color: $border-color !important;
+            }
+        }
+
+        .vditor-resize {
+            background: $border-color !important;
+        }
+    }
+}

@@ -121,6 +121,16 @@ export const routes: IRoutePage[] = [
                         auth: true,
                         tag: { type: "warning", text: "半成品" },
                     },
+                    {
+                        key: "article-edit-vditor",
+                        label: "文章编辑-vditor",
+                        icon: RiFileTextLine,
+                        path: "edit-vditor",
+                        component: Pages.ArticleEditVditor,
+                        menuShow: true,
+                        auth: true,
+                        tag: { type: "success", text: "推荐" },
+                    },
                 ],
             },
             {

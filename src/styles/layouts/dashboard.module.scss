@@ -419,10 +419,6 @@ $transition-duration: 0.2s;
                 }
             }
         }
-
-        .content {
-            min-height: calc(100vh - #{$header-height});
-        }
     }
 
     &.collapsed {
