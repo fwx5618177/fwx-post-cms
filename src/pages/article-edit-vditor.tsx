@@ -3,6 +3,7 @@ import { RiSaveLine } from "react-icons/ri";
 import Vditor from "vditor";
 import "vditor/dist/index.css";
 import styles from "@styles/pages/article-edit-vditor.module.scss";
+import Loading from "@components/Loading";
 
 // 默认 Markdown 内容
 const defaultMarkdown = `# Vditor 编辑器示例
@@ -43,6 +44,49 @@ $$
 
 `;
 
+// 文章类型选项
+const articleTypes = [
+    { value: "tech", label: "技术文章" },
+    { value: "tutorial", label: "教程指南" },
+    { value: "experience", label: "经验分享" },
+    { value: "news", label: "新闻资讯" },
+    { value: "review", label: "产品评测" },
+    { value: "other", label: "其他" },
+];
+
+// 预设标签选项
+const predefinedTags = [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Vue",
+    "Node.js",
+    "Python",
+    "Java",
+    "Go",
+    "Docker",
+    "Kubernetes",
+    "前端",
+    "后端",
+    "全栈",
+    "移动开发",
+    "数据库",
+    "算法",
+    "架构",
+    "性能优化",
+    "工具",
+    "教程",
+];
+
+// 文章数据接口
+interface ArticleData {
+    title: string;
+    content: string;
+    tags: string[];
+    type: string;
+    status: "draft" | "published";
+}
+
 const ArticleEditVditor: React.FC = () => {
     // 编辑器实例引用
     const vditorRef = useRef<Vditor | null>(null);
@@ -50,6 +94,15 @@ const ArticleEditVditor: React.FC = () => {
 
     // 状态管理
     const [isReady, setIsReady] = useState<boolean>(false);
+    const [articleData, setArticleData] = useState<ArticleData>({
+        title: "",
+        content: defaultMarkdown,
+        tags: [],
+        type: "tech",
+        status: "draft",
+    });
+    const [newTag, setNewTag] = useState<string>("");
+    const [showTagInput, setShowTagInput] = useState<boolean>(false);
 
     // 初始化编辑器
     useEffect(() => {
@@ -114,13 +167,83 @@ const ArticleEditVditor: React.FC = () => {
         return "";
     }, []);
 
-    // 保存内容
-    const saveContent = useCallback(() => {
-        const markdown = getMarkdown();
+    // 添加标签
+    const addTag = useCallback(
+        (tag: string) => {
+            const trimmedTag = tag.trim();
+            if (trimmedTag && !articleData.tags.includes(trimmedTag)) {
+                setArticleData(prev => ({
+                    ...prev,
+                    tags: [...prev.tags, trimmedTag],
+                }));
+            }
+            setNewTag("");
+            setShowTagInput(false);
+        },
+        [articleData.tags],
+    );
 
-        // 这里可以添加保存到服务器的逻辑
-        console.log("保存内容:", { markdown });
-    }, [getMarkdown]);
+    // 移除标签
+    const removeTag = useCallback((tagToRemove: string) => {
+        setArticleData(prev => ({
+            ...prev,
+            tags: prev.tags.filter(tag => tag !== tagToRemove),
+        }));
+    }, []);
+
+    // 处理预设标签点击
+    const handlePredefinedTagClick = useCallback(
+        (tag: string) => {
+            addTag(tag);
+        },
+        [addTag],
+    );
+
+    // 处理新标签输入
+    const handleNewTagSubmit = useCallback(
+        (e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                addTag(newTag);
+            }
+            if (e.key === "Escape") {
+                setNewTag("");
+                setShowTagInput(false);
+            }
+        },
+        [newTag, addTag],
+    );
+
+    // 保存内容
+    const saveContent = useCallback(
+        (status: "draft" | "published" = "draft") => {
+            const markdown = getMarkdown();
+
+            const finalArticleData: ArticleData = {
+                ...articleData,
+                content: markdown,
+                status,
+            };
+
+            // 验证必填字段
+            if (!finalArticleData.title.trim()) {
+                alert("请输入文章标题");
+                return;
+            }
+
+            if (!finalArticleData.content.trim()) {
+                alert("请输入文章内容");
+                return;
+            }
+
+            // 这里可以添加保存到服务器的逻辑
+            console.log("保存内容:", finalArticleData);
+
+            // 显示保存成功提示
+            alert(`文章已${status === "published" ? "发布" : "保存为草稿"}`);
+        },
+        [getMarkdown, articleData],
+    );
 
     return (
         <div className={styles.container}>
@@ -128,20 +251,121 @@ const ArticleEditVditor: React.FC = () => {
                 <h1>Vditor Markdown 编辑器</h1>
 
                 <div className={styles.controls}>
-                    <button className={`${styles.button} ${styles.primary}`} onClick={saveContent} disabled={!isReady}>
-                        <RiSaveLine /> 保存内容
+                    <button
+                        className={`${styles.button} ${styles.secondary}`}
+                        onClick={() => saveContent("draft")}
+                        disabled={!isReady}
+                    >
+                        <RiSaveLine /> 保存草稿
                     </button>
+                    <button
+                        className={`${styles.button} ${styles.primary}`}
+                        onClick={() => saveContent("published")}
+                        disabled={!isReady}
+                    >
+                        <RiSaveLine /> 发布文章
+                    </button>
+                </div>
+            </div>
+
+            {/* 文章信息表单 */}
+            <div className={styles.articleForm}>
+                {/* 标题输入 */}
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>文章标题 *</label>
+                    <input
+                        type="text"
+                        className={styles.titleInput}
+                        placeholder="请输入文章标题..."
+                        value={articleData.title}
+                        onChange={e => setArticleData(prev => ({ ...prev, title: e.target.value }))}
+                    />
+                </div>
+
+                {/* 文章类型选择 */}
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>文章类型</label>
+                    <select
+                        className={styles.typeSelect}
+                        value={articleData.type}
+                        onChange={e => setArticleData(prev => ({ ...prev, type: e.target.value }))}
+                    >
+                        {articleTypes.map(type => (
+                            <option key={type.value} value={type.value}>
+                                {type.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                {/* 标签管理 */}
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>文章标签</label>
+
+                    {/* 已选择的标签 */}
+                    <div className={styles.selectedTags}>
+                        {articleData.tags.map((tag, index) => (
+                            <span key={index} className={styles.tag}>
+                                {tag}
+                                <button
+                                    type="button"
+                                    className={styles.removeTag}
+                                    onClick={() => removeTag(tag)}
+                                    aria-label={`移除标签 ${tag}`}
+                                >
+                                    ×
+                                </button>
+                            </span>
+                        ))}
+
+                        {/* 添加新标签 */}
+                        {showTagInput ? (
+                            <input
+                                type="text"
+                                className={styles.tagInput}
+                                placeholder="输入标签名称..."
+                                value={newTag}
+                                onChange={e => setNewTag(e.target.value)}
+                                onKeyDown={handleNewTagSubmit}
+                                onBlur={() => {
+                                    if (newTag.trim()) {
+                                        addTag(newTag);
+                                    } else {
+                                        setShowTagInput(false);
+                                    }
+                                }}
+                                autoFocus
+                            />
+                        ) : (
+                            <button type="button" className={styles.addTagBtn} onClick={() => setShowTagInput(true)}>
+                                + 添加标签
+                            </button>
+                        )}
+                    </div>
+
+                    {/* 预设标签 */}
+                    <div className={styles.predefinedTags}>
+                        <span className={styles.predefinedLabel}>常用标签：</span>
+                        {predefinedTags
+                            .filter(tag => !articleData.tags.includes(tag))
+                            .slice(0, 10)
+                            .map(tag => (
+                                <button
+                                    key={tag}
+                                    type="button"
+                                    className={styles.predefinedTag}
+                                    onClick={() => handlePredefinedTagClick(tag)}
+                                >
+                                    {tag}
+                                </button>
+                            ))}
+                    </div>
                 </div>
             </div>
 
             <div className={styles.editorWrapper}>
                 <div ref={containerRef} className={styles.vditorContainer}></div>
-                {!isReady && (
-                    <div className={styles.loading}>
-                        <div className={styles.spinner}></div>
-                        <span>编辑器加载中...</span>
-                    </div>
-                )}
+                {!isReady && <Loading />}
             </div>
         </div>
     );
