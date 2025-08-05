@@ -117,7 +117,7 @@ class City {
 
         const floorArray = ["LANDMASS"];
 
-        this.loadFbx(modelMaterial).then((scene: any) => {
+        this.loadFbx(modelMaterial).then((scene: THREE.Group) => {
             this.group.add(scene);
             // 遍历整个场景找到对应的对象
             scene.traverse((child: THREE.Object3D) => {
@@ -157,7 +157,7 @@ class City {
             this.isStart = true;
             // 加载扫描效果
             radarData.forEach(data => {
-                const mesh = Radar(data as any);
+                const mesh = Radar(data);
 
                 mesh.material.uniforms.time = this.time;
                 this.effectGroup.add(mesh);
@@ -182,7 +182,7 @@ class City {
 
     // 设置地板
     setFloor(object: THREE.Object3D<THREE.Event>) {
-        Utils.forMaterial((object as any)?.material, (material: any) => {
+        Utils.forMaterial((object as THREE.Mesh)?.material, (material: THREE.Material) => {
             material.color.setStyle("#040912");
         });
     }
@@ -190,7 +190,7 @@ class City {
     /**
      *
      */
-    setCityMaterial(object: any) {
+    setCityMaterial(object: THREE.Mesh) {
         // 确定oject的geometry的box size
         // 计算当前几何体的的边界矩形，该操作会更新已有 [param:.boundingBox]。
         // 边界矩形不会默认计算，需要调用该接口指定计算边界矩形，否则保持默认值 null。
@@ -206,109 +206,119 @@ class City {
 
         const size = new THREE.Vector3(max.x - min.x, max.y - min.y, max.z - min.z);
 
-        Utils.forMaterial(object.material, (material: any) => {
-            // material.opacity = 0.6;
-            material.transparent = true;
-            material.color.setStyle("#1B3045");
-            // 在编译shader程序之前立即执行的可选回调。此函数使用shader源码作为参数。用于修改内置材质。
-            material.onBeforeCompile = (shader: {
-                uniforms: {
-                    time: { value: number };
-                    uStartTime: { value: number };
-                    uCenter: { value: any };
-                    uSize: { value: THREE.Vector3 };
-                    uMax: { value: any };
-                    uMin: { value: any };
-                    uTopColor: { value: THREE.Color };
-                    uSwitch: { value: THREE.Vector3 };
-                    uDiffusion: { value: THREE.Vector3 };
-                    uDiffusionCenter: { value: THREE.Vector3 };
-                    uFlow: { value: THREE.Vector3 };
-                    uColor: { value: THREE.Color };
-                    uFlowColor: { value: THREE.Color };
-                    uOpacity: { value: number };
-                    uRadius: { value: any };
-                };
-                fragmentShader: string;
-                vertexShader: string;
-            }) => {
-                shader.uniforms.time = this.time;
-                shader.uniforms.uStartTime = this.StartTime;
+        Utils.forMaterial(
+            object.material,
+            (
+                material: THREE.Material & {
+                    onBeforeCompile?: (shader: {
+                        uniforms: Record<string, { value: unknown }>;
+                        fragmentShader: string;
+                        vertexShader: string;
+                    }) => void;
+                },
+            ) => {
+                // material.opacity = 0.6;
+                material.transparent = true;
+                material.color.setStyle("#1B3045");
+                // 在编译shader程序之前立即执行的可选回调。此函数使用shader源码作为参数。用于修改内置材质。
+                material.onBeforeCompile = (shader: {
+                    uniforms: {
+                        time: { value: number };
+                        uStartTime: { value: number };
+                        uCenter: { value: THREE.Vector3 };
+                        uSize: { value: THREE.Vector3 };
+                        uMax: { value: THREE.Vector3 };
+                        uMin: { value: THREE.Vector3 };
+                        uTopColor: { value: THREE.Color };
+                        uSwitch: { value: THREE.Vector3 };
+                        uDiffusion: { value: THREE.Vector3 };
+                        uDiffusionCenter: { value: THREE.Vector3 };
+                        uFlow: { value: THREE.Vector3 };
+                        uColor: { value: THREE.Color };
+                        uFlowColor: { value: THREE.Color };
+                        uOpacity: { value: number };
+                        uRadius: { value: number };
+                    };
+                    fragmentShader: string;
+                    vertexShader: string;
+                }) => {
+                    shader.uniforms.time = this.time;
+                    shader.uniforms.uStartTime = this.StartTime;
 
-                // 中心点
-                shader.uniforms.uCenter = {
-                    value: center,
-                };
+                    // 中心点
+                    shader.uniforms.uCenter = {
+                        value: center,
+                    };
 
-                // geometry大小
-                shader.uniforms.uSize = {
-                    value: size,
-                };
+                    // geometry大小
+                    shader.uniforms.uSize = {
+                        value: size,
+                    };
 
-                shader.uniforms.uMax = {
-                    value: max,
-                };
+                    shader.uniforms.uMax = {
+                        value: max,
+                    };
 
-                shader.uniforms.uMin = {
-                    value: min,
-                };
-                shader.uniforms.uTopColor = {
-                    value: new THREE.Color("#00FF00"),
-                };
+                    shader.uniforms.uMin = {
+                        value: min,
+                    };
+                    shader.uniforms.uTopColor = {
+                        value: new THREE.Color("#00FF00"),
+                    };
 
-                // 效果开关
-                shader.uniforms.uSwitch = {
-                    value: new THREE.Vector3(
-                        0, // 扩散
-                        0, // 左右横扫
-                        0, // 向上扫描
-                    ),
-                };
-                // 扩散
-                shader.uniforms.uDiffusion = {
-                    value: new THREE.Vector3(
-                        1, // 0 1开关
-                        20, // 范围
-                        600, // 速度
-                    ),
-                };
-                // 扩散中心点
-                shader.uniforms.uDiffusionCenter = {
-                    value: new THREE.Vector3(0, 0, 0),
-                };
+                    // 效果开关
+                    shader.uniforms.uSwitch = {
+                        value: new THREE.Vector3(
+                            0, // 扩散
+                            0, // 左右横扫
+                            0, // 向上扫描
+                        ),
+                    };
+                    // 扩散
+                    shader.uniforms.uDiffusion = {
+                        value: new THREE.Vector3(
+                            1, // 0 1开关
+                            20, // 范围
+                            600, // 速度
+                        ),
+                    };
+                    // 扩散中心点
+                    shader.uniforms.uDiffusionCenter = {
+                        value: new THREE.Vector3(0, 0, 0),
+                    };
 
-                // 扩散中心点
-                shader.uniforms.uFlow = {
-                    value: new THREE.Vector3(
-                        1, // 0 1开关
-                        10, // 范围
-                        60, // 速度
-                    ),
-                };
+                    // 扩散中心点
+                    shader.uniforms.uFlow = {
+                        value: new THREE.Vector3(
+                            1, // 0 1开关
+                            10, // 范围
+                            60, // 速度
+                        ),
+                    };
 
-                // 效果颜色
-                shader.uniforms.uColor = {
-                    value: new THREE.Color("#5588aa"),
-                };
-                // 效果颜色
-                shader.uniforms.uFlowColor = {
-                    value: new THREE.Color("#BF3EFF"),
-                };
+                    // 效果颜色
+                    shader.uniforms.uColor = {
+                        value: new THREE.Color("#5588aa"),
+                    };
+                    // 效果颜色
+                    shader.uniforms.uFlowColor = {
+                        value: new THREE.Color("#BF3EFF"),
+                    };
 
-                // 效果透明度
-                shader.uniforms.uOpacity = {
-                    value: 1,
-                };
+                    // 效果透明度
+                    shader.uniforms.uOpacity = {
+                        value: 1,
+                    };
 
-                // 效果透明度
-                shader.uniforms.uRadius = {
-                    value: radius,
-                };
+                    // 效果透明度
+                    shader.uniforms.uRadius = {
+                        value: radius,
+                    };
 
-                /**
-                 * 对片元着色器进行修改
-                 */
-                const fragment = `
+                    /**
+                     * 对片元着色器进行修改
+                     */
+                    const fragment = `
     float distanceTo(vec2 src, vec2 dst) {
         float dx = src.x - dst.x;
         float dy = src.y - dst.y;
@@ -351,7 +361,7 @@ class City {
 
     void main() {
         `;
-                const fragmentColor = `
+                    const fragmentColor = `
     vec3 distColor = outgoingLight;
     float dstOpacity = diffuseColor.a;
     
@@ -392,16 +402,16 @@ class City {
     gl_FragColor = vec4(distColor, dstOpacity * uStartTime);
         `;
 
-                shader.fragmentShader = shader.fragmentShader.replace("void main() {", fragment);
-                shader.fragmentShader = shader.fragmentShader.replace(
-                    "gl_FragColor = vec4( outgoingLight, diffuseColor.a );",
-                    fragmentColor,
-                );
+                    shader.fragmentShader = shader.fragmentShader.replace("void main() {", fragment);
+                    shader.fragmentShader = shader.fragmentShader.replace(
+                        "gl_FragColor = vec4( outgoingLight, diffuseColor.a );",
+                        fragmentColor,
+                    );
 
-                /**
-                 * 对顶点着色器进行修改
-                 */
-                const vertex = `
+                    /**
+                     * 对顶点着色器进行修改
+                     */
+                    const vertex = `
     varying vec4 vPositionMatrix;
     varying vec3 vPosition;
     uniform float uStartTime;
@@ -409,21 +419,22 @@ class City {
             vPositionMatrix = projectionMatrix * vec4(position, 1.0);
             vPosition = position;
             `;
-                const vertexPosition = `
+                    const vertexPosition = `
     vec3 transformed = vec3(position.x, position.y, position.z * uStartTime);
             `;
 
-                shader.vertexShader = shader.vertexShader.replace("void main() {", vertex);
-                shader.vertexShader = shader.vertexShader.replace("#include <begin_vertex>", vertexPosition);
-            };
-        });
+                    shader.vertexShader = shader.vertexShader.replace("void main() {", vertex);
+                    shader.vertexShader = shader.vertexShader.replace("#include <begin_vertex>", vertexPosition);
+                };
+            },
+        );
     }
 
     // Line
     /**
      * 获取包围线条效果
      */
-    surroundLine(object: THREE.Object3D<THREE.Event> | any) {
+    surroundLine(object: THREE.Object3D<THREE.Event>) {
         // 获取线条geometry
         const geometry = Effects.surroundLineGeometry(object);
         // 获取物体的世界坐标 旋转等
@@ -457,7 +468,7 @@ class City {
     /**
      * 创建包围线条材质
      */
-    createSurroundLineMaterial({ max, min }: any) {
+    createSurroundLineMaterial({ max, min }: { max: THREE.Vector3; min: THREE.Vector3 }) {
         if (this.surroundLineMaterial) return this.surroundLineMaterial;
 
         this.surroundLineMaterial = new THREE.ShaderMaterial({

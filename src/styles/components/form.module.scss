@@ -1,0 +1,324 @@
+@import "../variables.scss";
+
+// 现代表单组件
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+    margin-bottom: $spacing-4;
+}
+
+.label {
+    font-family: $font-family-sans;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-primary;
+    line-height: $line-height-tight;
+
+    &.required::after {
+        content: " *";
+        color: $danger-color;
+    }
+
+    &.disabled {
+        color: $text-disabled;
+    }
+}
+
+.input {
+    padding: $spacing-3 $spacing-4;
+    font-family: $font-family-sans;
+    font-size: $font-size-base;
+    line-height: $line-height-normal;
+    color: $text-primary;
+    background-color: $surface-secondary;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+    transition: $transition-colors, box-shadow $transition-normal $ease-in-out;
+
+    &::placeholder {
+        color: $text-placeholder;
+    }
+
+    &:focus {
+        outline: none;
+        border-color: $primary-500;
+        box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+        background-color: $surface-primary;
+    }
+
+    &:hover:not(:focus):not(:disabled) {
+        border-color: $border-light;
+    }
+
+    &:disabled {
+        background-color: $surface-primary;
+        color: $text-disabled;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    &.error {
+        border-color: $danger-color;
+        box-shadow: 0 0 0 3px rgba($danger-color, 0.1);
+
+        &:focus {
+            border-color: $danger-color;
+            box-shadow: 0 0 0 3px rgba($danger-color, 0.2);
+        }
+    }
+
+    &.success {
+        border-color: $success-color;
+        box-shadow: 0 0 0 3px rgba($success-color, 0.1);
+    }
+
+    // 尺寸变体
+    &.size-sm {
+        padding: $spacing-2 $spacing-3;
+        font-size: $font-size-sm;
+        border-radius: $border-radius-md;
+    }
+
+    &.size-lg {
+        padding: $spacing-4 $spacing-5;
+        font-size: $font-size-lg;
+        border-radius: $border-radius-xl;
+    }
+}
+
+// 文本域
+.textarea {
+    @extend .input;
+    min-height: 100px;
+    resize: vertical;
+    font-family: $font-family-sans;
+    line-height: $line-height-relaxed;
+
+    &.size-sm {
+        min-height: 80px;
+    }
+
+    &.size-lg {
+        min-height: 120px;
+    }
+}
+
+// 选择框
+.select {
+    @extend .input;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right $spacing-3 center;
+    background-repeat: no-repeat;
+    background-size: 16px 12px;
+    padding-right: $spacing-10;
+
+    &:disabled {
+        cursor: not-allowed;
+    }
+}
+
+// 复选框和单选框
+.checkbox,
+.radio {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-2;
+    cursor: pointer;
+    font-size: $font-size-base;
+    color: $text-primary;
+    line-height: $line-height-normal;
+
+    input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .checkmark {
+        width: 18px;
+        height: 18px;
+        background-color: $surface-secondary;
+        border: 1px solid $border-color;
+        transition: $transition-colors;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &::after {
+            content: "";
+            opacity: 0;
+            transition: opacity $transition-fast $ease-in-out;
+        }
+    }
+
+    &:hover .checkmark {
+        border-color: $border-light;
+    }
+
+    input:checked ~ .checkmark {
+        background-color: $primary-500;
+        border-color: $primary-500;
+
+        &::after {
+            opacity: 1;
+        }
+    }
+
+    input:focus ~ .checkmark {
+        box-shadow: 0 0 0 3px rgba($primary-500, 0.1);
+    }
+
+    input:disabled ~ .checkmark {
+        background-color: $surface-primary;
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    &.error .checkmark {
+        border-color: $danger-color;
+    }
+}
+
+.checkbox .checkmark {
+    border-radius: $border-radius-sm;
+
+    &::after {
+        width: 5px;
+        height: 9px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+}
+
+.radio .checkmark {
+    border-radius: 50%;
+
+    &::after {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: white;
+    }
+}
+
+// 输入组
+.input-group {
+    display: flex;
+    border-radius: $border-radius-lg;
+    overflow: hidden;
+
+    .input {
+        border-radius: 0;
+        border-right: 0;
+
+        &:first-child {
+            border-top-left-radius: $border-radius-lg;
+            border-bottom-left-radius: $border-radius-lg;
+        }
+
+        &:last-child {
+            border-top-right-radius: $border-radius-lg;
+            border-bottom-right-radius: $border-radius-lg;
+            border-right: 1px solid $border-color;
+        }
+
+        &:focus {
+            z-index: 2;
+            border-right: 1px solid $primary-500;
+        }
+    }
+
+    .addon {
+        display: flex;
+        align-items: center;
+        padding: 0 $spacing-3;
+        background-color: $surface-tertiary;
+        border: 1px solid $border-color;
+        font-size: $font-size-sm;
+        color: $text-secondary;
+        white-space: nowrap;
+
+        &:first-child {
+            border-right: 0;
+        }
+
+        &:last-child {
+            border-left: 0;
+        }
+    }
+}
+
+// 错误和帮助文本
+.help-text {
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    margin-top: $spacing-1;
+    line-height: $line-height-normal;
+}
+
+.error-text {
+    @extend .help-text;
+    color: $danger-color;
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+
+    &::before {
+        content: "⚠";
+        font-size: $font-size-xs;
+    }
+}
+
+.success-text {
+    @extend .help-text;
+    color: $success-color;
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+
+    &::before {
+        content: "✓";
+        font-size: $font-size-xs;
+    }
+}
+
+// 表单布局
+.form-inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: $spacing-4;
+
+    .form-group {
+        margin-bottom: 0;
+        flex: 1;
+        min-width: 200px;
+    }
+}
+
+.form-grid {
+    display: grid;
+    gap: $spacing-4;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+// 响应式设计
+@media (max-width: $breakpoint-md) {
+    .form-inline {
+        flex-direction: column;
+        align-items: stretch;
+
+        .form-group {
+            min-width: unset;
+        }
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

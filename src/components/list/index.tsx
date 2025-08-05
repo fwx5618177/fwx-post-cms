@@ -15,7 +15,12 @@ const ListCard = () => {
     const [form] = Form.useForm();
     const [todoLists, setTodoLists] = useState<Performance[]>([]);
 
-    const onFinish = async (value: any) => {
+    interface TodoFormValues {
+        briefTitle: string;
+        detailInfos: string;
+    }
+
+    const onFinish = async (value: TodoFormValues) => {
         const { briefTitle, detailInfos } = value;
 
         const result = await api.create({
@@ -40,7 +45,7 @@ const ListCard = () => {
         }
     };
 
-    const handleDetail = async (e: { target: { value: any } }) => {
+    const handleDetail = async (e: { target: { value: string } }) => {
         const brief = e?.target?.value;
 
         const result = await api.queryId(brief);

@@ -2,11 +2,12 @@ import { Card, Descriptions } from "antd";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Parser } from "marked";
 import moment from "moment";
+import { ContentDetail } from "@/types/content";
 import api from "./api";
 
 const Instro: React.FC<{ routeKey: string }> = ({ routeKey }) => {
     const showRef = useRef<HTMLDivElement>(null);
-    const [content, setContent] = useState<any>(null);
+    const [content, setContent] = useState<ContentDetail | null>(null);
 
     const queryContent = useCallback(async () => {
         const result = await api.detail(routeKey);

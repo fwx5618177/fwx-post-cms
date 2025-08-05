@@ -1,7 +1,7 @@
 import { AxiosRequestConfig } from "axios";
 
 // 响应数据格式
-export interface IResponseData<T = any> {
+export interface IResponseData<T = unknown> {
     code: number;
     data: T;
     message: string;
@@ -20,11 +20,14 @@ export interface IErrorMessageMap {
     [key: number]: string;
 }
 
+// 请求数据类型
+export type RequestData = Record<string, unknown> | FormData | string | null;
+
 // 请求方法
 export interface IRequestMethods {
-    get: <T = any>(url: string, config?: IRequestConfig) => Promise<T>;
-    post: <T = any>(url: string, data?: any, config?: IRequestConfig) => Promise<T>;
-    put: <T = any>(url: string, data?: any, config?: IRequestConfig) => Promise<T>;
-    delete: <T = any>(url: string, config?: IRequestConfig) => Promise<T>;
-    patch: <T = any>(url: string, data?: any, config?: IRequestConfig) => Promise<T>;
+    get: <T = unknown>(url: string, config?: IRequestConfig) => Promise<T>;
+    post: <T = unknown>(url: string, data?: RequestData, config?: IRequestConfig) => Promise<T>;
+    put: <T = unknown>(url: string, data?: RequestData, config?: IRequestConfig) => Promise<T>;
+    delete: <T = unknown>(url: string, config?: IRequestConfig) => Promise<T>;
+    patch: <T = unknown>(url: string, data?: RequestData, config?: IRequestConfig) => Promise<T>;
 }

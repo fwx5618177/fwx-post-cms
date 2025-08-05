@@ -3,7 +3,7 @@ import { Button, message, Modal, Upload, UploadFile, UploadProps } from "antd";
 import { RcFile } from "antd/lib/upload/interface";
 import { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { BeforeUploadValueType, PostCosConf, uploadOSSDir, uploadStyle } from "@/request/interface";
+import { BeforeUploadValueType, PostCosConf, uploadOSSDir, uploadStyle, ExtendedUploadFile } from "@/request/interface";
 import { getBase64 } from "@/request/lib";
 import api from "./api";
 
@@ -52,7 +52,7 @@ const OSSUploadBase = ({
             setOSSData(result as unknown as PostCosConf);
             // console.log(result)
         } catch (error) {
-            message.error(error as any);
+            message.error(error instanceof Error ? error.message : String(error));
         }
     }, [uploadDir]);
 
@@ -92,26 +92,21 @@ const OSSUploadBase = ({
                 onChange?.(files);
             }
         },
-        data: ((file: UploadFile): PostCosConf => {
+        data: ((file: ExtendedUploadFile): PostCosConf => {
             return {
                 ...(OSSData as PostCosConf),
-                key: (file as any)?.dist as string,
+                key: file.dist || "",
             };
         }) as unknown as UploadProps["data"],
         beforeUpload: ((file: RcFile): BeforeUploadValueType => {
             if (!OSSData) return false;
 
             const filename = file.uid + "_" + file.name;
+            const tmpKey = OSSData.key?.substring(0, OSSData.key.lastIndexOf("*")) || "";
 
-            const tmpKey = OSSData.key?.substring(0, OSSData.key.lastIndexOf("*"));
-
-            (
-                file as unknown as UploadFile & {
-                    dist: string;
-                }
-            ).dist = tmpKey + filename;
-            (file as UploadFile).url =
-                "https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/" + (file as any)?.dist;
+            const extendedFile = file as unknown as ExtendedUploadFile;
+            extendedFile.dist = tmpKey + filename;
+            extendedFile.url = "https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/" + extendedFile.dist;
 
             return file;
         }) as UploadProps["beforeUpload"],

@@ -1,5 +1,5 @@
 import React from "react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import styles from "@styles/pages/forgot-password.module.scss";
 
@@ -12,7 +12,7 @@ const ForgotPassword = () => {
     // Random nature image from Unsplash
     const backgroundImage = "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&q=80";
 
-    const handleSubmit = async (values: { email: string }, { setSubmitting }: any) => {
+    const handleSubmit = async (values: { email: string }, { setSubmitting }: FormikHelpers<{ email: string }>) => {
         try {
             // TODO: Implement password reset logic
             console.log("Password reset request for:", values.email);

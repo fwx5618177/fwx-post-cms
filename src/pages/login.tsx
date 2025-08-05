@@ -1,5 +1,5 @@
 import React from "react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import styles from "@styles/pages/login.module.scss";
 import { FaGoogle, FaGithub, FaGitlab, FaWeixin, FaQq, FaKey, FaMobileAlt } from "react-icons/fa";
@@ -14,7 +14,10 @@ const Login = () => {
     // Random nature image from Unsplash
     const backgroundImage = "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&q=80";
 
-    const handleSubmit = async (values: { email: string; password: string }, { setSubmitting }: any) => {
+    const handleSubmit = async (
+        values: { email: string; password: string },
+        { setSubmitting }: FormikHelpers<{ email: string; password: string }>,
+    ) => {
         try {
             // TODO: Implement login logic
             console.log("Login attempt with:", values);

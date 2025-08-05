@@ -1,0 +1,99 @@
+// Side Menu Components Styles
+// Modern SCSS implementation with BEM methodology
+
+.sideMenuHeader {
+    height: auto;
+    margin: 12px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    > span {
+        width: 15px;
+        height: 30px;
+        background-color: #1890ff;
+        border-radius: 2px;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: #40a9ff;
+        }
+    }
+
+    > h3 {
+        margin-left: 8px;
+        margin-top: 0;
+        margin-bottom: 0;
+        color: var(--text-primary, #262626);
+        font-weight: 600;
+        font-size: 16px;
+        transition: color 0.3s ease;
+    }
+}
+
+.routeConfCardTitle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    border-radius: 8px;
+    background: var(--bg-secondary, #fafafa);
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: var(--bg-hover, #f0f0f0);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    > h3 {
+        margin: 0;
+        margin-left: 8px;
+        cursor: default;
+        user-select: none;
+        color: var(--text-primary, #262626);
+        font-weight: 500;
+        font-size: 14px;
+        transition: color 0.3s ease;
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .sideMenuHeader {
+        margin: 8px;
+
+        > h3 {
+            font-size: 14px;
+        }
+    }
+
+    .routeConfCardTitle {
+        padding: 12px;
+
+        > h3 {
+            font-size: 12px;
+        }
+    }
+}
+
+// Dark theme support
+@media (prefers-color-scheme: dark) {
+    .sideMenuHeader {
+        > h3 {
+            color: var(--text-primary-dark, #ffffff);
+        }
+    }
+
+    .routeConfCardTitle {
+        background: var(--bg-secondary-dark, #1f1f1f);
+
+        &:hover {
+            background: var(--bg-hover-dark, #262626);
+        }
+
+        > h3 {
+            color: var(--text-primary-dark, #ffffff);
+        }
+    }
+}

@@ -172,7 +172,7 @@ export const getArticleListColumns = (handlers: {
         fixed: "right",
         width: 150,
         align: "center",
-        render: (_: any, record: Article) => (
+        render: (_: unknown, record: Article) => (
             <div className={styles.actions}>
                 <button onClick={() => handlers.onView(record)} title="View">
                     <FaEye />

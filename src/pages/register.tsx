@@ -1,4 +1,5 @@
-import { Formik, Form, Field } from "formik";
+import React from "react";
+import { Formik, Form, Field, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import styles from "@styles/pages/register.module.scss";
 import { FaGoogle, FaGithub, FaGitlab } from "react-icons/fa";
@@ -23,7 +24,14 @@ const Register = () => {
     // Random nature image from Unsplash
     const backgroundImage = "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&q=80";
 
-    const handleSubmit = async (values: any, { setSubmitting }: any) => {
+    interface RegisterFormValues {
+        username: string;
+        email: string;
+        password: string;
+        confirmPassword: string;
+    }
+
+    const handleSubmit = async (values: RegisterFormValues, { setSubmitting }: FormikHelpers<RegisterFormValues>) => {
         try {
             // TODO: Implement registration logic
             console.log("Register attempt with:", values);

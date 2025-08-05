@@ -1,0 +1,190 @@
+/**
+ * Markdown Editor Self Component Styles
+ * Modern SCSS implementation based on original CSS
+ */
+
+// Variables
+$editor-bg-color: #f759ab;
+$editor-text-color: #ffffff;
+$border-radius: 5px;
+$hover-border-color: #40a9ff;
+$transition-duration: 0.3s;
+$editor-height: 450px;
+
+// Mixins
+@mixin transition($properties: all) {
+    transition: $properties $transition-duration ease;
+}
+
+@mixin hoverEffect {
+    @include transition(border, box-shadow, transform);
+
+    &:hover {
+        border: 2px solid $hover-border-color;
+        box-shadow: 0 4px 16px rgba(64, 169, 255, 0.2);
+        transform: translateY(-2px);
+    }
+}
+
+// Main markdown editor component - enhanced from original
+.markdownEditorSelf {
+    height: $editor-height;
+    width: 100%;
+    background: linear-gradient(135deg, $editor-bg-color 0%, lighten($editor-bg-color, 10%) 100%);
+    color: $editor-text-color;
+    border-radius: $border-radius;
+    cursor: pointer;
+    word-break: break-all;
+    border: 2px solid transparent;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    @include hoverEffect;
+
+    // Background pattern
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    // Content container
+    .content {
+        position: relative;
+        z-index: 1;
+
+        .title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .description {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.5;
+            max-width: 80%;
+            margin: 0 auto;
+        }
+    }
+
+    // Active state
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(64, 169, 255, 0.3);
+    }
+
+    // Focus state for accessibility
+    &:focus {
+        outline: none;
+        border-color: $hover-border-color;
+        box-shadow: 0 0 0 3px rgba(64, 169, 255, 0.2);
+    }
+
+    // Responsive design
+    @media (max-width: 768px) {
+        height: 350px;
+        padding: 12px;
+
+        .content {
+            .title {
+                font-size: 1.25rem;
+            }
+
+            .description {
+                font-size: 0.9rem;
+                max-width: 90%;
+            }
+        }
+    }
+
+    @media (max-width: 480px) {
+        height: 300px;
+        padding: 8px;
+
+        .content {
+            .title {
+                font-size: 1.1rem;
+            }
+
+            .description {
+                font-size: 0.8rem;
+                max-width: 95%;
+            }
+        }
+    }
+}
+
+// Loading state
+.markdownEditorSelf.loading {
+    cursor: wait;
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 30px;
+        height: 30px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid $editor-text-color;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+// Disabled state
+.markdownEditorSelf.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: desaturate($editor-bg-color, 30%);
+
+    &:hover {
+        border: 2px solid transparent;
+        box-shadow: none;
+        transform: none;
+    }
+}
+
+// Dark theme support
+@media (prefers-color-scheme: dark) {
+    .markdownEditorSelf {
+        background: linear-gradient(135deg, darken($editor-bg-color, 20%) 0%, darken($editor-bg-color, 10%) 100%);
+
+        &::before {
+            background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        }
+
+        &:hover {
+            border-color: lighten($hover-border-color, 10%);
+            box-shadow: 0 4px 16px rgba(64, 169, 255, 0.3);
+        }
+
+        &:focus {
+            border-color: lighten($hover-border-color, 10%);
+            box-shadow: 0 0 0 3px rgba(64, 169, 255, 0.3);
+        }
+    }
+}

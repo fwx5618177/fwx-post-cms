@@ -1,5 +1,14 @@
 import * as THREE from "three";
 
+interface WallOptions {
+    radius?: number;
+    height?: number;
+    opacity?: number;
+    color?: string | number;
+    speed?: number;
+    renderOrder?: number;
+}
+
 const vertexShader = `
 uniform vec3 u_color;
 
@@ -28,8 +37,8 @@ void main() {
 }
 `;
 
-const Wall = (option = {}) => {
-    const { radius, height, opacity, color, speed, renderOrder } = option as any;
+const Wall = (option: WallOptions = {}) => {
+    const { radius = 5, height = 10, opacity = 1, color = "#ffffff", speed = 1, renderOrder = 1 } = option;
     const geometry = new THREE.CylinderGeometry(radius, radius, height, 32, 1, true);
 
     geometry.translate(0, height / 2, 0);

@@ -28,7 +28,7 @@ export interface ColumnType<T> {
      * )
      * ```
      */
-    render?: (value: any, record: T, index: number) => React.ReactNode;
+    render?: (value: T[keyof T], record: T, index: number) => React.ReactNode;
     /** 是否可排序 */
     sortable?: boolean;
     /** 支持的排序方式，默认同时支持升序和降序 */
@@ -50,12 +50,12 @@ export interface ColumnType<T> {
      * 设置单元格的 className
      * @description 可以是字符串或根据数据返回字符串的函数
      */
-    className?: string | ((value: any, record: T, index: number) => string);
+    className?: string | ((value: T[keyof T], record: T, index: number) => string);
     /**
      * 设置单元格的样式
      * @description 可以是样式对象或根据数据返回样式对象的函数
      */
-    style?: React.CSSProperties | ((value: any, record: T, index: number) => React.CSSProperties);
+    style?: React.CSSProperties | ((value: T[keyof T], record: T, index: number) => React.CSSProperties);
 }
 
 /**
@@ -98,7 +98,7 @@ export interface TableProps<T> {
      * @param filters - 筛选信息
      * @param sorter - 排序信息
      */
-    onChange?: (pagination: any, filters: Record<string, any>, sorter: SortState<T>) => void;
+    onChange?: (pagination: PaginationConfig | null, filters: Record<string, unknown>, sorter: SortState<T>) => void;
     /**
      * 是否固定表头
      * @description

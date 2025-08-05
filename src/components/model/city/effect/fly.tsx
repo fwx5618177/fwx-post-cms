@@ -1,6 +1,22 @@
 import * as THREE from "three";
 
-const Fly = (option: { source: any; target: any; range: any; height: any; color: any; speed?: number; size: any }) => {
+interface Vector3D {
+    x: number;
+    y: number;
+    z: number;
+}
+
+interface FlyOptions {
+    source: Vector3D;
+    target: Vector3D;
+    range: number;
+    height: number;
+    color: string;
+    speed?: number;
+    size: number;
+}
+
+const Fly = (option: FlyOptions) => {
     const { source, target, height, size, color, range } = option;
     const positions: { x: number; y: number; z: number }[] = [];
     const attrPositions: number[] | ArrayBuffer = [];

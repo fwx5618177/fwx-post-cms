@@ -1,5 +1,5 @@
 import { instance } from "./interceptors";
-import { IRequestConfig, IRequestMethods } from "./IRequest";
+import { IRequestConfig, IRequestMethods, RequestData } from "./IRequest";
 
 /**
  * 封装的 HTTP 请求方法集合
@@ -19,7 +19,7 @@ export const request: IRequestMethods = {
      * // 带查询参数
      * const articles = await request.get<ArticleList>('/articles', { params: { page: 1 } });
      */
-    get: <T = any>(url: string, config?: IRequestConfig): Promise<T> => instance.get(url, config),
+    get: <T = unknown>(url: string, config?: IRequestConfig): Promise<T> => instance.get(url, config),
 
     /**
      * 发送 POST 请求
@@ -37,7 +37,8 @@ export const request: IRequestMethods = {
      *   headers: { 'Content-Type': 'multipart/form-data' }
      * });
      */
-    post: <T = any>(url: string, data?: any, config?: IRequestConfig): Promise<T> => instance.post(url, data, config),
+    post: <T = unknown>(url: string, data?: RequestData, config?: IRequestConfig): Promise<T> =>
+        instance.post(url, data, config),
 
     /**
      * 发送 PUT 请求
@@ -51,7 +52,8 @@ export const request: IRequestMethods = {
      * // 更新文章
      * const article = await request.put<Article>('/articles/123', { title: '新标题' });
      */
-    put: <T = any>(url: string, data?: any, config?: IRequestConfig): Promise<T> => instance.put(url, data, config),
+    put: <T = unknown>(url: string, data?: RequestData, config?: IRequestConfig): Promise<T> =>
+        instance.put(url, data, config),
 
     /**
      * 发送 DELETE 请求
@@ -64,7 +66,7 @@ export const request: IRequestMethods = {
      * // 批量删除
      * await request.delete<void>('/articles/batch', { data: { ids: ['1', '2'] } });
      */
-    delete: <T = any>(url: string, config?: IRequestConfig): Promise<T> => instance.delete(url, config),
+    delete: <T = unknown>(url: string, config?: IRequestConfig): Promise<T> => instance.delete(url, config),
 
     /**
      * 发送 PATCH 请求
@@ -78,5 +80,6 @@ export const request: IRequestMethods = {
      * // 更新文章状态
      * await request.patch<Article>('/articles/123', { status: 'published' });
      */
-    patch: <T = any>(url: string, data?: any, config?: IRequestConfig): Promise<T> => instance.patch(url, data, config),
+    patch: <T = unknown>(url: string, data?: RequestData, config?: IRequestConfig): Promise<T> =>
+        instance.patch(url, data, config),
 };

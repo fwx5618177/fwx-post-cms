@@ -42,7 +42,7 @@ export interface IRoutePage {
     /** 路由路径 */
     path: string;
     /** 路由组件 */
-    component: LazyExoticComponent<ComponentType<any>> | ComponentType<any>;
+    component: LazyExoticComponent<ComponentType<Record<string, unknown>>> | ComponentType<Record<string, unknown>>;
     /** 子路由 */
     children?: IRoutePage[];
     /** 是否在菜单中显示 */

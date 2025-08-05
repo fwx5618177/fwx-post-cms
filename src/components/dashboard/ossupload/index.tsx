@@ -34,7 +34,7 @@ const OSSUpload = () => {
         form.resetFields();
     };
 
-    const handleSubmit = async value => {
+    const handleSubmit = async (value: FormI) => {
         console.log(value);
 
         const { uploadFile, resoureParent } = value as FormI;
@@ -57,7 +57,8 @@ const OSSUpload = () => {
         } else {
             const data = await api.createData(result[0]);
             console.log("add:", data);
-            message.success(`${(data as any)?.name} 上传成功!`);
+            const uploadResult = data as UploadPost;
+            message.success(`${uploadResult?.name} 上传成功!`);
         }
     };
 
@@ -170,7 +171,7 @@ const OSSUpload = () => {
                                 <OSSUploadBase
                                     listType={listType}
                                     uploadStyle={uploadStyle}
-                                    uploadDir={(uploadPath + resource) as any}
+                                    uploadDir={(uploadPath + resource) as uploadOSSDir}
                                     directory={directoryStatus}
                                 />
                             </Form.Item>

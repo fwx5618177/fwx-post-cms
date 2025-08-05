@@ -1,10 +1,10 @@
 /**
  * 公共方法
  */
-// import * as THREE from 'three'
+import * as THREE from "three";
 
 const Utils = {
-    forMaterial(materials: any[], callback: { (material: any): void; (material: any): void; (arg0: any): void }) {
+    forMaterial(materials: THREE.Material | THREE.Material[], callback: (material: THREE.Material) => void) {
         if (!callback || !materials) return false;
         if (Array.isArray(materials)) {
             materials.forEach(mat => {

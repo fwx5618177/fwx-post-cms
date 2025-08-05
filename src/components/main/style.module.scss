@@ -1,0 +1,148 @@
+// Main Page Component Styles
+// Modern SCSS implementation based on original CSS
+
+// Variables
+$border-color: #000000;
+$transition-duration: 0.3s;
+
+// Main page container - enhanced from original
+.mainPageContainer {
+    margin: 12px;
+    width: 100%;
+    padding: 16px;
+    border-radius: 8px;
+    background: var(--bg-primary, #ffffff);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all $transition-duration ease;
+
+    &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+    }
+
+    // Responsive design
+    @media (max-width: 768px) {
+        margin: 8px;
+        padding: 12px;
+    }
+
+    @media (max-width: 480px) {
+        margin: 4px;
+        padding: 8px;
+    }
+}
+
+// Users number section - enhanced from original
+.mainPageUsersNumber {
+    border: none;
+    border-right: 1px solid $border-color;
+    padding: 8px 12px;
+    display: inline-block;
+    font-weight: 500;
+    color: var(--text-primary, #262626);
+    transition: all $transition-duration ease;
+    position: relative;
+
+    &:hover {
+        color: var(--primary-color, #1890ff);
+        transform: translateX(2px);
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 60%;
+        width: 1px;
+        background: linear-gradient(to bottom, transparent, $border-color, transparent);
+    }
+
+    // Remove border on small screens
+    @media (max-width: 480px) {
+        border-right: none;
+        padding: 5px;
+
+        &::after {
+            display: none;
+        }
+    }
+}
+
+// Additional modern enhancements
+.statsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+
+    @media (max-width: 768px) {
+        justify-content: center;
+        gap: 12px;
+    }
+}
+
+.statItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--bg-secondary, #f8f9fa);
+    border-radius: 6px;
+    transition: all $transition-duration ease;
+
+    &:hover {
+        background: var(--bg-hover, #e9ecef);
+        transform: scale(1.02);
+    }
+
+    .icon {
+        font-size: 1.2rem;
+        color: var(--primary-color, #1890ff);
+    }
+
+    .value {
+        font-weight: 600;
+        color: var(--text-primary, #262626);
+        font-size: 1.1rem;
+    }
+
+    .label {
+        color: var(--text-secondary, #6c757d);
+        font-size: 0.9rem;
+    }
+}
+
+// Dark theme support
+@media (prefers-color-scheme: dark) {
+    .mainPageContainer {
+        background: var(--bg-primary-dark, #1f1f1f);
+        color: var(--text-primary-dark, #ffffff);
+    }
+
+    .mainPageUsersNumber {
+        color: var(--text-primary-dark, #ffffff);
+        border-right-color: var(--border-color-dark, #404040);
+
+        &::after {
+            background: linear-gradient(to bottom, transparent, var(--border-color-dark, #404040), transparent);
+        }
+    }
+
+    .statItem {
+        background: var(--bg-secondary-dark, #2a2a2a);
+
+        &:hover {
+            background: var(--bg-hover-dark, #333333);
+        }
+
+        .value {
+            color: var(--text-primary-dark, #ffffff);
+        }
+
+        .label {
+            color: var(--text-secondary-dark, #a6a6a6);
+        }
+    }
+}

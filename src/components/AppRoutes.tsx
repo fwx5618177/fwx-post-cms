@@ -11,9 +11,9 @@ const { ErrorBoundary } = Pages;
 /**
  * 懒加载组件包装器
  */
-const LazyWrapper: React.FC<{ component: ComponentType | React.LazyExoticComponent<any> }> = ({
-    component: Component,
-}) => {
+const LazyWrapper: React.FC<{
+    component: ComponentType | React.LazyExoticComponent<ComponentType<Record<string, unknown>>>;
+}> = ({ component: Component }) => {
     return (
         <ErrorBoundary>
             <Suspense fallback={<Loading type="spinner" size="md" />}>

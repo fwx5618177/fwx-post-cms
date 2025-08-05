@@ -40,7 +40,18 @@ const SideMenu: React.FC = () => {
         wrapperCol: { offset: 8, span: 16 },
     };
 
-    const onFinish = async (values: any) => {
+    interface RouteFormValues {
+        menushow: string;
+        pageLevel: number;
+        key: string;
+        label: string;
+        path: string;
+        outlet: boolean;
+        casesensitive: boolean;
+        parent?: string | number;
+    }
+
+    const onFinish = async (values: RouteFormValues) => {
         console.log("Success:", values);
 
         const { menushow, pageLevel, key, label, path, outlet, casesensitive } = values;

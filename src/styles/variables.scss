@@ -42,13 +42,40 @@ $spacing-md: 16px;
 $spacing-lg: 24px;
 $spacing-xl: 32px;
 
-// 字体大小
+// 字体系统
+// 字体族
+$font-family-sans: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Arial, sans-serif;
+$font-family-mono: "JetBrains Mono", "Fira Code", "Menlo", "Monaco", "Consolas", monospace;
+$font-family-display: "Inter Display", $font-family-sans;
+
+// 字体大小 - 类型比例 1.25 (Major Third)
 $font-size-xs: 0.75rem; // 12px
 $font-size-sm: 0.875rem; // 14px
 $font-size-base: 1rem; // 16px
 $font-size-md: 1rem; // 16px
-$font-size-lg: 1.25rem; // 20px
-$font-size-xl: 1.5rem; // 24px
+$font-size-lg: 1.125rem; // 18px
+$font-size-xl: 1.25rem; // 20px
+$font-size-2xl: 1.5rem; // 24px
+$font-size-3xl: 1.875rem; // 30px
+$font-size-4xl: 2.25rem; // 36px
+$font-size-5xl: 3rem; // 48px
+
+// 字重
+$font-weight-thin: 100;
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;
+$font-weight-black: 900;
+
+// 行高
+$line-height-tight: 1.25;
+$line-height-snug: 1.375;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.625;
+$line-height-loose: 2;
 
 // 圆角
 $border-radius-sm: 2px;
@@ -56,7 +83,38 @@ $border-radius-md: 4px;
 $border-radius-lg: 8px;
 $border-radius-xl: 16px;
 
-// 过渡时间
-$transition-fast: 0.15s;
-$transition-normal: 0.3s;
-$transition-slow: 0.5s;
+// 动画和过渡系统
+$transition-fast: 150ms;
+$transition-normal: 250ms;
+$transition-slow: 400ms;
+$transition-slower: 600ms;
+
+// 缓动函数
+$ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+$ease-out: cubic-bezier(0, 0, 0.2, 1);
+$ease-in: cubic-bezier(0.4, 0, 1, 1);
+$ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+// 常用过渡
+$transition-colors: color $transition-normal $ease-in-out, background-color $transition-normal $ease-in-out,
+    border-color $transition-normal $ease-in-out;
+$transition-opacity: opacity $transition-normal $ease-in-out;
+$transition-transform: transform $transition-normal $ease-in-out;
+$transition-all: all $transition-normal $ease-in-out;
+
+// 断点系统
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+$breakpoint-2xl: 1536px;
+
+// Z-index 层级
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-modal-backdrop: 1040;
+$z-modal: 1050;
+$z-popover: 1060;
+$z-tooltip: 1070;
+$z-toast: 1080;
