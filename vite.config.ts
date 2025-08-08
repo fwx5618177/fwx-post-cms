@@ -57,8 +57,21 @@ export default defineConfig(({ mode }) => {
             https: false,
             proxy: {},
             watch: {
-                usePolling: true,
-                interval: 100,
+                usePolling: false,
+                // 等待写入稳定后再触发热更新，避免编辑器保存产生的多次写入导致抖动
+                awaitWriteFinish: {
+                    stabilityThreshold: 200,
+                    pollInterval: 50,
+                },
+                ignored: [
+                    "**/node_modules/**",
+                    "**/.git/**",
+                    "**/dist/**",
+                    "**/.DS_Store",
+                    "**/coverage/**",
+                    "**/.vite/**",
+                    "node_modules/.vite/**",
+                ],
             },
         },
         build: {
