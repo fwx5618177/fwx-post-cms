@@ -242,6 +242,7 @@ const Dropdown: React.FC<DropdownProps> = props => {
         placement = "bottomLeft",
         autoFocus,
         destroyPopupOnHide = false,
+        showArrow = false,
     } = props;
     const ref = useRef<HTMLDivElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -258,15 +259,31 @@ const Dropdown: React.FC<DropdownProps> = props => {
                 const menuRect = ref.current.getBoundingClientRect();
                 let left = anchorRect.left;
                 let top = anchorRect.bottom;
-                if (placement.includes("top")) top = anchorRect.top - menuRect.height;
-                if (placement.includes("Right")) left = anchorRect.right - menuRect.width;
-                if (placement === "left") {
+                // 统一根据 placement 精确对齐
+                if (placement === "bottomLeft") {
+                    left = anchorRect.left;
+                    top = anchorRect.bottom;
+                } else if (placement === "bottomRight") {
+                    left = anchorRect.right - menuRect.width;
+                    top = anchorRect.bottom;
+                } else if (placement === "topLeft") {
+                    left = anchorRect.left;
+                    top = anchorRect.top - menuRect.height;
+                } else if (placement === "topRight") {
+                    left = anchorRect.right - menuRect.width;
+                    top = anchorRect.top - menuRect.height;
+                } else if (placement === "left") {
                     left = anchorRect.left - menuRect.width;
                     top = anchorRect.top;
-                }
-                if (placement === "right") {
+                } else if (placement === "right") {
                     left = anchorRect.right;
                     top = anchorRect.top;
+                } else if (placement === "bottom") {
+                    left = anchorRect.left + (anchorRect.width - menuRect.width) / 2;
+                    top = anchorRect.bottom;
+                } else if (placement === "top") {
+                    left = anchorRect.left + (anchorRect.width - menuRect.width) / 2;
+                    top = anchorRect.top - menuRect.height;
                 }
                 setCoords({ top, left });
             } else if (position) {
@@ -428,6 +445,7 @@ const Dropdown: React.FC<DropdownProps> = props => {
             data-dropdown-container="true"
         >
             <DropdownContext.Provider value={contextValue}>
+                {showArrow && <div className={classNames(styles.dropdownArrow, styles[placement])} aria-hidden />}
                 <div
                     ref={scrollRef}
                     className={classNames(styles.dropdownScroll, { [styles.scrollable]: isScrollable })}

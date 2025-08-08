@@ -102,8 +102,12 @@ export default function DropdownDemo() {
     const [maxHeightMaxHeight, setMaxHeightMaxHeight] = useState<number>(180);
     const btnRefMaxHeight = useRef<HTMLButtonElement>(null);
 
-    const [openGroup, setOpenGroup] = useState(false);
-    const btnRefGroup = useRef<HTMLButtonElement>(null);
+    // items（分组/分割线/多级菜单）
+    const [openItems, setOpenItems] = useState(false);
+    const btnRefItems = useRef<HTMLButtonElement>(null);
+    // 深层菜单（与 items 独立锚点，避免 anchor 冲突导致偏移）
+    const [openDeep, setOpenDeep] = useState(false);
+    const btnRefDeep = useRef<HTMLButtonElement>(null);
 
     const [openAll, setOpenAll] = useState(false);
     const btnRefAll = useRef<HTMLButtonElement>(null);
@@ -127,6 +131,7 @@ export default function DropdownDemo() {
 
     // showArrow
     const [openArrow, setOpenArrow] = useState(false);
+    const [arrowPlacement, setArrowPlacement] = useState<DropdownPlacement>("bottomLeft");
     const btnRefArrow = useRef<HTMLButtonElement>(null);
 
     // destroyPopupOnHide
@@ -311,18 +316,18 @@ export default function DropdownDemo() {
             <section className={styles["dropdownDemo-section"]}>
                 <h3>items（分组/分割线/多级菜单）</h3>
                 <button
-                    ref={btnRefGroup}
+                    ref={btnRefItems}
                     className={styles["dropdownDemo-dropdownBtn"]}
-                    onClick={() => setOpenGroup(v => !v)}
+                    onClick={() => setOpenItems(v => !v)}
                 >
                     打开 Dropdown
                 </button>
                 <Dropdown
-                    open={openGroup}
-                    anchorEl={btnRefGroup.current}
+                    open={openItems}
+                    anchorEl={btnRefItems.current}
                     items={demoItems}
-                    onSelect={() => setOpenGroup(false)}
-                    onClose={() => setOpenGroup(false)}
+                    onSelect={() => setOpenItems(false)}
+                    onClose={() => setOpenItems(false)}
                     placement={"bottomLeft"}
                     size={"medium"}
                     maxHeight={180}
@@ -377,7 +382,18 @@ export default function DropdownDemo() {
             </section>
             {/* showArrow */}
             <section className={styles["dropdownDemo-section"]}>
-                <h3>showArrow</h3>
+                <h3>showArrow（各方向）</h3>
+                <div className={styles["dropdownDemo-row"]}>
+                    {placements.map(p => (
+                        <button
+                            key={`arrow-${p}`}
+                            className={arrowPlacement === p ? styles["dropdownDemo-active"] : ""}
+                            onClick={() => setArrowPlacement(p)}
+                        >
+                            {p}
+                        </button>
+                    ))}
+                </div>
                 <button
                     ref={btnRefArrow}
                     className={styles["dropdownDemo-dropdownBtn"]}
@@ -391,7 +407,7 @@ export default function DropdownDemo() {
                     items={demoItems}
                     onSelect={() => setOpenArrow(false)}
                     onClose={() => setOpenArrow(false)}
-                    placement={"bottomLeft"}
+                    placement={arrowPlacement}
                     size={"medium"}
                     maxHeight={180}
                     showArrow
@@ -423,18 +439,18 @@ export default function DropdownDemo() {
             <section className={styles["dropdownDemo-section"]}>
                 <h3>多级菜单滚动演示</h3>
                 <button
-                    ref={btnRefGroup}
+                    ref={btnRefDeep}
                     className={styles["dropdownDemo-dropdownBtn"]}
-                    onClick={() => setOpenGroup(v => !v)}
+                    onClick={() => setOpenDeep(v => !v)}
                 >
                     打开深层菜单
                 </button>
                 <Dropdown
-                    open={openGroup}
-                    anchorEl={btnRefGroup.current}
+                    open={openDeep}
+                    anchorEl={btnRefDeep.current}
                     items={deepItems}
-                    onSelect={() => setOpenGroup(false)}
-                    onClose={() => setOpenGroup(false)}
+                    onSelect={() => setOpenDeep(false)}
+                    onClose={() => setOpenDeep(false)}
                     placement={"bottomLeft"}
                     size={"medium"}
                     maxHeight={220}
