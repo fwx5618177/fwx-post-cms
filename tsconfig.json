@@ -8,6 +8,10 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
         "baseUrl": ".",
         "paths": {
             "@components/*": ["./src/components/*"],
@@ -20,9 +24,14 @@
             "@types/*": ["./src/types/*"],
             "@layout/*": ["./src/layout/*"],
             "@i18n/*": ["./i18n/*"],
-            "@settings/*": ["./src/settings/*"]
+            "@settings/*": ["./src/settings/*"],
+            "@context/*": ["./src/context/*"]
         },
-        "noImplicitAny": true
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false
     },
     "include": ["src/**/*", "i18n/**/*", "mocks/**/*"],
     "exclude": ["node_modules", "dist"]

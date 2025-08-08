@@ -1,228 +1,441 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState, useCallback, createContext, useContext } from "react";
+import { createPortal } from "react-dom";
 import classNames from "classnames";
 import styles from "./dropdown.module.scss";
 import type { DropdownProps, DropdownItem, DropdownGroup, DropdownDivider, DropdownMenuItem } from "./types";
 
-// 智能边界检测和反向弹出
-function getSmartPlacement(
-    anchorEl: HTMLElement,
-    menuRect: { width: number; height: number },
-    placement: DropdownProps["placement"],
-): DropdownProps["placement"] {
-    const rect = anchorEl.getBoundingClientRect();
-    const padding = 8;
-    // 上方空间
-    const spaceTop = rect.top - padding;
-    // 下方空间
-    const spaceBottom = window.innerHeight - rect.bottom - padding;
+// --- TYPE GUARDS ---
+const isDivider = (item: DropdownMenuItem): item is DropdownDivider => "type" in item && item.type === "divider";
+const isGroup = (item: DropdownMenuItem): item is DropdownGroup => "items" in item;
+const isItem = (item: DropdownMenuItem): item is DropdownItem => "key" in item && !isGroup(item) && !isDivider(item);
+const hasChildren = (item: DropdownItem): boolean => !!item.children && item.children.length > 0;
 
-    // 只对上下方向做智能反向
-    if (["top", "topLeft", "topRight"].includes(placement!)) {
-        if (spaceTop < menuRect.height && spaceBottom > spaceTop) {
-            // 上方不够，下方更大，切换到底部
-            if (placement === "top") return "bottom";
-            if (placement === "topLeft") return "bottomLeft";
-            if (placement === "topRight") return "bottomRight";
-        }
-    }
-    if (["bottom", "bottomLeft", "bottomRight"].includes(placement!)) {
-        if (spaceBottom < menuRect.height && spaceTop > spaceBottom) {
-            // 下方不够，上方更大，切换到顶部
-            if (placement === "bottom") return "top";
-            if (placement === "bottomLeft") return "topLeft";
-            if (placement === "bottomRight") return "topRight";
-        }
-    }
-    // 可扩展左右方向
-    return placement!;
+// --- CONTEXT ---
+interface DropdownContextType {
+    activePath: (string | number)[];
+    setActivePath: (path: (string | number)[]) => void;
+    focusedKey: string | number | null;
+    setFocusedKey: (key: string | number | null) => void;
+    onSelect?: (item: DropdownItem) => void;
+    onClose?: () => void;
 }
+const DropdownContext = createContext<DropdownContextType | null>(null);
+const useDropdownContext = () => {
+    const context = useContext(DropdownContext);
+    if (!context) throw new Error("useDropdownContext must be used within a Dropdown");
+    return context;
+};
 
-function getAnchorPosition(
-    anchorEl: HTMLElement,
-    menuRect: { width: number; height: number },
-    placement: DropdownProps["placement"] = "bottomLeft",
-) {
-    // 智能反向
-    const smartPlacement = getSmartPlacement(anchorEl, menuRect, placement);
-    const rect = anchorEl.getBoundingClientRect();
-    let left = 0,
-        top = 0;
-    switch (smartPlacement) {
-        case "top":
-            left = rect.left + rect.width / 2 - menuRect.width / 2;
-            top = rect.top - menuRect.height;
-            break;
-        case "topLeft":
-            left = rect.left;
-            top = rect.top - menuRect.height;
-            break;
-        case "topRight":
-            left = rect.right - menuRect.width;
-            top = rect.top - menuRect.height;
-            break;
-        case "bottom":
-            left = rect.left + rect.width / 2 - menuRect.width / 2;
-            top = rect.bottom;
-            break;
-        case "bottomLeft":
-            left = rect.left;
-            top = rect.bottom;
-            break;
-        case "bottomRight":
-            left = rect.right - menuRect.width;
-            top = rect.bottom;
-            break;
-        case "left":
-            left = rect.left - menuRect.width;
-            top = rect.top + rect.height / 2 - menuRect.height / 2;
-            break;
-        case "right":
-            left = rect.right;
-            top = rect.top + rect.height / 2 - menuRect.height / 2;
-            break;
-        default:
-            left = rect.left;
-            top = rect.bottom;
-    }
-    // 边界检测
-    const padding = 8;
-    if (left + menuRect.width > window.innerWidth - padding) {
-        left = window.innerWidth - menuRect.width - padding;
-    }
-    if (left < padding) {
-        left = padding;
-    }
-    if (top + menuRect.height > window.innerHeight - padding) {
-        top = window.innerHeight - menuRect.height - padding;
-    }
-    if (top < padding) {
-        top = padding;
-    }
-    return { left, top };
-}
+// --- HOOKS ---
+export const useDropdown = () => {
+    const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const handleOpen = useCallback((element: HTMLElement) => {
+        setAnchorEl(element);
+        setOpen(true);
+    }, []);
+    const handleClose = useCallback(() => {
+        setOpen(false);
+        setAnchorEl(null);
+    }, []);
+    const handleToggle = useCallback((element: HTMLElement) => {
+        setOpen(prev => !prev);
+        setAnchorEl(element);
+    }, []);
+    return { open, anchorEl, handleOpen, handleClose, handleToggle };
+};
 
-// Dropdown 组件
-// 只负责弹层和菜单渲染，不负责触发按钮
-// 高内聚低耦合，详细注释
-const Dropdown: React.FC<DropdownProps> = ({
-    open,
-    anchorEl,
-    position,
-    items,
-    onSelect,
-    onClose,
-    size = "medium",
-    maxHeight,
-    className,
-    style,
-    placement = "bottomLeft",
-}) => {
-    const ref = useRef<HTMLDivElement>(null);
-    const [coords, setCoords] = React.useState<{ left: number; top: number } | null>(null);
+// --- COMPONENTS ---
 
-    // 监听点击外部关闭
+const MenuItem: React.FC<{ item: DropdownItem; path: (string | number)[] }> = ({ item, path }) => {
+    const { activePath, setActivePath, focusedKey, setFocusedKey, onSelect } = useDropdownContext();
+    const isFocused = focusedKey === item.key;
+    const itemRef = useRef<HTMLLIElement>(null);
+
     useEffect(() => {
-        if (!open) return;
-        const handleClick = (e: MouseEvent) => {
-            if (!ref.current) return;
-            if (!ref.current.contains(e.target as Node)) {
-                onClose?.();
-            }
-        };
-        window.addEventListener("mousedown", handleClick);
-        return () => window.removeEventListener("mousedown", handleClick);
-    }, [open, onClose]);
-
-    // 计算定位，支持边界检测和智能反向
-    useEffect(() => {
-        if (!open) return;
-        if (anchorEl && ref.current) {
-            ref.current.style.visibility = "hidden";
-            ref.current.style.display = "block";
-            const menuRect = ref.current.getBoundingClientRect();
-            const coords = getAnchorPosition(anchorEl, { width: menuRect.width, height: menuRect.height }, placement);
-            setCoords(coords);
-            ref.current.style.visibility = "";
-            ref.current.style.display = "";
-        } else if (position) {
-            setCoords({ left: position.x, top: position.y });
+        if (isFocused) {
+            itemRef.current?.focus();
         }
-    }, [open, anchorEl, position, placement]);
+    }, [isFocused]);
 
-    if (!open) return null;
+    if (hasChildren(item)) {
+        const isSubMenuOpen = activePath[path.length - 1] === item.key;
+        return (
+            <li
+                ref={itemRef}
+                className={classNames(styles.dropdownItem, styles.dropdownItemWithChildren, {
+                    [styles.dropdownItemFocused]: isFocused,
+                    disabled: item.disabled,
+                })}
+                role="menuitem"
+                tabIndex={-1}
+                aria-haspopup="true"
+                aria-expanded={isSubMenuOpen}
+                onMouseEnter={() => {
+                    if (item.disabled) return;
+                    // Open submenu on hover
+                    setActivePath(path);
+                    setFocusedKey(item.key);
+                }}
+                onClick={e => {
+                    if (item.disabled) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // Toggle submenu on click
+                    if (isSubMenuOpen) {
+                        setActivePath(path.slice(0, -1));
+                    } else {
+                        setActivePath(path);
+                        setFocusedKey(item.key);
+                    }
+                }}
+            >
+                <div className={styles.dropdownItemContent}>
+                    {item.icon && <span className={styles.dropdownItemIcon}>{item.icon}</span>}
+                    <span>{item.label}</span>
+                    {item.shortcut && <span className={styles.dropdownShortcut}>{item.shortcut}</span>}
+                    <span className={styles.dropdownItemSubArrow}>▶</span>
+                </div>
+                {isSubMenuOpen && <SubMenu items={item.children!} parentRef={itemRef} path={path} />}
+            </li>
+        );
+    }
 
-    // 渲染菜单项/分组/分割线
-    const renderMenu = (menu: DropdownMenuItem[], depth = 0, parentKey = "") => (
-        <ul className={styles.dropdownList} style={depth > 0 ? { minWidth: 140 } : undefined}>
-            {menu.map((item, idx) => {
-                if ((item as DropdownDivider).type === "divider") {
+    return (
+        <li
+            ref={itemRef}
+            className={classNames(styles.dropdownItem, {
+                [styles.dropdownItemFocused]: isFocused,
+                disabled: item.disabled,
+            })}
+            role="menuitem"
+            tabIndex={-1}
+            aria-disabled={item.disabled}
+            onMouseEnter={() => !item.disabled && setFocusedKey(item.key)}
+            onClick={() => !item.disabled && onSelect?.(item)}
+        >
+            <div className={styles.dropdownItemContent}>
+                {item.icon && <span className={styles.dropdownItemIcon}>{item.icon}</span>}
+                <span>{item.label}</span>
+                {item.shortcut && <span className={styles.dropdownShortcut}>{item.shortcut}</span>}
+            </div>
+        </li>
+    );
+};
+
+const Menu: React.FC<{ items: DropdownMenuItem[]; path?: (string | number)[] }> = ({ items, path = [] }) => {
+    return (
+        <ul className={styles.dropdownList} role="menu">
+            {items.map((item, index) => {
+                if (isDivider(item)) {
                     return (
-                        <li
-                            className={styles.dropdownDivider}
-                            key={(item as DropdownDivider).key ?? `divider-${parentKey}-${idx}`}
-                        />
+                        <li key={item.key || `divider-${index}`} className={styles.dropdownDivider} role="separator" />
                     );
                 }
-                if ((item as DropdownGroup).items) {
-                    const group = item as DropdownGroup;
-                    const groupKey = `group-${parentKey}-${idx}`;
+                if (isGroup(item)) {
                     return (
-                        <React.Fragment key={groupKey}>
-                            <div className={styles.dropdownGroupLabel}>{group.label}</div>
-                            {renderMenu(group.items, depth, groupKey)}
-                        </React.Fragment>
+                        <li key={item.label?.toString() || index} role="presentation">
+                            <div className={styles.dropdownGroupLabel}>{item.label}</div>
+                            <ul className={styles.dropdownList} role="menu">
+                                {item.items.map((groupItem, subIndex) => {
+                                    if (isDivider(groupItem)) {
+                                        return (
+                                            <li
+                                                key={`group-divider-${subIndex}`}
+                                                className={styles.dropdownDivider}
+                                                role="separator"
+                                            />
+                                        );
+                                    }
+                                    if (isGroup(groupItem)) {
+                                        // Nested group
+                                        return (
+                                            <li key={`nested-group-${subIndex}`} role="presentation">
+                                                <div className={styles.dropdownGroupLabel}>{groupItem.label}</div>
+                                                <Menu items={groupItem.items} path={path} />
+                                            </li>
+                                        );
+                                    }
+                                    // Regular item
+                                    return (
+                                        <MenuItem
+                                            key={groupItem.key}
+                                            item={groupItem}
+                                            path={[...path, groupItem.key]}
+                                        />
+                                    );
+                                })}
+                            </ul>
+                        </li>
                     );
                 }
-                const menuItem = item as DropdownItem;
-                const hasChildren = !!menuItem.children && menuItem.children.length > 0;
-                return (
-                    <li
-                        key={menuItem.key}
-                        className={classNames(styles.dropdownItem, {
-                            [styles.dropdownItemWithChildren]: hasChildren,
-                            disabled: menuItem.disabled,
-                        })}
-                        tabIndex={menuItem.disabled ? -1 : 0}
-                        onClick={
-                            menuItem.disabled
-                                ? undefined
-                                : e => {
-                                      e.stopPropagation();
-                                      if (hasChildren) return;
-                                      onSelect?.(menuItem);
-                                      onClose?.();
-                                  }
-                        }
-                    >
-                        {menuItem.icon && <span className={styles.dropdownItemIcon}>{menuItem.icon}</span>}
-                        <span>{menuItem.label}</span>
-                        {menuItem.shortcut && <span className={styles.dropdownShortcut}>{menuItem.shortcut}</span>}
-                        {hasChildren && <span className={styles.dropdownItemSubArrow}>▶</span>}
-                        {hasChildren && (
-                            <div className={styles.dropdownSubmenu}>
-                                {renderMenu(menuItem.children!, depth + 1, `${parentKey}-${menuItem.key}`)}
-                            </div>
-                        )}
-                    </li>
-                );
+                return <MenuItem key={item.key} item={item} path={[...path, item.key]} />;
             })}
         </ul>
     );
+};
+
+const SubMenu: React.FC<{
+    items: DropdownMenuItem[];
+    parentRef: React.RefObject<HTMLElement>;
+    path: (string | number)[];
+}> = ({ items, parentRef, path }) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const [coords, setCoords] = useState<{ top?: number; left?: number }>({});
+    const [submenuMaxHeight, setSubmenuMaxHeight] = useState<number | undefined>(undefined);
+    const { setActivePath } = useDropdownContext();
+
+    useEffect(() => {
+        if (parentRef.current && ref.current) {
+            const parentRect = parentRef.current.getBoundingClientRect();
+            const menuRect = ref.current.getBoundingClientRect();
+            const { innerWidth, innerHeight } = window;
+            const PADDING = 8;
+
+            let top = parentRect.top;
+            let left = parentRect.right;
+
+            if (left + menuRect.width > innerWidth - PADDING) {
+                left = parentRect.left - menuRect.width;
+            }
+            if (top + menuRect.height > innerHeight - PADDING) {
+                top = Math.max(PADDING, innerHeight - menuRect.height - PADDING);
+            }
+            if (top < PADDING) {
+                top = PADDING;
+            }
+
+            setCoords({ top, left });
+            const availableHeight = Math.max(PADDING, innerHeight - top - PADDING);
+            setSubmenuMaxHeight(availableHeight);
+        }
+    }, [parentRef]);
+
+    return createPortal(
+        <div
+            ref={ref}
+            className={classNames(styles.dropdown, styles.dropdownSubmenu)}
+            style={coords}
+            onMouseEnter={() => setActivePath(path)}
+            onMouseLeave={() => setActivePath(path.slice(0, -1))}
+        >
+            <div className={styles.dropdownScroll} style={{ maxHeight: submenuMaxHeight }}>
+                <Menu items={items} path={path} />
+            </div>
+        </div>,
+        document.body,
+    );
+};
+
+const Dropdown: React.FC<DropdownProps> = props => {
+    const {
+        open,
+        anchorEl,
+        position,
+        items,
+        onSelect,
+        onClose,
+        size = "medium",
+        maxHeight,
+        className,
+        style,
+        placement = "bottomLeft",
+        autoFocus,
+        destroyPopupOnHide = false,
+    } = props;
+    const ref = useRef<HTMLDivElement>(null);
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const [coords, setCoords] = useState<{ left: number; top: number } | null>(null);
+    const [activePath, setActivePath] = useState<(string | number)[]>([]);
+    const [focusedKey, setFocusedKey] = useState<string | number | null>(null);
+    const [isScrollable, setIsScrollable] = useState(false);
+
+    // --- POSITIONING ---
+    useEffect(() => {
+        if (open && ref.current) {
+            if (anchorEl) {
+                const anchorRect = anchorEl.getBoundingClientRect();
+                const menuRect = ref.current.getBoundingClientRect();
+                let left = anchorRect.left;
+                let top = anchorRect.bottom;
+                if (placement.includes("top")) top = anchorRect.top - menuRect.height;
+                if (placement.includes("Right")) left = anchorRect.right - menuRect.width;
+                if (placement === "left") {
+                    left = anchorRect.left - menuRect.width;
+                    top = anchorRect.top;
+                }
+                if (placement === "right") {
+                    left = anchorRect.right;
+                    top = anchorRect.top;
+                }
+                setCoords({ top, left });
+            } else if (position) {
+                setCoords({ left: position.x, top: position.y });
+            }
+        }
+    }, [open, anchorEl, position, placement]);
+
+    // --- OUTSIDE CLICK ---
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            const insideAnyDropdown = target.closest('[data-dropdown-container="true"]');
+            const insideAnchor = anchorEl && anchorEl.contains(target);
+            if (!insideAnyDropdown && !insideAnchor) onClose?.();
+        };
+        if (open) document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [open, onClose, anchorEl]);
+
+    // --- SCROLLBAR STABILITY ---
+    useEffect(() => {
+        if (!open) return;
+        const el = scrollRef.current;
+        if (!el) return;
+        const update = () => {
+            setIsScrollable(el.scrollHeight > el.clientHeight);
+        };
+        update();
+        const resizeObserver = new ResizeObserver(update);
+        resizeObserver.observe(el);
+        window.addEventListener("resize", update);
+        return () => {
+            resizeObserver.disconnect();
+            window.removeEventListener("resize", update);
+        };
+    }, [open, items, maxHeight]);
+
+    // --- KEYBOARD NAVIGATION ---
+    const getItemsFromPath = useCallback(
+        (path: (string | number)[]): DropdownMenuItem[] => {
+            if (path.length === 0) return items;
+            let current: DropdownMenuItem[] | undefined = items;
+            for (const key of path) {
+                const parent = current?.find(i => isItem(i) && i.key === key) as DropdownItem;
+                current = parent?.children;
+                if (!current) return [];
+            }
+            return current;
+        },
+        [items],
+    );
+
+    const getFlatItems = useCallback((menuItems: DropdownMenuItem[]): DropdownItem[] => {
+        const flatten = (arr: DropdownMenuItem[]): DropdownItem[] => {
+            return arr.reduce<DropdownItem[]>((acc, item) => {
+                if (isGroup(item)) acc.push(...flatten(item.items));
+                else if (isItem(item)) acc.push(item);
+                return acc;
+            }, []);
+        };
+        return flatten(menuItems);
+    }, []);
+
+    const handleKeyDown = useCallback(
+        (e: React.KeyboardEvent) => {
+            const currentItems = getItemsFromPath(activePath);
+            const flatItems = getFlatItems(currentItems).filter(i => !i.disabled);
+            if (flatItems.length === 0) return;
+
+            const currentIndex = flatItems.findIndex(i => i.key === focusedKey);
+            const currentItem = flatItems[currentIndex];
+
+            switch (e.key) {
+                case "ArrowDown": {
+                    e.preventDefault();
+                    const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % flatItems.length;
+                    setFocusedKey(flatItems[nextIndex].key);
+                    break;
+                }
+                case "ArrowUp": {
+                    e.preventDefault();
+                    const prevIndex = currentIndex <= 0 ? flatItems.length - 1 : currentIndex - 1;
+                    setFocusedKey(flatItems[prevIndex].key);
+                    break;
+                }
+                case "ArrowRight":
+                    if (currentItem && hasChildren(currentItem)) {
+                        e.preventDefault();
+                        setActivePath([...activePath, currentItem.key]);
+                        const subItems = getFlatItems(currentItem.children!).filter(i => !i.disabled);
+                        if (subItems.length > 0) setFocusedKey(subItems[0].key);
+                    }
+                    break;
+                case "ArrowLeft":
+                    if (activePath.length > 0) {
+                        e.preventDefault();
+                        const parentPath = activePath.slice(0, -1);
+                        const parentKey = activePath[activePath.length - 1];
+                        setActivePath(parentPath);
+                        setFocusedKey(parentKey);
+                    }
+                    break;
+                case "Enter":
+                case " ":
+                    if (currentItem) {
+                        e.preventDefault();
+                        if (hasChildren(currentItem)) {
+                            setActivePath([...activePath, currentItem.key]);
+                            const subItems = getFlatItems(currentItem.children!).filter(i => !i.disabled);
+                            if (subItems.length > 0) setFocusedKey(subItems[0].key);
+                        } else {
+                            onSelect?.(currentItem);
+                        }
+                    }
+                    break;
+                case "Escape":
+                    e.preventDefault();
+                    if (activePath.length > 0) {
+                        const parentPath = activePath.slice(0, -1);
+                        const parentKey = activePath[activePath.length - 1];
+                        setActivePath(parentPath);
+                        setFocusedKey(parentKey);
+                    } else {
+                        onClose?.();
+                    }
+                    break;
+                case "Tab":
+                    e.preventDefault();
+                    onClose?.();
+                    break;
+            }
+        },
+        [activePath, focusedKey, onSelect, onClose, getFlatItems, getItemsFromPath],
+    );
+
+    // --- FOCUS MANAGEMENT ---
+    useEffect(() => {
+        if (open && autoFocus && ref.current) {
+            ref.current.focus();
+        }
+        if (!open) {
+            setActivePath([]);
+            setFocusedKey(null);
+        }
+    }, [open, autoFocus]);
+
+    if (!open && destroyPopupOnHide) return null;
+
+    const contextValue = { activePath, setActivePath, focusedKey, setFocusedKey, onSelect, onClose };
 
     return (
         <div
             ref={ref}
-            className={classNames(styles.dropdown, styles[size], className)}
-            style={{
-                ...style,
-                maxHeight,
-                left: coords?.left,
-                top: coords?.top,
-                position: "fixed",
-            }}
+            className={classNames(styles.dropdown, styles[size], className, { [styles.hidden]: !open })}
+            style={{ ...style, left: coords?.left, top: coords?.top }}
             tabIndex={-1}
+            onKeyDown={handleKeyDown}
+            data-dropdown-container="true"
         >
-            {renderMenu(items)}
+            <DropdownContext.Provider value={contextValue}>
+                <div
+                    ref={scrollRef}
+                    className={classNames(styles.dropdownScroll, { [styles.scrollable]: isScrollable })}
+                    style={{ maxHeight }}
+                >
+                    <Menu items={items} />
+                </div>
+            </DropdownContext.Provider>
         </div>
     );
 };

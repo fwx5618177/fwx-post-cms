@@ -35,7 +35,7 @@ export interface DropdownItem {
     /** 右侧快捷键提示 */
     shortcut?: React.ReactNode;
     /** 子菜单 */
-    children?: DropdownItem[];
+    children?: DropdownMenuItem[];
 }
 
 // Dropdown 分组类型
@@ -43,7 +43,7 @@ export interface DropdownGroup {
     /** 分组标题 */
     label: React.ReactNode;
     /** 分组下的菜单项 */
-    items: DropdownItem[];
+    items: DropdownMenuItem[];
 }
 
 // Dropdown 分割线类型

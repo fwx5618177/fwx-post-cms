@@ -176,6 +176,12 @@
     font-size: 1.08em;
 }
 
+/* 演示场景中的下拉个性化样式（className 演示用） */
+.dropdownDemo-custom {
+    border: 2px solid #ffd666;
+    box-shadow: 0 0 16px #ffd66655;
+}
+
 // 自定义动画
 .dropdownDemo-fadeIn {
     animation: dropdownDemoFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);

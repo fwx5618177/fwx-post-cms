@@ -1,17 +1,21 @@
 .dropdown {
     position: fixed;
-    z-index: 2000;
-    background: #2c2e33;
-    color: #e9ecef;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: $z-dropdown;
+    background: var(--dropdown-bg, #{$dark-bg-secondary});
+    color: var(--dropdown-text, #{$dark-text-primary});
+    border: 1px solid var(--dropdown-border, #{$dark-border-color});
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-lg;
     min-width: 120px;
-    padding: 6px 0;
-    font-size: 14px;
+    padding: $spacing-xs 0;
+    font-size: $font-size-sm;
+    font-family: $font-family-sans;
     user-select: none;
-    overflow: auto;
+    overflow: hidden;
     max-height: 320px;
     outline: none;
+    backdrop-filter: blur(8px);
+    transition: $transition-all;
 
     &.small {
         min-width: 140px;
@@ -104,64 +108,91 @@
     .dropdownItem {
         display: flex;
         align-items: center;
-        padding: 10px 20px;
+        padding: $spacing-sm $spacing-md;
         cursor: pointer;
-        color: #e9ecef;
+        color: var(--dropdown-text, #{$dark-text-primary});
         background: transparent;
-        transition: background 0.2s, color 0.2s;
+        transition: $transition-colors;
         border: none;
         width: 100%;
         text-align: left;
         font-family: inherit;
         list-style: none;
+        position: relative;
+        line-height: $line-height-normal;
 
         &:hover:not(.disabled),
-        &.active:not(.disabled) {
-            background: #35363c;
-            color: #ffd666;
+        &.active:not(.disabled),
+        &:focus:not(.disabled),
+        &.dropdownItemFocused:not(.disabled) {
+            background: var(--dropdown-hover-bg, #{$dark-hover-color});
+            color: var(--dropdown-hover-text, #{$primary-color});
+            outline: none;
         }
 
         &.disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            color: var(--dropdown-disabled-text, #{$text-muted});
 
             &:hover {
                 background: transparent;
-                color: #e9ecef;
+                color: var(--dropdown-disabled-text, #{$text-muted});
             }
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--dropdown-focus-color, #{$primary-color});
+            outline-offset: -2px;
         }
     }
 }
 
 .fadeIn {
-    animation: dropdownFadeIn 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: dropdownFadeIn $transition-normal $ease-out;
 }
 
 .fadeOut {
-    animation: dropdownFadeOut 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: dropdownFadeOut $transition-normal $ease-in;
+}
+
+.scaleIn {
+    animation: dropdownScaleIn $transition-normal $ease-bounce;
 }
 
 @keyframes dropdownFadeIn {
     from {
         opacity: 0;
-        transform: translateY(8px);
+        transform: translateY(-4px) scale(0.95);
     }
 
     to {
         opacity: 1;
-        transform: none;
+        transform: translateY(0) scale(1);
     }
 }
 
 @keyframes dropdownFadeOut {
     from {
         opacity: 1;
-        transform: none;
+        transform: translateY(0) scale(1);
     }
 
     to {
         opacity: 0;
-        transform: translateY(8px);
+        transform: translateY(-4px) scale(0.95);
+    }
+}
+
+@keyframes dropdownScaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
     }
 }
 
@@ -220,12 +251,49 @@
 
 .dropdownSubmenu {
     position: absolute;
-    top: 0;
+    top: -$spacing-xs;
     left: 100%;
-    margin-left: 2px;
-    z-index: 2100;
+    margin-left: $spacing-xs;
+    z-index: calc(#{$z-dropdown} + 1);
     min-width: 140px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+    box-shadow: $shadow-lg;
+    background: var(--dropdown-bg, #{$dark-bg-secondary});
+    border: 1px solid var(--dropdown-border, #{$dark-border-color});
+    border-radius: $border-radius-md;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-$spacing-sm) scale(0.95);
+    transition: opacity $transition-normal $ease-out, visibility $transition-normal $ease-out,
+        transform $transition-normal $ease-out;
+    pointer-events: none;
+
+    .dropdownItemWithChildren:hover &,
+    .dropdownItemWithChildren:focus & {
+        animation: submenuShow $transition-normal $ease-out forwards;
+        animation-delay: 150ms;
+    }
+
+    &.submenuVisible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0) scale(1);
+        pointer-events: auto;
+    }
+}
+
+@keyframes submenuShow {
+    from {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(-$spacing-sm) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0) scale(1);
+        pointer-events: auto;
+    }
 }
 
 .dropdownShortcut {
@@ -250,11 +318,181 @@
     }
 }
 
-.dropdownItemSubArrow {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 14px;
-    color: #adb5bd;
+.dropdown {
+    position: fixed;
+    z-index: $z-dropdown;
+    background: var(--dropdown-bg, #{$dark-bg-secondary});
+    color: var(--dropdown-text, #{$dark-text-primary});
+    border: 1px solid var(--dropdown-border, #{$dark-border-color});
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-lg;
+    min-width: 160px;
+    padding: $spacing-xs 0;
+    font-size: $font-size-sm;
+    font-family: $font-family-sans;
+    user-select: none;
+    outline: none;
+    backdrop-filter: blur(8px);
+    transition: opacity 0.15s $ease-out, transform 0.15s $ease-out;
+
+    // 滚动交由内部容器处理
+    overflow: hidden;
+
+    &.hidden {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-4px) scale(0.98);
+    }
+
+    &.small {
+        font-size: 13px;
+        min-width: 140px;
+    }
+
+    &.medium {
+        font-size: 14px;
+        min-width: 160px;
+    }
+
+    &.large {
+        font-size: 16px;
+        min-width: 200px;
+    }
+
+    // 结构化子元素样式（利用 SCSS 嵌套）
+    .dropdownList {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        // 覆盖旧样式，统一为单一滚动容器
+        overflow: visible;
+        max-height: none;
+    }
+
+    .dropdownItem {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+        outline: none; // 焦点样式通过类控制
+
+        &:focus {
+            outline: none;
+        }
+
+        &.disabled {
+            .dropdownItemContent {
+                opacity: 0.5;
+                cursor: not-allowed;
+                color: var(--dropdown-disabled-text, #{$text-muted});
+            }
+        }
+    }
+
+    .dropdownItemContent {
+        display: flex;
+        align-items: center;
+        padding: $spacing-sm $spacing-md;
+        color: var(--dropdown-text, #{$dark-text-primary});
+        transition: $transition-colors;
+        line-height: $line-height-normal;
+    }
+
+    .dropdownItem:not(.disabled) {
+        &.dropdownItemFocused .dropdownItemContent,
+        &:hover .dropdownItemContent {
+            background: var(--dropdown-hover-bg, #{$dark-hover-color});
+            color: var(--dropdown-hover-text, #{$primary-color});
+        }
+    }
+
+    // 分组标题：弱提示中性色
+    .dropdownGroupLabel {
+        font-size: 12px;
+        color: $text-secondary;
+        padding: 6px 20px 2px 20px;
+        font-weight: 500;
+        pointer-events: none;
+    }
+
+    // 分割线：弱化对比，使用边框体系色
+    .dropdownDivider {
+        height: 1px;
+        background: $border-color;
+        opacity: 0.6;
+        margin: 4px 0;
+        border: none;
+    }
+
+    .dropdownItemIcon {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 8px;
+        font-size: 16px;
+    }
+
+    .dropdownItemWithChildren {
+        position: relative;
+
+        .dropdownItemContent {
+            padding-right: 32px !important;
+        }
+    }
+
+    // 右侧快捷键：弱提示
+    .dropdownShortcut {
+        margin-left: auto;
+        color: $text-secondary;
+        font-size: 12px;
+        padding-left: 16px;
+        white-space: nowrap;
+    }
+
+    // 子菜单箭头：弱提示
+    .dropdownItemSubArrow {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 14px;
+        color: $text-secondary;
+    }
+
+    // 单一滚动容器，避免嵌套滚动条
+    .dropdownScroll {
+        max-height: 320px; // 可通过内联样式覆盖
+        overflow: auto;
+        // 始终保留滚动条占位，避免容器尺寸跳变
+        scrollbar-gutter: stable both-edges;
+    }
+
+    // 当内容可滚动时可用该类进行样式微调（可按需扩展）
+    .scrollable {
+        // 防止滚动冒泡到页面，避免外层滚动条闪烁
+        overscroll-behavior: contain;
+    }
+
+    // 选中态：使用主动背景与可读文本色
+    .dropdownItem.active:not(.disabled) {
+        .dropdownItemContent {
+            background: var(--dropdown-active-bg, #{$dark-active-color});
+            color: var(--dropdown-hover-text, #{$primary-color});
+        }
+    }
+}
+
+// 通过 Portal 渲染的子菜单容器（叠加在主下拉之上）
+.dropdownSubmenu {
+    position: fixed;
+    z-index: calc(#{$z-dropdown} + 1); // 保证在主下拉之上
+    min-width: 140px;
+    // 覆盖旧的隐藏/动画状态，保证可见性
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
 }

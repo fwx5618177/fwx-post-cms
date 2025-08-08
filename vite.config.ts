@@ -39,9 +39,6 @@ export default defineConfig(({ mode }) => {
         },
         css: {
             preprocessorOptions: {
-                less: {
-                    javascriptEnabled: true,
-                },
                 scss: {
                     api: "modern-compiler",
                     silenceDeprecations: ["legacy-js-api"],
@@ -49,6 +46,7 @@ export default defineConfig(({ mode }) => {
                     sassOptions: {
                         outputStyle: "compressed",
                     },
+                    additionalData: `@use "@styles/variables.scss" as *;`,
                 },
             },
             modules: {

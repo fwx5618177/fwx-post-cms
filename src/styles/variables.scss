@@ -118,3 +118,24 @@ $z-modal: 1050;
 $z-popover: 1060;
 $z-tooltip: 1070;
 $z-toast: 1080;
+
+// 主题系统
+// 亮色主题变量
+$light-bg-primary: #ffffff;
+$light-bg-secondary: #f8f9fa;
+$light-bg-tertiary: #e9ecef;
+$light-text-primary: #212529;
+$light-text-secondary: #6c757d;
+$light-border-color: #dee2e6;
+$light-hover-color: #f8f9fa;
+$light-active-color: #e9ecef;
+
+// 暗色主题变量 (当前默认)
+$dark-bg-primary: $bg-dark;
+$dark-bg-secondary: $bg-medium;
+$dark-bg-tertiary: $bg-light;
+$dark-text-primary: $text-primary;
+$dark-text-secondary: $text-secondary;
+$dark-border-color: $border-color;
+$dark-hover-color: $bg-light;
+$dark-active-color: $bg-lighter;

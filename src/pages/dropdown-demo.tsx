@@ -1,7 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { Dropdown } from "../components/Dropdown";
+import { useDropdown } from "../components/Dropdown/Dropdown";
 import type { DropdownGroup, DropdownMenuItem, DropdownSize, DropdownPlacement } from "../components/Dropdown/types";
-import styles from "../styles/dropdown-demo.module.scss";
+import styles from "../styles/pages/dropdown-demo.module.scss";
 
 const placements: DropdownPlacement[] = ["bottomLeft", "bottomRight", "topLeft", "topRight", "left", "right"];
 const sizes: DropdownSize[] = ["small", "medium", "large"];
@@ -24,7 +25,23 @@ const demoItems: DropdownMenuItem[] = [
         label: "多级菜单",
         children: [
             { key: "sub1", label: "子项1" },
-            { key: "sub2", label: "子项2" },
+            {
+                key: "sub2",
+                label: "子项2（含子菜单）",
+                children: [
+                    { key: "sub2-1", label: "子项2-1" },
+                    { key: "sub2-2", label: "子项2-2" },
+                    {
+                        key: "sub2-3",
+                        label: "子项2-3（再一层）",
+                        children: [
+                            { key: "sub2-3-1", label: "子项2-3-1" },
+                            { key: "sub2-3-2", label: "子项2-3-2" },
+                            { key: "sub2-3-3", label: "子项2-3-3" },
+                        ],
+                    },
+                ],
+            },
         ],
     },
     { type: "divider" },
@@ -125,6 +142,25 @@ export default function DropdownDemo() {
     const btnRefDropdown = useRef<HTMLButtonElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [dropdownRect, setDropdownRect] = useState<{ width: number; height: number } | null>(null);
+
+    // hover 触发示例
+    const hoverBtnRef = useRef<HTMLButtonElement>(null);
+    const hoverDropdown = useDropdown();
+
+    // 多级菜单滚动示例数据（强制产生滚动条）
+    const deepItems = useMemo<DropdownMenuItem[]>(() => {
+        const children = Array.from({ length: 18 }).map((_, i) => ({
+            key: `deep-${i + 1}`,
+            label: `深层子项 ${i + 1}`,
+        }));
+        return [
+            {
+                key: "deep-1",
+                label: "深层菜单",
+                children,
+            },
+        ];
+    }, []);
 
     return (
         <div className={styles.dropdownDemo}>
@@ -360,6 +396,52 @@ export default function DropdownDemo() {
                     maxHeight={180}
                     showArrow
                 />
+            </section>
+            {/* trigger（hover 打开） */}
+            <section className={styles["dropdownDemo-section"]}>
+                <h3>trigger（hover）</h3>
+                <button
+                    ref={hoverBtnRef}
+                    className={styles["dropdownDemo-dropdownBtn"]}
+                    onMouseEnter={() => hoverDropdown.handleOpen(hoverBtnRef.current!)}
+                >
+                    悬停打开 Dropdown（hover）
+                </button>
+                <Dropdown
+                    open={hoverDropdown.open}
+                    anchorEl={hoverBtnRef.current}
+                    items={demoItems}
+                    onSelect={() => hoverDropdown.handleClose()}
+                    onClose={hoverDropdown.handleClose}
+                    placement={"bottomLeft"}
+                    size={"medium"}
+                    maxHeight={180}
+                />
+                <div style={{ color: "#adb5bd", marginTop: 8 }}>将鼠标移到按钮上即可打开；点击外部或选择项后关闭</div>
+            </section>
+            {/* 多级菜单滚动（子菜单内容较多时的滚动） */}
+            <section className={styles["dropdownDemo-section"]}>
+                <h3>多级菜单滚动演示</h3>
+                <button
+                    ref={btnRefGroup}
+                    className={styles["dropdownDemo-dropdownBtn"]}
+                    onClick={() => setOpenGroup(v => !v)}
+                >
+                    打开深层菜单
+                </button>
+                <Dropdown
+                    open={openGroup}
+                    anchorEl={btnRefGroup.current}
+                    items={deepItems}
+                    onSelect={() => setOpenGroup(false)}
+                    onClose={() => setOpenGroup(false)}
+                    placement={"bottomLeft"}
+                    size={"medium"}
+                    maxHeight={220}
+                />
+                <div style={{ color: "#adb5bd", marginTop: 8 }}>
+                    子菜单采用单一滚动容器，避免外层出现/消失滚动条的闪动
+                </div>
             </section>
             {/* destroyPopupOnHide */}
             <section className={styles["dropdownDemo-section"]}>
