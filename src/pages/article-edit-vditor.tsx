@@ -4,6 +4,7 @@ import Vditor from "vditor";
 import "vditor/dist/index.css";
 import styles from "@styles/pages/article-edit-vditor.module.scss";
 import Loading from "@components/Loading";
+import OssUpload from "@components/OssUpload";
 
 // 默认 Markdown 内容
 const defaultMarkdown = `# Vditor 编辑器示例
@@ -85,6 +86,8 @@ interface ArticleData {
     tags: string[];
     type: string;
     status: "draft" | "published";
+    coverUrl?: string;
+    excerpt?: string;
 }
 
 const ArticleEditVditor: React.FC = () => {
@@ -94,12 +97,17 @@ const ArticleEditVditor: React.FC = () => {
 
     // 状态管理
     const [isReady, setIsReady] = useState<boolean>(false);
+    const [isDirty, setIsDirty] = useState<boolean>(false);
+    const [isSaving, setIsSaving] = useState<boolean>(false);
+    const autoSaveTimerRef = useRef<number | null>(null);
     const [articleData, setArticleData] = useState<ArticleData>({
         title: "",
         content: defaultMarkdown,
         tags: [],
         type: "tech",
         status: "draft",
+        coverUrl: "",
+        excerpt: "",
     });
     const [newTag, setNewTag] = useState<string>("");
     const [showTagInput, setShowTagInput] = useState<boolean>(false);
@@ -132,6 +140,15 @@ const ArticleEditVditor: React.FC = () => {
                     math: {
                         engine: "KaTeX",
                     },
+                },
+                input: value => {
+                    setArticleData(prev => ({ ...prev, content: value }));
+                    setIsDirty(true);
+                    // 启动防抖自动保存
+                    if (autoSaveTimerRef.current) window.clearTimeout(autoSaveTimerRef.current);
+                    autoSaveTimerRef.current = window.setTimeout(() => {
+                        handleAutoSave();
+                    }, 1000);
                 },
                 upload: {
                     url: "/api/upload",
@@ -166,6 +183,20 @@ const ArticleEditVditor: React.FC = () => {
         }
         return "";
     }, []);
+
+    // 自动保存（草稿）
+    const handleAutoSave = useCallback(() => {
+        if (!isReady) return;
+        setIsSaving(true);
+        const markdown = getMarkdown();
+        const draft: ArticleData = { ...articleData, content: markdown, status: "draft" };
+        // 这里可以调用草稿保存接口
+        console.log("自动保存草稿:", draft);
+        setTimeout(() => {
+            setIsSaving(false);
+            setIsDirty(false);
+        }, 400);
+    }, [articleData, getMarkdown, isReady]);
 
     // 添加标签
     const addTag = useCallback(
@@ -236,14 +267,31 @@ const ArticleEditVditor: React.FC = () => {
                 return;
             }
 
+            if (status === "published") {
+                const ok = window.confirm("确定要发布文章吗？发布后将对外可见。");
+                if (!ok) return;
+            }
+
             // 这里可以添加保存到服务器的逻辑
             console.log("保存内容:", finalArticleData);
 
             // 显示保存成功提示
             alert(`文章已${status === "published" ? "发布" : "保存为草稿"}`);
+            setIsDirty(false);
         },
         [getMarkdown, articleData],
     );
+
+    // 关闭或刷新时的未保存提示
+    useEffect(() => {
+        const handler = (e: BeforeUnloadEvent) => {
+            if (!isDirty) return;
+            e.preventDefault();
+            e.returnValue = "";
+        };
+        window.addEventListener("beforeunload", handler);
+        return () => window.removeEventListener("beforeunload", handler);
+    }, [isDirty]);
 
     return (
         <div className={styles.container}>
@@ -251,6 +299,9 @@ const ArticleEditVditor: React.FC = () => {
                 <h1>Vditor Markdown 编辑器</h1>
 
                 <div className={styles.controls}>
+                    <div className={styles.modeInfo} aria-live="polite">
+                        {isSaving ? "自动保存中…" : isDirty ? "有未保存更改" : "已保存"}
+                    </div>
                     <button
                         className={`${styles.button} ${styles.secondary}`}
                         onClick={() => saveContent("draft")}
@@ -296,6 +347,34 @@ const ArticleEditVditor: React.FC = () => {
                             </option>
                         ))}
                     </select>
+                </div>
+
+                {/* 封面上传 */}
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>文章封面</label>
+                    <div className={styles.coverRow}>
+                        <div className={styles.coverUploader}>
+                            <OssUpload
+                                value={articleData.coverUrl}
+                                onChange={(url: string) => setArticleData(prev => ({ ...prev, coverUrl: url }))}
+                            />
+                        </div>
+                        {articleData.coverUrl && (
+                            <img src={articleData.coverUrl} alt="cover" className={styles.coverPreview} />
+                        )}
+                    </div>
+                </div>
+
+                {/* 摘要 */}
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>文章摘要</label>
+                    <textarea
+                        className={styles.excerptInput}
+                        placeholder="用于列表与分享的简短摘要，建议 50-120 字"
+                        rows={3}
+                        value={articleData.excerpt}
+                        onChange={e => setArticleData(prev => ({ ...prev, excerpt: e.target.value }))}
+                    />
                 </div>
 
                 {/* 标签管理 */}

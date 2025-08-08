@@ -1,58 +1,34 @@
-import { InboxOutlined, PlusOutlined, UploadOutlined, FileImageOutlined } from "@ant-design/icons";
-import { Button, message, Modal, Upload, UploadFile, UploadProps } from "antd";
-import { RcFile } from "antd/lib/upload/interface";
-import { useEffect, useState, useCallback } from "react";
-import { useTranslation } from "react-i18next";
-import { BeforeUploadValueType, PostCosConf, uploadOSSDir, uploadStyle, ExtendedUploadFile } from "@/request/interface";
-import { getBase64 } from "@/request/lib";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import api from "./api";
+import type { PostCosConf, uploadOSSDir } from "../request/interface";
 
-interface OSSUploadProps {
-    value?: UploadFile[];
-    onChange?: (fileList: UploadFile[]) => void;
-    accept?: UploadProps["accept"];
+interface SimpleOSSUploadProps {
+    value?: string;
+    onChange?: (url: string) => void;
+    accept?: string;
     uploadDir?: uploadOSSDir;
-    directory?: boolean;
-    multiple?: boolean;
-    maxCount?: number;
-    listType?: UploadProps["listType"];
-    uploadStyle?: uploadStyle;
 }
 
-const { Dragger } = Upload;
-
-const OSSUploadBase = ({
-    value = [],
+const OSSUploadBase: React.FC<SimpleOSSUploadProps> = ({
+    value = "",
     onChange,
-    accept = "*",
+    accept = "image/*",
     uploadDir = "upload",
-    directory = false,
-    multiple = false,
-    maxCount = 50,
-    listType = "picture-card",
-    uploadStyle = "click",
-}: OSSUploadProps) => {
-    const { t } = useTranslation();
-
-    const [OSSData, setOSSData] = useState<PostCosConf>();
-
-    const [previewVisible, setPreviewVisible] = useState(false);
-    const [previewImage, setPreviewImage] = useState("");
-    const [previewTitle, setPreviewTitle] = useState("");
-    const [fileList, setFileList] = useState<UploadFile[]>(value as UploadFile[]);
+}) => {
+    const [ossData, setOssData] = useState<PostCosConf | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const init = useCallback(async () => {
         try {
-            const result = await api.ossSignature({
+            const result = (await api.ossSignature({
                 allowPrefix: `${uploadDir}/*`,
                 username: "fwx",
                 password: "123",
-            });
-
-            setOSSData(result as unknown as PostCosConf);
-            // console.log(result)
+            })) as PostCosConf;
+            setOssData(result);
         } catch (error) {
-            message.error(error instanceof Error ? error.message : String(error));
+            console.error("获取OSS签名失败:", error);
         }
     }, [uploadDir]);
 
@@ -60,124 +36,52 @@ const OSSUploadBase = ({
         init();
     }, [init]);
 
-    const uploadProps: UploadProps = {
-        action: "https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com",
-        listType,
-        fileList: fileList,
-        accept: accept as UploadProps["accept"],
-        directory,
-        multiple,
-        maxCount,
-        onPreview: (async (file: UploadFile) => {
-            if (!file.url && !file.preview) {
-                file.preview = await getBase64(file.originFileObj as RcFile);
-            }
+    const handlePick = () => inputRef.current?.click();
 
-            // console.log('preview file:', file, !file.url && !file.preview)
+    const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = async e => {
+        const file = e.target.files?.[0];
+        if (!file || !ossData) return;
+        setUploading(true);
+        try {
+            const tmpKey = (ossData.key?.substring(0, ossData.key.lastIndexOf("*")) || "").trim();
+            const filename = `${Date.now()}_${file.name}`;
+            const objectKey = tmpKey + filename;
 
-            setPreviewImage(file.url || (file.preview as string));
-            setPreviewVisible(true);
-            setPreviewTitle(file.name);
-        }) as UploadProps["onPreview"],
-        onChange: (({ fileList }) => {
-            // console.log('OSS:', fileList)
-            onChange?.([...fileList]);
+            const form = new FormData();
+            form.append("key", objectKey);
+            form.append("policy", ossData.policy);
+            form.append("q-sign-algorithm", ossData.qSignAlgorithm);
+            form.append("q-ak", ossData.qAk);
+            form.append("q-key-time", ossData.qKeyTime);
+            form.append("q-signature", ossData.qSignature);
+            form.append("file", file);
 
-            setFileList(fileList);
-        }) as UploadProps["onChange"],
-        onRemove: (file: UploadFile) => {
-            const files = (value || []).filter(v => v.url !== file.url);
-
-            if (onChange) {
-                onChange?.(files);
-            }
-        },
-        data: ((file: ExtendedUploadFile): PostCosConf => {
-            return {
-                ...(OSSData as PostCosConf),
-                key: file.dist || "",
-            };
-        }) as unknown as UploadProps["data"],
-        beforeUpload: ((file: RcFile): BeforeUploadValueType => {
-            if (!OSSData) return false;
-
-            const filename = file.uid + "_" + file.name;
-            const tmpKey = OSSData.key?.substring(0, OSSData.key.lastIndexOf("*")) || "";
-
-            const extendedFile = file as unknown as ExtendedUploadFile;
-            extendedFile.dist = tmpKey + filename;
-            extendedFile.url = "https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/" + extendedFile.dist;
-
-            return file;
-        }) as UploadProps["beforeUpload"],
-    };
-
-    const ListTypeOpsElement = () => {
-        switch (listType) {
-            case "picture":
-                return (
-                    <Button type="primary" icon={<FileImageOutlined />}>
-                        Click Image to Upload
-                    </Button>
-                );
-            case "picture-card":
-                return (
-                    <div>
-                        <PlusOutlined />
-                        <div style={{ marginTop: 8 }}>Upload</div>
-                    </div>
-                );
-            case "text":
-                return (
-                    <Button type="primary" icon={<UploadOutlined />}>
-                        Click to Upload
-                    </Button>
-                );
-            default:
-                return (
-                    <Button type="primary" icon={<UploadOutlined />}>
-                        Click to Upload
-                    </Button>
-                );
-        }
-    };
-
-    const UploadStyleElement = () => {
-        switch (uploadStyle) {
-            case "click":
-                return <Upload {...uploadProps}>{fileList.length >= maxCount ? null : ListTypeOpsElement()}</Upload>;
-            case "dragger":
-                return (
-                    <Dragger
-                        {...uploadProps}
-                        onDrop={e => {
-                            console.log("Dropped files", e.dataTransfer.files);
-                        }}
-                    >
-                        <p className="ant-upload-drag-icon">
-                            <InboxOutlined />
-                        </p>
-                        <p className="ant-upload-text">{t("component.ossupload.dragger.title")}</p>
-                        <p className="ant-upload-hint">{t("component.ossupload.dragger.body")}</p>
-                    </Dragger>
-                );
-            default:
-                return <Upload {...uploadProps}>{fileList.length >= maxCount ? null : ListTypeOpsElement()}</Upload>;
+            const res = await fetch("https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com", {
+                method: "POST",
+                body: form,
+            });
+            if (!res.ok) throw new Error(`上传失败: ${res.status}`);
+            const url = `https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/${objectKey}`;
+            onChange?.(url);
+        } catch (err) {
+            console.error(err);
+            alert("上传失败，请重试");
+        } finally {
+            setUploading(false);
+            if (inputRef.current) inputRef.current.value = "";
         }
     };
 
     return (
-        <>
-            {UploadStyleElement()}
-            <Modal
-                visible={previewVisible}
-                title={previewTitle}
-                footer={null}
-                onCancel={() => setPreviewVisible(false)}
-            >
-                <img alt="example" style={{ width: "100%" }} src={previewImage} />
-            </Modal>
-        </>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <button type="button" onClick={handlePick} disabled={uploading} style={{ padding: "6px 12px" }}>
+                {uploading ? "上传中…" : value ? "更换封面" : "上传封面"}
+            </button>
+            {value && (
+                <img src={value} alt="cover" style={{ width: 120, height: 68, objectFit: "cover", borderRadius: 4 }} />
+            )}
+            <input ref={inputRef} type="file" accept={accept} onChange={handleFileChange} style={{ display: "none" }} />
+        </div>
     );
 };
 

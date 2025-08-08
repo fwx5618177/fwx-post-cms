@@ -1,4 +1,4 @@
-import { request } from "@/request/request";
+import { request } from "@request/request";
 import { IOssUploadParams, IOssUploadResponse, IOssPolicy } from "./IOss";
 
 // OSS 上传参数
