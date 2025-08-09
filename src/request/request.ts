@@ -1,5 +1,5 @@
 import { instance } from "./interceptors";
-import { IRequestConfig, IRequestMethods, RequestData } from "./IRequest";
+import { IRequestConfig, IRequestMethods, RequestData } from "./http-types";
 
 /**
  * 封装的 HTTP 请求方法集合

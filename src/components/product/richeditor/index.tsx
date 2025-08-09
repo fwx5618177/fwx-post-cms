@@ -1,7 +1,7 @@
 import { Card, Col, Row } from "antd";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { queryPathKey } from "@/request/lib";
+import { queryPathKey } from "@/request";
 import Instro from "@/components/instro";
 import EditorRich from "./editor";
 import "./richtext.css";

@@ -1,4 +1,4 @@
-import { IErrorMessageMap } from "./IRequest";
+import { IErrorMessageMap } from "./http-types";
 
 // 错误信息映射
 export const ErrorMessageMap: IErrorMessageMap = {

@@ -1,6 +1,6 @@
 import { Button, Card, Col, Form, Input, message, Row, Select, Switch, UploadFile, UploadProps } from "antd";
 import { useState } from "react";
-import { uploadOSSDir, uploadStyle } from "@/request/interface";
+import { uploadOSSDir, uploadStyle } from "@/request";
 import OSSUploadBase from "@/components/OssUpload";
 import { UploadPost } from "./interface";
 import { v4 as uuidv4 } from "uuid";

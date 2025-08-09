@@ -1,19 +1,19 @@
 /**
- * API
+ * @deprecated 请使用 @/services/api 中的集中化 API
+ * 这个文件保留是为了向后兼容，建议迁移到新的 API 结构
  */
-
-import { get, post, put } from "@/request/lib";
+import { menuApi } from "@/services/api";
 
 class api {
-    static queryRouteList = params => post("/api/route/list", params);
+    static queryRouteList = (params: any) => menuApi.queryRouteList(params);
 
-    static createContent = params => put("/api/content/create", params);
+    static createContent = (params: any) => menuApi.createContent(params);
 
-    static list = () => get("/api/content/list");
+    static list = () => menuApi.list();
 
-    static detail = params => get(`/api/content/detail/${params}`);
+    static detail = (params: string) => menuApi.detail(params);
 
-    static updateContent = params => put(`/api/content/detail/${params?.title}`, params);
+    static updateContent = (params: any) => menuApi.updateContent(params);
 }
 
 export default api;

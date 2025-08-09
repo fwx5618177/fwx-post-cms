@@ -1,5 +1,5 @@
 import { UploadFile, UploadProps } from "antd";
-import { uploadOSSDir, uploadStyle } from "@/request/interface";
+import { uploadOSSDir, uploadStyle } from "@/request";
 
 // OSS上传组件属性接口
 export interface OSSUploadProps {

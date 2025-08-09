@@ -1,6 +1,6 @@
 import { mockArticles } from "@settings/article-list/mock";
 import { Article } from "../types/IArticleList";
-import { request } from "@request/request";
+import { request } from "@/request";
 
 // 查询参数类型
 export type FetchParams = {

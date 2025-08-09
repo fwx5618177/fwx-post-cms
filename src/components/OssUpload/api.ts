@@ -1,5 +1,11 @@
-import { request } from "@/request/request";
-import { OSSSignatureRequest, PostCosConf } from "@/request/interface";
+/**
+ * @deprecated 请使用 @/services/api 中的集中化 API 或 @/utils/oss 中的 ossApi
+ * 这个文件保留是为了向后兼容，建议迁移到新的 API 结构
+ */
+import { ossApi as centralizedOssApi } from "@/services/api";
+import { ossApi as utilsOssApi } from "@/utils/oss";
+import { request } from "@/request";
+import { OSSSignatureRequest, PostCosConf } from "@/request";
 
 /**
  * OSS上传相关API
@@ -11,7 +17,7 @@ export const ossApi = {
      * @returns Promise<PostCosConf> OSS配置信息
      */
     ossSignature: (params: OSSSignatureRequest): Promise<PostCosConf> => {
-        return request.post<PostCosConf>("/api/oss/signature", params);
+        return centralizedOssApi.signature(params);
     },
 
     /**
@@ -29,7 +35,7 @@ export const ossApi = {
      * @returns Promise<void>
      */
     deleteFile: (key: string): Promise<void> => {
-        return request.delete<void>("/api/oss/delete", { params: { key } });
+        return utilsOssApi.deleteOSSFile(key);
     },
 };
 

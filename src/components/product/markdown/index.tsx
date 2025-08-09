@@ -1,6 +1,6 @@
 import { Card } from "antd";
 import { useTranslation } from "react-i18next";
-import { queryPathKey } from "@/request/lib";
+import { queryPathKey } from "@/request";
 import Instro from "@/components/instro";
 import MarkdonwEditor from "./reactMarkdownEditorLite";
 

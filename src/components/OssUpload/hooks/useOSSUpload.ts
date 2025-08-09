@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { message, UploadFile, UploadProps } from "antd";
 import { RcFile } from "antd/lib/upload/interface";
-import { PostCosConf, BeforeUploadValueType, ExtendedUploadFile } from "@/request/interface";
-import { getBase64 } from "@/request/lib";
+import { PostCosConf, BeforeUploadValueType, ExtendedUploadFile } from "@/request";
+import { getBase64 } from "@/request";
 import { PreviewState, OSSUploadProps } from "../types";
 import api from "../api";
 

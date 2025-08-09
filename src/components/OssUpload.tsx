@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import api from "./api";
-import type { PostCosConf, uploadOSSDir } from "../request/interface";
+import type { PostCosConf, uploadOSSDir } from "../request/upload-types";
 
 interface SimpleOSSUploadProps {
     value?: string;

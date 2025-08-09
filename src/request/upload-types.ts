@@ -1,14 +1,29 @@
-import COS from "cos-js-sdk-v5";
+// OSS 上传相关接口类型定义
+export interface PostCosConf {
+    key: string;
+    policy: string;
+    qSignAlgorithm: string;
+    qAk: string;
+    qKeyTime: string;
+    qSignature: string;
+}
+
+// OSS 上传配置请求
+export interface OSSSignatureRequest {
+    allowPrefix: string;
+    username: string;
+    password: string;
+}
 
 // OSS 上传参数
-export interface IOssUploadParams {
+export interface OSSUploadParams {
     file: File;
     dir?: string;
     filename?: string;
 }
 
 // OSS 上传响应
-export interface IOssUploadResponse {
+export interface OSSUploadResponse {
     url: string;
     filename: string;
     size: number;
@@ -16,7 +31,7 @@ export interface IOssUploadResponse {
 }
 
 // OSS 策略响应
-export interface IOssPolicy {
+export interface OSSPolicy {
     accessId: string;
     policy: string;
     signature: string;
@@ -26,7 +41,7 @@ export interface IOssPolicy {
 }
 
 // OSS 临时签证
-export interface IOssTmpSecret {
+export interface OSSTmpSecret {
     tmpSecretId: string;
     tmpSecretKey: string;
     securityToken: string;
@@ -41,15 +56,15 @@ export interface IOssTmpSecret {
 }
 
 // OSS 验证数据
-export interface IOssValidation {
+export interface OSSValidation {
     allowPrefix: string;
     username: string;
     password: string;
 }
 
 // OSS 上传实例
-export interface IOssUpload {
-    instance: COS;
+export interface OSSUpload {
+    instance: any; // COS 实例
     config: {
         TmpSecretId: string;
         TmpSecretKey: string;
@@ -66,7 +81,7 @@ export interface IOssUpload {
 }
 
 // OSS 上传配置
-export interface IOssCosConf {
+export interface OSSCosConf {
     key: string;
     policy: string;
     "q-ak": string;
@@ -78,11 +93,22 @@ export interface IOssCosConf {
     "q-url-param-list": string;
 }
 
-// 上传前值类型
-export type IBeforeUploadValueType = void | boolean | string | Blob | File;
+// 上传前验证返回类型
+export type BeforeUploadValueType = void | boolean | string | Blob | File;
 
-// 上传目录类型
-export type IOssUploadDir = "upload" | "image" | "file" | "video";
+// 上传目录类型 - 统一化
+export type uploadOSSDir = "upload" | "images" | "documents" | "videos" | "audio" | "temp" | "image" | "file" | "video";
 
 // 上传样式类型
-export type IOssUploadStyle = "click" | "dragger";
+export type uploadStyle = "click" | "dragger";
+
+// 扩展的UploadFile类型，包含dist属性
+export interface ExtendedUploadFile {
+    uid: string;
+    name: string;
+    status?: "uploading" | "done" | "error" | "removed";
+    url?: string;
+    preview?: string;
+    originFileObj?: File;
+    dist?: string;
+}

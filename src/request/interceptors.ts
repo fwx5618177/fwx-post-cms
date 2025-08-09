@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from "axios";
 // import { message } from "antd";
-import { IResponseData } from "./IRequest";
-import { ErrorMessageMap } from "./ErrorMessageMap";
+import { IResponseData } from "./http-types";
+import { ErrorMessageMap } from "./error-messages";
 
 /**
  * 创建 axios 实例
@@ -56,7 +56,7 @@ instance.interceptors.request.use(
  * 在响应返回后统一处理，如处理业务状态码、错误信息等
  */
 instance.interceptors.response.use(
-    (response: AxiosResponse<IResponseData>) => {
+    (response: AxiosResponse<IResponseData>): any => {
         const { data, status } = response;
 
         // 处理 HTTP 状态码
@@ -102,8 +102,8 @@ instance.interceptors.response.use(
         if (response) {
             const { status } = response;
             // 使用 ErrorMessageMap 获取错误信息
-            const errorMessage = ErrorMessageMap[status] || "请求失败";
-            // message.error(errorMessage);
+            const _errorMessage = ErrorMessageMap[status] || "请求失败";
+            // message.error(_errorMessage);
 
             // 处理特定状态码
             if (status === 401) {
