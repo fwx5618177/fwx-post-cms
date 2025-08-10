@@ -24,6 +24,12 @@ export const articleApi = {
 
     // 删除文章
     delete: (id: string) => request.delete(`/api/article/${id}`),
+
+    // 保存草稿
+    saveDraft: (params: any) => request.post("/api/article/draft", params),
+
+    // 发布文章
+    publish: (params: any) => request.post("/api/article/publish", params),
 };
 
 // ================================

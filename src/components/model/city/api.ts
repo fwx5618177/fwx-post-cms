@@ -5,7 +5,7 @@
 import { cityApi } from "@/services/api";
 
 class api {
-    static queryMarioResource = (params: string) => cityApi.list();
+    static queryMarioResource = (_params: string) => cityApi.list();
 }
 
 export default api;

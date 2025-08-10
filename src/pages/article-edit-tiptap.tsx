@@ -1,6 +1,9 @@
 import React, { useState, useRef, useCallback } from "react";
 import { RiEditLine, RiEyeLine, RiClipboardLine, RiDeleteBinLine } from "react-icons/ri";
 import { TiptapEditor, EditorRefMethods } from "@components/TiptapEditor";
+import EditorHeader from "@/components/EditorHeader";
+import { usePublishForm } from "@/hooks/usePublishForm";
+import { computeEditorStats } from "@/utils/editorStats";
 import styles from "@styles/pages/article-edit-tiptap.module.scss";
 
 // 默认 HTML 内容
@@ -85,6 +88,21 @@ const ArticleEditTiptap: React.FC = () => {
     // 状态管理
     const [readonly, setReadonly] = useState<boolean>(false);
     const [htmlContent, setHtmlContent] = useState<string>(defaultHtml);
+    const [statsState, setStatsState] = useState<{ text: string }>({ text: "" });
+    const stats = React.useMemo(() => computeEditorStats(statsState.text), [statsState.text]);
+
+    // 发布表单
+    const {
+        form: _form,
+        update: _update,
+        setContent,
+        isSaving,
+        isDirty,
+        issues,
+        scheduleAutoSave,
+        autoSave,
+        publish,
+    } = usePublishForm({ content: defaultHtml });
 
     // 切换只读/编辑模式
     const toggleReadonly = useCallback(() => {
@@ -123,16 +141,29 @@ const ArticleEditTiptap: React.FC = () => {
     const clearContent = useCallback(() => {
         editorRef.current?.clear();
         setHtmlContent("");
-    }, []);
+        setContent("");
+    }, [setContent]);
+
+    // 保存和发布
+    const saveDraftNow = useCallback(() => void autoSave(), [autoSave]);
+    const publishNow = useCallback(async () => {
+        const res = await publish();
+        if (!res.ok) return;
+        alert("文章已发布");
+    }, [publish]);
 
     return (
         <div className={styles.container}>
-            <div className={styles.header}>
-                <h1>Tiptap 富文本编辑器</h1>
-
-                <div className={styles.controls}>
-                    <div className={styles.switch}>
-                        <span>模式</span>
+            <EditorHeader
+                issues={issues}
+                stats={stats}
+                isSaving={isSaving}
+                isDirty={isDirty}
+                disabled={false}
+                onSaveDraft={saveDraftNow}
+                onPublish={publishNow}
+                extraActions={
+                    <>
                         <button className={styles.button} onClick={toggleReadonly}>
                             {readonly ? (
                                 <>
@@ -144,21 +175,21 @@ const ArticleEditTiptap: React.FC = () => {
                                 </>
                             )}
                         </button>
-                    </div>
 
-                    <button className={styles.button} onClick={copyHtml}>
-                        <RiClipboardLine /> 复制 HTML
-                    </button>
+                        <button className={styles.button} onClick={copyHtml}>
+                            <RiClipboardLine /> 复制 HTML
+                        </button>
 
-                    <button className={styles.button} onClick={copyText}>
-                        <RiClipboardLine /> 复制纯文本
-                    </button>
+                        <button className={styles.button} onClick={copyText}>
+                            <RiClipboardLine /> 复制纯文本
+                        </button>
 
-                    <button className={`${styles.button} ${styles.danger}`} onClick={clearContent}>
-                        <RiDeleteBinLine /> 清空内容
-                    </button>
-                </div>
-            </div>
+                        <button className={`${styles.button} ${styles.danger}`} onClick={clearContent}>
+                            <RiDeleteBinLine /> 清空内容
+                        </button>
+                    </>
+                }
+            />
 
             <div className={styles.editorWrapper}>
                 <TiptapEditor
@@ -167,6 +198,12 @@ const ArticleEditTiptap: React.FC = () => {
                     readonly={readonly}
                     placeholder="开始输入您的文档内容..."
                     height="calc(100vh - 200px)"
+                    onUpdate={({ html, text }) => {
+                        setHtmlContent(html);
+                        setStatsState({ text });
+                        setContent(html);
+                        scheduleAutoSave();
+                    }}
                 />
             </div>
         </div>

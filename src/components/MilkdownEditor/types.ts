@@ -20,4 +20,6 @@ export interface EditorProps {
     defaultValue?: string;
     /** 是否为只读模式 */
     readonly?: boolean;
+    /** 内容更新回调（用于统计与自动保存） */
+    onUpdate?: (payload: { markdown: string; html: string }) => void;
 }

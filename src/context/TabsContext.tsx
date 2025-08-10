@@ -261,7 +261,7 @@ const tabsReducer = (state: TabsState, action: TabsAction): TabsState => {
 
         case "CLEAR_NAVIGATION": {
             // 清除导航状态
-            const { tabToNavigate, ...rest } = state;
+            const { tabToNavigate: _tabToNavigate, ...rest } = state;
             return rest;
         }
 
@@ -450,7 +450,7 @@ export const TabsProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
 
         // 获取所有tab的路径，并计算每个路径出现的次数
-        const pathCounts = state.tabs.reduce((counts, tab) => {
+        const _pathCounts = state.tabs.reduce((counts, tab) => {
             if (tab.path) {
                 counts[tab.path] = (counts[tab.path] || 0) + 1;
             }
@@ -479,7 +479,7 @@ export const TabsProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     // 生成唯一的标签Key
     const generateTabKey = useCallback(
-        (path: string, title: string) => {
+        (path: string, _title: string) => {
             // 检查是否已存在该路径的标签
             const existingTab = state.tabs.find(tab => tab.path === path);
             if (existingTab) {

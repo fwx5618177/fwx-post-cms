@@ -28,4 +28,6 @@ export interface EditorProps {
     placeholder?: string;
     /** 编辑器高度 */
     height?: string;
+    /** 内容更新回调（用于实时统计与自动保存） */
+    onUpdate?: (payload: { html: string; text: string }) => void;
 }

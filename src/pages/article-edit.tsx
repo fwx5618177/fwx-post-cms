@@ -163,7 +163,7 @@ const ArticleEdit = () => {
         console.log("Toolbar action:", action);
     };
 
-    const handleSave = () => {
+    const _handleSave = () => {
         if (isViewMode) return;
         // TODO: Implement save functionality
         console.log("Saving article:", article);

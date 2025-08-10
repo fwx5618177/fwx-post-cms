@@ -1,0 +1,42 @@
+@use "sass:color";
+@use "../variables.scss" as *;
+
+.toolbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 10px;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+    background: $bg-darker;
+    margin-bottom: 10px;
+
+    button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 28px;
+        border: 1px solid $border-color;
+        border-radius: 4px;
+        background: $bg-dark;
+        color: $text-primary;
+        cursor: pointer;
+
+        &:hover:not(:disabled) {
+            background: color.adjust($bg-dark, $lightness: 5%);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    .separator {
+        width: 1px;
+        height: 20px;
+        background: $border-color;
+        margin: 0 4px;
+    }
+}

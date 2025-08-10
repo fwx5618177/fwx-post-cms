@@ -22,7 +22,7 @@ import "@milkdown/prose/gapcursor/style/gapcursor.css";
  * 基于Crepe的Markdown编辑器，支持设置默认内容、只读模式，
  * 并提供获取Markdown和HTML内容的功能
  */
-const Editor = forwardRef<EditorRefMethods, EditorProps>(({ defaultValue = "", readonly = false }, ref) => {
+const Editor = forwardRef<EditorRefMethods, EditorProps>(({ defaultValue = "", readonly = false, onUpdate }, ref) => {
     // 编辑器实例引用
     let crepe: Crepe | undefined;
     // 创建一个ref来存储编辑器实例，便于在外部方法中访问
@@ -107,7 +107,8 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(({ defaultValue = "", r
                     [CrepeFeature.BlockEdit]: true,
                     [CrepeFeature.Cursor]: true,
                     [CrepeFeature.Placeholder]: true,
-                    [CrepeFeature.Toolbar]: !isReadonly,
+                    // 使用自定义 React Toolbar，禁用内置 Toolbar
+                    [CrepeFeature.Toolbar]: false,
                 },
             });
 
@@ -124,13 +125,39 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(({ defaultValue = "", r
     // 存储编辑器实例到ref中
     editorRef.current = get;
 
-    // 初始化编辑器
+    // 初始化编辑器并挂载变更监听
     useEffect(() => {
         const editor = get();
         if (!editor) return;
 
         editor.use(commonmark);
-    }, [get]);
+
+        let originalDispatch: any = null;
+        editor.action((ctx: any) => {
+            const view = ctx.get(editorViewCtx) as EditorView | undefined;
+            if (!view || !view.dispatchTransaction) return;
+            originalDispatch = view.dispatchTransaction;
+            view.dispatchTransaction = (tr: any) => {
+                // 先走原始逻辑
+                originalDispatch.call(view, tr);
+                // 再触发外部更新
+                try {
+                    const markdown = getMarkdown();
+                    const html = getHtml();
+                    onUpdate?.({ markdown, html });
+                } catch {}
+            };
+        });
+
+        return () => {
+            // 恢复原始 dispatchTransaction
+            editor.action((ctx: any) => {
+                const view = ctx.get(editorViewCtx) as EditorView | undefined;
+                if (!view || !originalDispatch) return;
+                view.dispatchTransaction = originalDispatch;
+            });
+        };
+    }, [get, getHtml, getMarkdown, onUpdate]);
 
     return <Milkdown />;
 });

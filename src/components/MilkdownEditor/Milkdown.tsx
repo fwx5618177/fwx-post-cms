@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 import { MilkdownProvider } from "@milkdown/react";
 import Editor from "./Editor";
 import { EditorProps, EditorRefMethods } from "./types";
+import Toolbar from "./Toolbar";
 
 /**
  * Milkdown编辑器包装组件
@@ -11,6 +12,8 @@ import { EditorProps, EditorRefMethods } from "./types";
 const Milkdown = forwardRef<EditorRefMethods, EditorProps>((props, ref) => {
     return (
         <MilkdownProvider>
+            {/* 自定义 Toolbar 替代 Crepe 默认 */}
+            <Toolbar getEditor={(ref as any)?.current} readonly={props.readonly} />
             <Editor ref={ref} {...props} />
         </MilkdownProvider>
     );

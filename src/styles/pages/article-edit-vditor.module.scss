@@ -32,6 +32,18 @@ $text-color: #e0e0e0;
             gap: 12px;
             flex-wrap: wrap;
 
+            .statsBox {
+                display: inline-flex;
+                gap: 10px;
+                align-items: center;
+                padding: 6px 12px;
+                background: color.adjust($light-color, $lightness: 3%);
+                border: 1px solid $border-color;
+                border-radius: 4px;
+                color: $text-color;
+                font-size: 13px;
+            }
+
             .modeInfo {
                 padding: 6px 12px;
                 background: color.adjust($info-color, $lightness: 45%);
@@ -101,6 +113,16 @@ $text-color: #e0e0e0;
         .vditorContainer {
             width: 100%;
             height: 100%;
+        }
+
+        .previewContainer {
+            width: 100%;
+            min-height: 600px;
+            padding: 12px;
+            background: $dark-color;
+            border: 1px solid $border-color;
+            border-radius: 6px;
+            color: $text-color;
         }
 
         .loading {

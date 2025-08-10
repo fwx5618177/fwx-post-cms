@@ -1,0 +1,14 @@
+@use "sass:color";
+@use "../variables.scss" as *;
+
+.stats {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    padding: 6px 12px;
+    background: color.adjust($bg-darker, $lightness: 3%);
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    color: $text-secondary;
+    font-size: 13px;
+}

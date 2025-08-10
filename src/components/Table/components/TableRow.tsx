@@ -20,7 +20,7 @@ export function TableRow<T extends Record<string, unknown>>({
     record,
     index,
     columns,
-    rowKey,
+    rowKey: rowKeyProp,
     level = 0,
     rowIndent,
     isRowExpanded,
@@ -29,11 +29,11 @@ export function TableRow<T extends Record<string, unknown>>({
     treeChildrenKey,
     onRow,
 }: TableRowProps<T>) {
-    const key = typeof rowKey === "function" ? rowKey(record) : String(record[rowKey] ?? index);
+    const key = typeof rowKeyProp === "function" ? rowKeyProp(record) : String(record[rowKeyProp] ?? index);
     const children = (record[treeChildrenKey] ?? []) as T[];
-    const expanded = isRowExpanded(key);
-    const hasChildren = Array.isArray(children) && children.length > 0;
-    const rowProps = onRow?.(record, index) || {};
+    const _expanded = isRowExpanded(key);
+    const _hasChildren = Array.isArray(children) && children.length > 0;
+    const _rowProps = onRow?.(record, index) || {};
 
     const renderCell = (column: ColumnType<T>, record: T, index: number) => {
         const value = record[column.dataIndex];
@@ -59,15 +59,15 @@ export function TableRow<T extends Record<string, unknown>>({
 
     const renderRows = (rows: T[], currentLevel = 0): React.ReactElement[] => {
         return rows.reduce<React.ReactElement[]>((acc, row, idx) => {
-            const rowKey = typeof rowKey === "function" ? rowKey(row) : String(row[rowKey] ?? idx);
+            const rowKeyValue = typeof rowKeyProp === "function" ? rowKeyProp(row) : String(row[rowKeyProp] ?? idx);
             const rowChildren = (row[treeChildrenKey] ?? []) as T[];
-            const rowExpanded = isRowExpanded(rowKey);
+            const rowExpanded = isRowExpanded(rowKeyValue);
             const rowHasChildren = Array.isArray(rowChildren) && rowChildren.length > 0;
             const rowProps = onRow?.(row, idx) || {};
 
             const rowNodes: React.ReactElement[] = [
                 <tr
-                    key={rowKey}
+                    key={rowKeyValue}
                     {...rowProps}
                     className={[
                         rowProps.className || "",
@@ -92,7 +92,7 @@ export function TableRow<T extends Record<string, unknown>>({
                                             className={styles.treeExpandIcon}
                                             onClick={e => {
                                                 e.stopPropagation();
-                                                handleExpand(rowKey, !rowExpanded, row);
+                                                handleExpand(rowKeyValue, !rowExpanded, row);
                                             }}
                                             style={{ cursor: "pointer", marginRight: 4 }}
                                         >

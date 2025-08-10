@@ -1,6 +1,9 @@
 import React, { useState, useRef, useCallback } from "react";
 import { RiEditLine, RiEyeLine, RiSaveLine, RiClipboardLine } from "react-icons/ri";
 import { Milkdown, EditorRefMethods } from "@components/MilkdownEditor";
+import EditorHeader from "@/components/EditorHeader";
+import { usePublishForm } from "@/hooks/usePublishForm";
+import { computeEditorStats } from "@/utils/editorStats";
 import styles from "@styles/pages/article-edit-milkdown.module.scss";
 
 // 默认 Markdown 内容
@@ -32,6 +35,21 @@ const ArticleEditMilkdown: React.FC = () => {
     // 状态管理
     const [readonly, setReadonly] = useState<boolean>(false);
     const [markdown, setMarkdown] = useState<string>(defaultMarkdown);
+    const [statsState, setStatsState] = useState<{ text: string }>({ text: "" });
+    const stats = React.useMemo(() => computeEditorStats(statsState.text), [statsState.text]);
+
+    // 发布表单
+    const {
+        form: _form,
+        update: _update,
+        setContent,
+        isSaving,
+        isDirty,
+        issues,
+        scheduleAutoSave,
+        autoSave,
+        publish,
+    } = usePublishForm({ content: defaultMarkdown });
 
     // 切换只读/编辑模式
     const toggleReadonly = useCallback(() => {
@@ -81,14 +99,26 @@ const ArticleEditMilkdown: React.FC = () => {
         );
     }, [markdown]);
 
+    // 保存和发布
+    const saveDraftNow = useCallback(() => void autoSave(), [autoSave]);
+    const publishNow = useCallback(async () => {
+        const res = await publish();
+        if (!res.ok) return;
+        alert("文章已发布");
+    }, [publish]);
+
     return (
         <div className={styles.container}>
-            <div className={styles.header}>
-                <h1>Markdown 编辑器</h1>
-
-                <div className={styles.controls}>
-                    <div className={styles.switch}>
-                        <span>模式:</span>
+            <EditorHeader
+                issues={issues}
+                stats={stats}
+                isSaving={isSaving}
+                isDirty={isDirty}
+                disabled={false}
+                onSaveDraft={saveDraftNow}
+                onPublish={publishNow}
+                extraActions={
+                    <>
                         <button className={styles.button} onClick={toggleReadonly}>
                             {readonly ? (
                                 <>
@@ -100,24 +130,34 @@ const ArticleEditMilkdown: React.FC = () => {
                                 </>
                             )}
                         </button>
-                    </div>
 
-                    <button className={styles.button} onClick={copyMarkdown}>
-                        <RiClipboardLine /> 复制 Markdown
-                    </button>
+                        <button className={styles.button} onClick={copyMarkdown}>
+                            <RiClipboardLine /> 复制 Markdown
+                        </button>
 
-                    <button className={styles.button} onClick={copyHtml}>
-                        <RiClipboardLine /> 复制 HTML
-                    </button>
+                        <button className={styles.button} onClick={copyHtml}>
+                            <RiClipboardLine /> 复制 HTML
+                        </button>
 
-                    <button className={`${styles.button} ${styles.primary}`} onClick={showContent}>
-                        <RiSaveLine /> 显示内容
-                    </button>
-                </div>
-            </div>
+                        <button className={`${styles.button} ${styles.primary}`} onClick={showContent}>
+                            <RiSaveLine /> 显示内容
+                        </button>
+                    </>
+                }
+            />
 
             <div className={styles.editorWrapper}>
-                <Milkdown ref={editorRef} defaultValue={markdown} readonly={readonly} />
+                <Milkdown
+                    ref={editorRef}
+                    defaultValue={markdown}
+                    readonly={readonly}
+                    onUpdate={({ markdown: md, html: _html }) => {
+                        setMarkdown(md);
+                        setStatsState({ text: md });
+                        setContent(md);
+                        scheduleAutoSave();
+                    }}
+                />
             </div>
         </div>
     );

@@ -112,7 +112,7 @@ lowlight.register("yml", yaml); // yml 使用 yaml 语法
  * 基于Tiptap的富文本编辑器，支持丰富的文档编辑功能，类似 Notion 风格
  */
 const Editor = forwardRef<EditorRefMethods, EditorProps>(
-    ({ defaultValue = "", readonly = false, placeholder = "开始输入...", height = "400px" }, ref) => {
+    ({ defaultValue = "", readonly = false, placeholder = "开始输入...", height = "400px", onUpdate }, ref) => {
         // 当前激活的颜色
         const [currentColor, setCurrentColor] = useState("#e1e1e1");
         const [currentHighlight, setCurrentHighlight] = useState("#ffeb3b");
@@ -225,6 +225,9 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(
             enablePasteRules: true,
             parseOptions: {
                 preserveWhitespace: "full",
+            },
+            onUpdate: ({ editor }) => {
+                onUpdate?.({ html: editor.getHTML(), text: editor.getText() });
             },
         });
 

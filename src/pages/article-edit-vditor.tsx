@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { RiSaveLine } from "react-icons/ri";
 import Vditor from "vditor";
 import "vditor/dist/index.css";
 import styles from "@styles/pages/article-edit-vditor.module.scss";
 import Loading from "@components/Loading";
 import OssUpload from "@components/OssUpload";
+import EditorHeader from "@/components/EditorHeader";
+import { computeEditorStats } from "@/utils/editorStats";
+import { usePublishForm } from "@/hooks/usePublishForm";
 
 // 默认 Markdown 内容
 const defaultMarkdown = `# Vditor 编辑器示例
@@ -79,17 +81,6 @@ const predefinedTags = [
     "教程",
 ];
 
-// 文章数据接口
-interface ArticleData {
-    title: string;
-    content: string;
-    tags: string[];
-    type: string;
-    status: "draft" | "published";
-    coverUrl?: string;
-    excerpt?: string;
-}
-
 const ArticleEditVditor: React.FC = () => {
     // 编辑器实例引用
     const vditorRef = useRef<Vditor | null>(null);
@@ -97,18 +88,12 @@ const ArticleEditVditor: React.FC = () => {
 
     // 状态管理
     const [isReady, setIsReady] = useState<boolean>(false);
-    const [isDirty, setIsDirty] = useState<boolean>(false);
-    const [isSaving, setIsSaving] = useState<boolean>(false);
+    const { form, update, setContent, isSaving, isDirty, issues, scheduleAutoSave, autoSave, publish } = usePublishForm(
+        { content: defaultMarkdown },
+    );
+    const [showPreview, setShowPreview] = useState<boolean>(false);
+    const previewRef = useRef<HTMLDivElement>(null);
     const autoSaveTimerRef = useRef<number | null>(null);
-    const [articleData, setArticleData] = useState<ArticleData>({
-        title: "",
-        content: defaultMarkdown,
-        tags: [],
-        type: "tech",
-        status: "draft",
-        coverUrl: "",
-        excerpt: "",
-    });
     const [newTag, setNewTag] = useState<string>("");
     const [showTagInput, setShowTagInput] = useState<boolean>(false);
 
@@ -142,12 +127,11 @@ const ArticleEditVditor: React.FC = () => {
                     },
                 },
                 input: value => {
-                    setArticleData(prev => ({ ...prev, content: value }));
-                    setIsDirty(true);
+                    setContent(value);
                     // 启动防抖自动保存
                     if (autoSaveTimerRef.current) window.clearTimeout(autoSaveTimerRef.current);
                     autoSaveTimerRef.current = window.setTimeout(() => {
-                        handleAutoSave();
+                        scheduleAutoSave();
                     }, 1000);
                 },
                 upload: {
@@ -174,7 +158,7 @@ const ArticleEditVditor: React.FC = () => {
                 vditorRef.current = null;
             }
         };
-    }, []);
+    }, [setContent, scheduleAutoSave]);
 
     // 获取 Markdown 内容
     const getMarkdown = useCallback((): string => {
@@ -184,43 +168,29 @@ const ArticleEditVditor: React.FC = () => {
         return "";
     }, []);
 
-    // 自动保存（草稿）
-    const handleAutoSave = useCallback(() => {
-        if (!isReady) return;
-        setIsSaving(true);
-        const markdown = getMarkdown();
-        const draft: ArticleData = { ...articleData, content: markdown, status: "draft" };
-        // 这里可以调用草稿保存接口
-        console.log("自动保存草稿:", draft);
-        setTimeout(() => {
-            setIsSaving(false);
-            setIsDirty(false);
-        }, 400);
-    }, [articleData, getMarkdown, isReady]);
-
     // 添加标签
     const addTag = useCallback(
         (tag: string) => {
             const trimmedTag = tag.trim();
-            if (trimmedTag && !articleData.tags.includes(trimmedTag)) {
-                setArticleData(prev => ({
-                    ...prev,
-                    tags: [...prev.tags, trimmedTag],
-                }));
+            if (trimmedTag && !form.tags.includes(trimmedTag)) {
+                update("tags", [...form.tags, trimmedTag]);
             }
             setNewTag("");
             setShowTagInput(false);
         },
-        [articleData.tags],
+        [form.tags, update],
     );
 
     // 移除标签
-    const removeTag = useCallback((tagToRemove: string) => {
-        setArticleData(prev => ({
-            ...prev,
-            tags: prev.tags.filter(tag => tag !== tagToRemove),
-        }));
-    }, []);
+    const removeTag = useCallback(
+        (tagToRemove: string) => {
+            update(
+                "tags",
+                form.tags.filter(tag => tag !== tagToRemove),
+            );
+        },
+        [form.tags, update],
+    );
 
     // 处理预设标签点击
     const handlePredefinedTagClick = useCallback(
@@ -246,41 +216,31 @@ const ArticleEditVditor: React.FC = () => {
     );
 
     // 保存内容
-    const saveContent = useCallback(
-        (status: "draft" | "published" = "draft") => {
+    const saveDraftNow = useCallback(() => void autoSave(), [autoSave]);
+    const publishNow = useCallback(async () => {
+        const res = await publish();
+        if (!res.ok) return;
+        alert("文章已发布");
+    }, [publish]);
+
+    // 预览模式切换
+    const togglePreview = useCallback(() => {
+        const next = !showPreview;
+        setShowPreview(next);
+        if (next && previewRef.current) {
             const markdown = getMarkdown();
+            // 使用 Vditor 的静态预览渲染
+            (Vditor as any)?.preview(previewRef.current, markdown, {
+                theme: { current: "dark" },
+                hljs: { style: "github-dark", lineNumber: true },
+                markdown: { toc: true, footnotes: true },
+                math: { engine: "KaTeX" },
+            });
+        }
+    }, [showPreview, getMarkdown]);
 
-            const finalArticleData: ArticleData = {
-                ...articleData,
-                content: markdown,
-                status,
-            };
-
-            // 验证必填字段
-            if (!finalArticleData.title.trim()) {
-                alert("请输入文章标题");
-                return;
-            }
-
-            if (!finalArticleData.content.trim()) {
-                alert("请输入文章内容");
-                return;
-            }
-
-            if (status === "published") {
-                const ok = window.confirm("确定要发布文章吗？发布后将对外可见。");
-                if (!ok) return;
-            }
-
-            // 这里可以添加保存到服务器的逻辑
-            console.log("保存内容:", finalArticleData);
-
-            // 显示保存成功提示
-            alert(`文章已${status === "published" ? "发布" : "保存为草稿"}`);
-            setIsDirty(false);
-        },
-        [getMarkdown, articleData],
-    );
+    // 统计：字数/词数/阅读时长
+    const stats = React.useMemo(() => computeEditorStats(form.content || ""), [form.content]);
 
     // 关闭或刷新时的未保存提示
     useEffect(() => {
@@ -295,29 +255,20 @@ const ArticleEditVditor: React.FC = () => {
 
     return (
         <div className={styles.container}>
-            <div className={styles.header}>
-                <h1>Vditor Markdown 编辑器</h1>
-
-                <div className={styles.controls}>
-                    <div className={styles.modeInfo} aria-live="polite">
-                        {isSaving ? "自动保存中…" : isDirty ? "有未保存更改" : "已保存"}
-                    </div>
-                    <button
-                        className={`${styles.button} ${styles.secondary}`}
-                        onClick={() => saveContent("draft")}
-                        disabled={!isReady}
-                    >
-                        <RiSaveLine /> 保存草稿
+            <EditorHeader
+                issues={issues}
+                stats={stats}
+                isSaving={isSaving}
+                isDirty={isDirty}
+                disabled={!isReady}
+                onSaveDraft={saveDraftNow}
+                onPublish={publishNow}
+                extraActions={
+                    <button className={styles.button} onClick={togglePreview} disabled={!isReady}>
+                        {showPreview ? "返回编辑" : "预览模式"}
                     </button>
-                    <button
-                        className={`${styles.button} ${styles.primary}`}
-                        onClick={() => saveContent("published")}
-                        disabled={!isReady}
-                    >
-                        <RiSaveLine /> 发布文章
-                    </button>
-                </div>
-            </div>
+                }
+            />
 
             {/* 文章信息表单 */}
             <div className={styles.articleForm}>
@@ -328,8 +279,8 @@ const ArticleEditVditor: React.FC = () => {
                         type="text"
                         className={styles.titleInput}
                         placeholder="请输入文章标题..."
-                        value={articleData.title}
-                        onChange={e => setArticleData(prev => ({ ...prev, title: e.target.value }))}
+                        value={form.title}
+                        onChange={e => update("title", e.target.value)}
                     />
                 </div>
 
@@ -338,8 +289,8 @@ const ArticleEditVditor: React.FC = () => {
                     <label className={styles.label}>文章类型</label>
                     <select
                         className={styles.typeSelect}
-                        value={articleData.type}
-                        onChange={e => setArticleData(prev => ({ ...prev, type: e.target.value }))}
+                        value={form.type}
+                        onChange={e => update("type", e.target.value)}
                     >
                         {articleTypes.map(type => (
                             <option key={type.value} value={type.value}>
@@ -354,14 +305,9 @@ const ArticleEditVditor: React.FC = () => {
                     <label className={styles.label}>文章封面</label>
                     <div className={styles.coverRow}>
                         <div className={styles.coverUploader}>
-                            <OssUpload
-                                value={articleData.coverUrl}
-                                onChange={(url: string) => setArticleData(prev => ({ ...prev, coverUrl: url }))}
-                            />
+                            <OssUpload value={form.coverUrl} onChange={(url: string) => update("coverUrl", url)} />
                         </div>
-                        {articleData.coverUrl && (
-                            <img src={articleData.coverUrl} alt="cover" className={styles.coverPreview} />
-                        )}
+                        {form.coverUrl && <img src={form.coverUrl} alt="cover" className={styles.coverPreview} />}
                     </div>
                 </div>
 
@@ -372,8 +318,8 @@ const ArticleEditVditor: React.FC = () => {
                         className={styles.excerptInput}
                         placeholder="用于列表与分享的简短摘要，建议 50-120 字"
                         rows={3}
-                        value={articleData.excerpt}
-                        onChange={e => setArticleData(prev => ({ ...prev, excerpt: e.target.value }))}
+                        value={form.excerpt}
+                        onChange={e => update("excerpt", e.target.value)}
                     />
                 </div>
 
@@ -383,7 +329,7 @@ const ArticleEditVditor: React.FC = () => {
 
                     {/* 已选择的标签 */}
                     <div className={styles.selectedTags}>
-                        {articleData.tags.map((tag, index) => (
+                        {form.tags.map((tag, index) => (
                             <span key={index} className={styles.tag}>
                                 {tag}
                                 <button
@@ -426,7 +372,7 @@ const ArticleEditVditor: React.FC = () => {
                     <div className={styles.predefinedTags}>
                         <span className={styles.predefinedLabel}>常用标签：</span>
                         {predefinedTags
-                            .filter(tag => !articleData.tags.includes(tag))
+                            .filter(tag => !form.tags.includes(tag))
                             .slice(0, 10)
                             .map(tag => (
                                 <button
@@ -443,7 +389,11 @@ const ArticleEditVditor: React.FC = () => {
             </div>
 
             <div className={styles.editorWrapper}>
-                <div ref={containerRef} className={styles.vditorContainer}></div>
+                {showPreview ? (
+                    <div ref={previewRef} className={styles.previewContainer} />
+                ) : (
+                    <div ref={containerRef} className={styles.vditorContainer}></div>
+                )}
                 {!isReady && <Loading />}
             </div>
         </div>

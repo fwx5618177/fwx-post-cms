@@ -76,7 +76,7 @@ const ArticleList = () => {
         navigateToCreate();
     };
 
-    const handleTableChange = (_pagination: null, _filters: Record<string, unknown>, sorter: SortState<Article>) => {
+    const handleTableChange = (_pagination: null, _filters: Record<string, unknown>, _sorter: SortState<Article>) => {
         // 可扩展排序逻辑
     };
 

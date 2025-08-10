@@ -1,0 +1,56 @@
+@use "sass:color";
+@use "../variables.scss" as *;
+
+.headerWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.topRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.status {
+    padding: 6px 12px;
+    background: color.adjust($info-color, $lightness: 40%);
+    border: 1px solid color.adjust($info-color, $lightness: 25%);
+    color: color.adjust($info-color, $lightness: -20%);
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.actions {
+    margin-left: auto;
+    display: inline-flex;
+    gap: 8px;
+}
+
+.button {
+    padding: 8px 14px;
+    border-radius: 4px;
+    border: 1px solid $border-color;
+    background: $bg-darker;
+    color: $text-primary;
+    cursor: pointer;
+
+    &.primary {
+        background: $primary-color;
+        color: $text-on-primary;
+        border-color: $primary-color;
+    }
+
+    &.secondary {
+        background: $info-color;
+        color: $text-on-primary;
+        border-color: $info-color;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
