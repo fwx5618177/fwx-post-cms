@@ -90,11 +90,6 @@
     border: 1px solid $border-color;
     background-color: color.adjust($bg-dark, $lightness: 3%);
 
-    // 设置编辑器高度
-    > div {
-        height: calc(100vh - 150px) !important;
-    }
-
     .statsBar {
         position: sticky;
         bottom: 0;

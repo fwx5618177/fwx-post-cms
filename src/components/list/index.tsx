@@ -1,5 +1,6 @@
-import { EnterOutlined } from "@ant-design/icons";
-import { Button, Card, Col, Form, Input, List, message, Radio, Row } from "antd";
+import { RiArrowRightLine } from "react-icons/ri";
+// 移除 antd：保留类型与逻辑结构，简化为原生元素
+import React from "react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import api from "./api";
@@ -12,7 +13,9 @@ interface Performance {
 }
 
 const ListCard = () => {
-    const [form] = Form.useForm();
+    const [form] = ((): any => ({
+        setFieldsValue: (_: any) => undefined,
+    }))();
     const [todoLists, setTodoLists] = useState<Performance[]>([]);
 
     interface TodoFormValues {
@@ -29,7 +32,8 @@ const ListCard = () => {
         });
 
         if (result && Array.isArray(result) && result.length > 0) {
-            message.success("新增成功");
+            // eslint-disable-next-line no-console
+            console.info("新增成功");
             queryList();
         }
     };
@@ -74,80 +78,50 @@ const ListCard = () => {
                 Todoist
             </h3>
 
-            <Row
-                gutter={24}
-                style={{
-                    margin: 12,
-                }}
-            >
-                <Col span={12}>
-                    <Card>
-                        <Form name="basic" form={form} onFinish={onFinish} autoComplete="off">
-                            <Form.Item
-                                label="title"
-                                name={"briefTitle"}
-                                rules={[{ required: true, message: "请输入" }]}
-                            >
-                                <Input placeholder="Input todoist" suffix={<EnterOutlined />} allowClear />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="detail"
-                                name={"detailInfos"}
-                                rules={[{ required: true, message: "请输入" }]}
-                            >
-                                <Input.TextArea
-                                    placeholder="Input detail information"
-                                    style={{
-                                        marginTop: 1,
-                                    }}
-                                    autoSize={{ minRows: 10, maxRows: 10 }}
-                                    allowClear
-                                />
-                            </Form.Item>
-
-                            <Form.Item>
-                                <div className="list_container_btn">
-                                    <Button
-                                        htmlType="submit"
-                                        style={{
-                                            margin: "0 atuo",
-                                        }}
-                                        type="primary"
-                                    >
-                                        Submit
-                                    </Button>
-                                </div>
-                            </Form.Item>
-                        </Form>
-                    </Card>
-                </Col>
-
-                <Col span={12}>
-                    <Card
-                        style={{
-                            height: 400,
-                            overflowY: "scroll",
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, margin: 12 }}>
+                <div className={styles.card}>
+                    <form
+                        onSubmit={e => {
+                            e.preventDefault();
+                            const fd = new FormData(e.currentTarget);
+                            onFinish({
+                                briefTitle: String(fd.get("briefTitle") || ""),
+                                detailInfos: String(fd.get("detailInfos") || ""),
+                            });
                         }}
                     >
-                        <Radio.Group onChange={handleDetail}>
-                            <List
-                                size="small"
-                                header="Todo Lists"
-                                bordered
-                                dataSource={todoLists}
-                                renderItem={item => (
-                                    <List.Item>
-                                        <Radio value={item?.title}>
-                                            {moment(item?.time).format("YYYY-MM-DD HH:mm:ss")}: {item?.title}
-                                        </Radio>
-                                    </List.Item>
-                                )}
-                            />
-                        </Radio.Group>
-                    </Card>
-                </Col>
-            </Row>
+                        <div className={styles.formItem}>
+                            <label>title</label>
+                            <div className={styles.inputWrap}>
+                                <input name="briefTitle" placeholder="Input todoist" />
+                                <RiArrowRightLine />
+                            </div>
+                        </div>
+                        <div className={styles.formItem}>
+                            <label>detail</label>
+                            <textarea name="detailInfos" rows={10} placeholder="Input detail information" />
+                        </div>
+                        <div>
+                            <button type="submit" className={styles.primaryBtn}>
+                                Submit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div className={styles.card} style={{ height: 400, overflowY: "auto" }}>
+                    <div style={{ fontWeight: 600, marginBottom: 8 }}>Todo Lists</div>
+                    <div>
+                        {todoLists.map(item => (
+                            <label key={item.id} style={{ display: "block", padding: "6px 0" }}>
+                                <input type="radio" name="todoSelect" value={item.title} onChange={handleDetail} />
+                                <span style={{ marginLeft: 8 }}>
+                                    {moment(item?.time).format("YYYY-MM-DD HH:mm:ss")}: {item?.title}
+                                </span>
+                            </label>
+                        ))}
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

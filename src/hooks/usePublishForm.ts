@@ -8,6 +8,9 @@ export interface PublishFormState {
     tags: string[];
     type: string;
     status: "draft" | "published";
+    auditStatus: "pending" | "approved" | "rejected";
+    section?: string;
+    scheduledAt?: string | null;
     coverUrl?: string;
     excerpt?: string;
 }
@@ -19,6 +22,9 @@ export function usePublishForm(initial?: Partial<PublishFormState>) {
         tags: [],
         type: "tech",
         status: "draft",
+        auditStatus: "pending",
+        section: "general",
+        scheduledAt: null,
         coverUrl: "",
         excerpt: "",
         ...initial,
@@ -26,6 +32,9 @@ export function usePublishForm(initial?: Partial<PublishFormState>) {
 
     const [isSaving, setIsSaving] = useState(false);
     const [isDirty, setIsDirty] = useState(false);
+    const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
+    const [lastPublishedAt, setLastPublishedAt] = useState<number | null>(null);
+    const [lastError, setLastError] = useState<string | null>(null);
     const timerRef = useRef<number | null>(null);
 
     const issues = useMemo(() => validateForPublish(form).issues, [form]);
@@ -42,6 +51,8 @@ export function usePublishForm(initial?: Partial<PublishFormState>) {
         try {
             await articleApi.saveDraft({ ...form, status: "draft" });
             setIsDirty(false);
+            setLastSavedAt(Date.now());
+            setLastError(null);
         } finally {
             setIsSaving(false);
         }
@@ -55,10 +66,32 @@ export function usePublishForm(initial?: Partial<PublishFormState>) {
     const publish = useCallback(async () => {
         const result = validateForPublish(form);
         if (!result.ok) return result;
-        await articleApi.publish({ ...form, status: "published" });
-        setIsDirty(false);
-        return result;
+        try {
+            await articleApi.publish({ ...form, status: "published" });
+            setIsDirty(false);
+            setLastPublishedAt(Date.now());
+            setLastError(null);
+            return result;
+        } catch (e: any) {
+            const message = e?.message || "发布失败，请稍后重试";
+            setLastError(message);
+            return { ok: false, issues: [message] } as ReturnType<typeof validateForPublish>;
+        }
     }, [form]);
 
-    return { form, setForm, update, setContent, isSaving, isDirty, issues, scheduleAutoSave, autoSave, publish };
+    return {
+        form,
+        setForm,
+        update,
+        setContent,
+        isSaving,
+        isDirty,
+        issues,
+        scheduleAutoSave,
+        autoSave,
+        publish,
+        lastSavedAt,
+        lastPublishedAt,
+        lastError,
+    };
 }

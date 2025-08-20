@@ -1,4 +1,3 @@
-import { Card } from "antd";
 import { useTranslation } from "react-i18next";
 import { queryPathKey } from "@/request";
 import Instro from "@/components/instro";
@@ -28,13 +27,11 @@ const MarkdownComponents = () => {
                 {t("markdown.title.react-markdown-editor-lite")}
             </h3>
 
-            <Card
-                style={{
-                    margin: 12,
-                }}
+            <div
+                style={{ margin: 12, background: "#232428", border: "1px solid #36373a", borderRadius: 6, padding: 12 }}
             >
                 <MarkdonwEditor />
-            </Card>
+            </div>
         </>
     );
 };

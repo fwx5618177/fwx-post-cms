@@ -1,7 +1,5 @@
 import React from "react";
-import { Card, Col, Row, Switch } from "antd";
 import { useTranslation } from "react-i18next";
-import { CheckOutlined } from "@ant-design/icons";
 import { useMenuContent } from "./useMenuContent";
 import { ContentForm } from "./ContentForm";
 import { UpdateForm } from "./UpdateForm";
@@ -27,26 +25,18 @@ const MenuContent: React.FC = () => {
     return (
         <>
             <h3 style={{ margin: 12 }}>{t("menucontent.header.title.add")}</h3>
-            <Card bordered={false} hoverable style={{ margin: 12 }}>
-                <Row gutter={24} style={{ margin: 6 }}>
-                    <Col span={12}>
-                        <Switch
-                            checkedChildren={
-                                <>
-                                    {t("menucontent.header.title.switch.text.add")}
-                                    <CheckOutlined />
-                                </>
-                            }
-                            unCheckedChildren={
-                                <>
-                                    {t("menucontent.header.title.switch.text.load")}
-                                    <CheckOutlined />
-                                </>
-                            }
-                            onChange={setLoadStatus}
-                        />
-                    </Col>
-                </Row>
+            <div
+                style={{ margin: 12, background: "#232428", border: "1px solid #36373a", borderRadius: 6, padding: 12 }}
+            >
+                <div style={{ margin: 6 }}>
+                    <label style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                        <input type="checkbox" onChange={e => setLoadStatus(e.target.checked)} />
+                        <span>
+                            {t("menucontent.header.title.switch.text.add")} /{" "}
+                            {t("menucontent.header.title.switch.text.load")}
+                        </span>
+                    </label>
+                </div>
 
                 {loadStatus ? (
                     <ContentForm
@@ -66,7 +56,7 @@ const MenuContent: React.FC = () => {
                         onReset={handleReset}
                     />
                 )}
-            </Card>
+            </div>
 
             <MarkdownPreview ref={showRef} />
         </>

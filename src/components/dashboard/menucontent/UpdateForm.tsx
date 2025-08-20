@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Col, Form, Input, Row, Select, Descriptions } from "antd";
+// 移除 antd 表单/布局
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import { UpdateFormValues, SelectOption, ContentItem } from "./types";
@@ -23,67 +23,76 @@ export const UpdateForm: React.FC<UpdateFormProps> = ({
     onContentChange,
     onReset,
 }) => {
-    const [updateForm] = Form.useForm();
+    const formRef = React.useRef<HTMLFormElement | null>(null);
     const { t } = useTranslation();
 
     return (
-        <Form name="updateForm" form={updateForm} onFinish={onUpdate} autoComplete="off">
-            <Row gutter={24}>
-                <Col span={24}>
-                    <Form.Item name="title" label="Title">
-                        <Select
-                            style={{ width: 300 }}
-                            placeholder={t("menucontent.header.title.switch.text.load.select")}
-                            onSelect={onVersionSelect}
-                        >
-                            {versions?.map((item, index) => (
-                                <Option key={index + "_versions"} value={item.value}>
-                                    {item.label}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                </Col>
-            </Row>
+        <form
+            ref={formRef}
+            onSubmit={async e => {
+                e.preventDefault();
+                const fd = new FormData(e.currentTarget);
+                const title = String(fd.get("title") || "");
+                const updateContent = String(fd.get("updateContent") || "");
+                await onUpdate({ title, updateContent });
+            }}
+        >
+            <div style={{ marginBottom: 12 }}>
+                <label>Title</label>
+                <select
+                    name="title"
+                    defaultValue=""
+                    onChange={e => onVersionSelect(e.target.value)}
+                    style={{ width: 300, display: "block" }}
+                >
+                    <option value="" disabled>
+                        {t("menucontent.header.title.switch.text.load.select")}
+                    </option>
+                    {versions?.map((item, index) => (
+                        <option key={index + "_versions"} value={String(item.value)}>
+                            {item.label}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
-            <Row gutter={24} style={{ marginTop: 8 }}>
-                <Col span={24}>
-                    <Form.Item name="updateContent" label="Text">
-                        <Input.TextArea
-                            onChange={onContentChange}
-                            showCount
-                            placeholder={t("menucontent.name.form.content.text")}
-                            allowClear
-                            autoSize={{ minRows: 5, maxRows: 8 }}
-                        />
-                    </Form.Item>
-                </Col>
-            </Row>
+            <div style={{ marginBottom: 12 }}>
+                <label>Text</label>
+                <textarea
+                    name="updateContent"
+                    rows={6}
+                    onChange={onContentChange}
+                    placeholder={t("menucontent.name.form.content.text") || ""}
+                    style={{ width: "100%" }}
+                />
+            </div>
 
-            <Form.Item>
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                    <Button type="primary" htmlType="submit">
-                        {t("button.submit")}
-                    </Button>
-                    <Button style={{ marginLeft: 8 }} htmlType="button" onClick={onReset}>
-                        {t("button.reset")}
-                    </Button>
-                </div>
-            </Form.Item>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+                <button type="submit">{t("button.submit")}</button>
+                <button type="button" style={{ marginLeft: 8 }} onClick={onReset}>
+                    {t("button.reset")}
+                </button>
+            </div>
 
             {detailInfo && (
-                <Row gutter={24}>
-                    <Col span={24}>
-                        <Descriptions title="Versions" bordered>
-                            <Descriptions.Item label="title">{detailInfo.title}</Descriptions.Item>
-                            <Descriptions.Item label="time">
-                                {moment(detailInfo.createdAt).format("YYYY-MM-DD hh:mm:ss")}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="routekeyname">{detailInfo.routekeyname}</Descriptions.Item>
-                        </Descriptions>
-                    </Col>
-                </Row>
+                <div style={{ background: "#232428", border: "1px solid #36373a", borderRadius: 6, padding: 12 }}>
+                    <div style={{ fontWeight: 700, marginBottom: 8 }}>Versions</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 8 }}>
+                        <div>
+                            <div style={{ color: "#9aa0a6" }}>title</div>
+                            <div>{detailInfo.title}</div>
+                        </div>
+                        <div>
+                            <div style={{ color: "#9aa0a6" }}>time</div>
+                            <div>{moment(detailInfo.createdAt).format("YYYY-MM-DD hh:mm:ss")}</div>
+                        </div>
+                        <div>
+                            <div style={{ color: "#9aa0a6" }}>routekeyname</div>
+                            <div>{detailInfo.routekeyname}</div>
+                        </div>
+                    </div>
+                </div>
             )}
-        </Form>
+        </form>
     );
 };

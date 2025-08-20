@@ -1,4 +1,4 @@
-import { Card, Col, Row } from "antd";
+// 移除 antd，使用原生布局
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { queryPathKey } from "@/request";
@@ -37,32 +37,24 @@ const RichEditor: React.FC = () => {
                 {t("richeditor.title.wangeditor")}
             </h3>
 
-            <Row
-                gutter={24}
-                style={{
-                    margin: 12,
-                }}
-            >
-                <Col span={12}>
-                    <Card>
-                        <EditorRich onChange={handleShow} />
-                    </Card>
-                </Col>
-
-                <Col span={12}>
-                    <Card
-                        style={{
-                            height: 700,
-                            overflowY: "scroll",
-                            wordBreak: "break-all",
-                        }}
-                        bordered={true}
-                        hoverable
-                    >
-                        <div className="performance_div" ref={showRef}></div>
-                    </Card>
-                </Col>
-            </Row>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, margin: 12 }}>
+                <div style={{ background: "#232428", border: "1px solid #36373a", borderRadius: 6, padding: 12 }}>
+                    <EditorRich onChange={handleShow} />
+                </div>
+                <div
+                    style={{
+                        background: "#232428",
+                        border: "1px solid #36373a",
+                        borderRadius: 6,
+                        padding: 12,
+                        height: 700,
+                        overflowY: "auto",
+                        wordBreak: "break-all",
+                    }}
+                >
+                    <div className="performance_div" ref={showRef}></div>
+                </div>
+            </div>
         </div>
     );
 };

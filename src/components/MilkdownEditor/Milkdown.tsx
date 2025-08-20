@@ -13,7 +13,7 @@ const Milkdown = forwardRef<EditorRefMethods, EditorProps>((props, ref) => {
     return (
         <MilkdownProvider>
             {/* 自定义 Toolbar 替代 Crepe 默认 */}
-            <Toolbar getEditor={(ref as any)?.current} readonly={props.readonly} />
+            <Toolbar getEditor={() => (ref as any)?.current?.getEditor?.()} readonly={props.readonly} />
             <Editor ref={ref} {...props} />
         </MilkdownProvider>
     );

@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Input } from "antd";
+// 移除 antd，使用原生布局与表单
 import { useRef } from "react";
 import * as marked from "marked";
 import styles from "@/styles/pages/markdown.module.scss";
@@ -16,20 +16,14 @@ const MarkdonwEditor: React.FC = () => {
 
     return (
         <div className={styles.container}>
-            <Row gutter={24}>
-                <Col span={12}>
-                    <Input.TextArea
-                        onChange={handleChange}
-                        bordered={true}
-                        allowClear
-                        showCount
-                        autoSize={{ minRows: 20, maxRows: 20 }}
-                    />
-                </Col>
-                <Col span={12}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+                <div>
+                    <textarea onChange={handleChange} rows={20} style={{ width: "100%" }} />
+                </div>
+                <div>
                     <div className="markdown_editor_self" ref={showRef}></div>
-                </Col>
-            </Row>
+                </div>
+            </div>
         </div>
     );
 };

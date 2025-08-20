@@ -1,25 +1,12 @@
-import React, { useState, useEffect } from "react";
-import styles from "@styles/pages/article-edit.module.scss";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
-import {
-    FaImage,
-    FaLink,
-    FaListUl,
-    FaQuoteRight,
-    FaCode,
-    FaBold,
-    FaItalic,
-    FaUnderline,
-    FaStrikethrough,
-    FaArrowLeft,
-    FaEye,
-    FaPen,
-    FaDesktop,
-    FaMobileAlt,
-    FaCheck,
-    FaTimes,
-    FaExclamationTriangle,
-} from "react-icons/fa";
+import React, { useEffect, useState, useCallback } from "react";
+import sharedStyles from "@styles/pages/editor-shared.module.scss";
+import EditorHeader from "@/components/EditorHeader";
+import type { PublishStep } from "@/components/EditorSteps";
+import { usePublishForm } from "@/hooks/usePublishForm";
+import { computeEditorStats } from "@/utils/editorStats";
+import { useParams } from "react-router-dom";
+import { articleApi } from "@/services/api";
+import OssUpload from "@/components/OssUpload";
 
 interface ArticleForm {
     title: string;
@@ -67,20 +54,32 @@ const PUBLISH_STEPS: Record<PublishStep, PublishStepInfo> = {
 
 const ArticleEdit = () => {
     const { id } = useParams();
-    const [searchParams, setSearchParams] = useSearchParams();
-    const navigate = useNavigate();
-    const mode = (searchParams.get("mode") as EditMode) || "edit";
-    const isViewMode = mode === "view";
-    const isCreateMode = !id;
-
-    const [article, setArticle] = useState<ArticleForm>({
-        title: "",
-        category: "",
-        tags: [],
-        content: "",
-        coverImage: "",
-        excerpt: "",
-    });
+    const {
+        form,
+        update,
+        setContent,
+        isSaving,
+        isDirty,
+        issues,
+        scheduleAutoSave,
+        autoSave,
+        publish,
+        lastSavedAt,
+        lastPublishedAt,
+        lastError,
+    } = usePublishForm({ content: "" });
+    const [previewMode, setPreviewMode] = useState<PreviewMode>("none");
+    const articleTypes = [
+        { value: "tech", label: "技术文章" },
+        { value: "tutorial", label: "教程指南" },
+        { value: "experience", label: "经验分享" },
+        { value: "news", label: "新闻资讯" },
+        { value: "review", label: "产品评测" },
+        { value: "other", label: "其他" },
+    ];
+    const predefinedTags = ["JavaScript", "TypeScript", "React", "Vue", "Node.js", "前端", "后端", "算法", "教程"];
+    const [newTag, setNewTag] = useState<string>("");
+    const [showTagInput, setShowTagInput] = useState<boolean>(false);
 
     const [currentTag, setCurrentTag] = useState("");
     const [customCategory, setCustomCategory] = useState("");
@@ -93,23 +92,31 @@ const ArticleEdit = () => {
     const categories = ["Technology", "Programming", "Design", "Business", "Other"];
 
     useEffect(() => {
-        if (id) {
-            // TODO: Fetch article data using id
-            console.log("Fetching article with id:", id);
-        }
+        if (!id) return;
+        (async () => {
+            try {
+                const data = await articleApi.detail(id);
+                Object.entries(data || {}).forEach(([key, value]) => {
+                    if (key in form) {
+                        // @ts-ignore
+                        update(key as any, value as any);
+                    }
+                });
+                if (typeof data?.content === "string") setContent(data.content);
+            } catch (e) {
+                console.error("加载文章详情失败", e);
+            }
+        })();
     }, [id]);
 
-    const handleModeChange = (newMode: EditMode) => {
-        setSearchParams({ mode: newMode });
-    };
+    const stats = React.useMemo(() => computeEditorStats(form.content || ""), [form.content]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        if (isViewMode) return;
-        const { name, value } = e.target;
-        setArticle(prev => ({
-            ...prev,
-            [name]: value,
-        }));
+        const { name, value } = e.target as any;
+        if (name === "title") update("title", value);
+        if (name === "content") update("content", value);
+        if (name === "category") update("section", value);
+        if (name === "excerpt") update("excerpt", value);
     };
 
     const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -136,25 +143,44 @@ const ArticleEdit = () => {
     };
 
     const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (isViewMode) return;
         if (e.key === "Enter" && currentTag.trim()) {
             e.preventDefault();
-            if (!article.tags.includes(currentTag.trim())) {
-                setArticle(prev => ({
-                    ...prev,
-                    tags: [...prev.tags, currentTag.trim()],
-                }));
+            if (!form.tags.includes(currentTag.trim())) {
+                update("tags", [...form.tags, currentTag.trim()]);
             }
             setCurrentTag("");
         }
     };
 
+    const addTag = useCallback(
+        (tag: string) => {
+            const trimmed = tag.trim();
+            if (trimmed && !form.tags.includes(trimmed)) update("tags", [...form.tags, trimmed]);
+            setNewTag("");
+            setShowTagInput(false);
+        },
+        [form.tags, update],
+    );
+
+    const handleNewTagSubmit = useCallback(
+        (e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                addTag(newTag);
+            }
+            if (e.key === "Escape") {
+                setNewTag("");
+                setShowTagInput(false);
+            }
+        },
+        [newTag, addTag],
+    );
+
     const removeTag = (tagToRemove: string) => {
-        if (isViewMode) return;
-        setArticle(prev => ({
-            ...prev,
-            tags: prev.tags.filter(tag => tag !== tagToRemove),
-        }));
+        update(
+            "tags",
+            form.tags.filter(tag => tag !== tagToRemove),
+        );
     };
 
     const handleToolbarAction = (action: string) => {
@@ -163,11 +189,7 @@ const ArticleEdit = () => {
         console.log("Toolbar action:", action);
     };
 
-    const _handleSave = () => {
-        if (isViewMode) return;
-        // TODO: Implement save functionality
-        console.log("Saving article:", article);
-    };
+    const saveDraftNow = React.useCallback(() => void autoSave(), [autoSave]);
 
     const handleBack = () => {
         navigate("/content/article/list");
@@ -198,16 +220,10 @@ const ArticleEdit = () => {
     };
 
     const handlePublish = async () => {
-        try {
-            setPublishStatus("loading");
-            // TODO: 实际的发布 API 调用
-            await new Promise(resolve => setTimeout(resolve, 2000)); // 模拟 API 调用
-            setPublishStatus("success");
-            handlePublishStepChange("published");
-        } catch (error) {
-            setPublishStatus("error");
-            setPublishError(error instanceof Error ? error.message : "Failed to publish article");
-        }
+        const res = await publish();
+        if (!res.ok) return;
+        setPublishStatus("success");
+        handlePublishStepChange("published");
     };
 
     const renderPreview = () => {
@@ -539,88 +555,178 @@ const ArticleEdit = () => {
         }
     };
 
+    const currentStep: PublishStep = React.useMemo(() => {
+        if (form.status === "published") return "published";
+        if (form.auditStatus === "approved") return "confirm";
+        if (form.auditStatus === "rejected") return "review";
+        return "draft";
+    }, [form.status, form.auditStatus]);
+
     return (
-        <div className={styles.articleEditPage}>
-            <div className={styles.header}>
-                <div className={styles.headerControls}>
-                    {!isCreateMode && (
-                        <>
-                            <button className={styles.backButton} onClick={handleBack}>
-                                <FaArrowLeft />
-                            </button>
-                            <div className={styles.divider} />
-                        </>
-                    )}
+        <div className={sharedStyles.page}>
+            <div className={sharedStyles.main}>
+                <EditorHeader
+                    issues={issues}
+                    stats={stats}
+                    isSaving={isSaving}
+                    isDirty={isDirty}
+                    disabled={false}
+                    onSaveDraft={saveDraftNow}
+                    onPublish={handlePublish}
+                    lastSavedAt={lastSavedAt}
+                    lastPublishedAt={lastPublishedAt}
+                    lastError={lastError}
+                    auditStatus={form.auditStatus}
+                    section={form.section}
+                    scheduledAt={form.scheduledAt ?? ""}
+                    onChangeAuditStatus={s => update("auditStatus", s)}
+                    onChangeSection={s => update("section", s)}
+                    onChangeScheduledAt={val => update("scheduledAt", val)}
+                    step={currentStep}
+                    onStepChange={async step => {
+                        switch (step) {
+                            case "draft":
+                                update("auditStatus", "pending");
+                                update("status", "draft");
+                                break;
+                            case "review":
+                                update("auditStatus", "pending");
+                                update("status", "draft");
+                                break;
+                            case "confirm":
+                                update("auditStatus", "approved");
+                                update("status", "draft");
+                                break;
+                            case "published": {
+                                const res = await publish();
+                                if (!res.ok) return;
+                                break;
+                            }
+                        }
+                    }}
+                />
+                <div className={`${sharedStyles.card} ${sharedStyles.titleBar}`}>
                     <input
-                        type="text"
+                        className={sharedStyles.titleInputMain}
+                        placeholder="请输入文章标题..."
                         name="title"
-                        value={article.title}
+                        value={form.title}
                         onChange={handleInputChange}
-                        placeholder="Enter article title..."
-                        className={styles.titleInput}
-                        readOnly={isViewMode}
                     />
                 </div>
-                <div className={styles.actionControls}>
-                    {!isCreateMode && (
-                        <div className={styles.modeSwitch}>
-                            <button
-                                className={mode === "edit" ? styles.active : ""}
-                                onClick={() => handleModeChange("edit")}
-                            >
-                                <FaPen />
-                                Edit
-                            </button>
-                            <button
-                                className={mode === "view" ? styles.active : ""}
-                                onClick={() => handleModeChange("view")}
-                            >
-                                <FaEye />
-                                View
-                            </button>
-                        </div>
-                    )}
-                    {!isViewMode && (
-                        <>
-                            <div className={styles.previewControls}>
-                                <button
-                                    className={previewMode === "desktop" ? styles.active : ""}
-                                    onClick={() => handlePreviewModeChange("desktop")}
-                                    title="Desktop Preview"
-                                >
-                                    <FaDesktop />
-                                </button>
-                                <button
-                                    className={previewMode === "mobile" ? styles.active : ""}
-                                    onClick={() => handlePreviewModeChange("mobile")}
-                                    title="Mobile Preview"
-                                >
-                                    <FaMobileAlt />
-                                </button>
-                            </div>
-                            <button
-                                className={`${styles.publishButton} ${
-                                    publishStep === "published" ? styles.published : ""
-                                }`}
-                                onClick={() => {
-                                    const nextSteps: Record<PublishStep, PublishStep> = {
-                                        draft: "review",
-                                        review: "confirm",
-                                        confirm: "published",
-                                        published: "published",
-                                    };
-                                    handlePublishStepChange(nextSteps[publishStep]);
-                                }}
-                            >
-                                {publishStep === "published" ? "Published" : "Publish"}
-                            </button>
-                        </>
-                    )}
+                <div className={sharedStyles.articleForm}>
+                    <div className={sharedStyles.formGroup}>
+                        <label className={sharedStyles.label}>文章摘要</label>
+                        <textarea
+                            className={sharedStyles.excerptInput}
+                            name="excerpt"
+                            rows={3}
+                            value={form.excerpt}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                </div>
+                <div className={sharedStyles.card}>
+                    <textarea
+                        name="content"
+                        value={form.content}
+                        onChange={e => {
+                            handleInputChange(e);
+                            scheduleAutoSave();
+                        }}
+                        placeholder="在此处编写文章内容…"
+                        style={{ width: "100%", minHeight: 360 }}
+                    />
                 </div>
             </div>
-
-            {renderPublishSteps()}
-            {renderStepContent()}
+            <aside className={`${sharedStyles.aside} ${sharedStyles.card} ${sharedStyles.articleForm}`}>
+                <div className={sharedStyles.formGroup}>
+                    <label className={sharedStyles.label}>文章类型</label>
+                    <select
+                        className={sharedStyles.typeSelect}
+                        value={form.type}
+                        onChange={e => update("type", e.target.value)}
+                    >
+                        {articleTypes.map(type => (
+                            <option key={type.value} value={type.value}>
+                                {type.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className={sharedStyles.formGroup}>
+                    <label className={sharedStyles.label}>文章封面</label>
+                    <div className={sharedStyles.coverRow}>
+                        <div className={sharedStyles.coverUploader}>
+                            <OssUpload value={form.coverUrl} onChange={(url: string) => update("coverUrl", url)} />
+                        </div>
+                        {form.coverUrl && <img src={form.coverUrl} alt="cover" className={sharedStyles.coverPreview} />}
+                    </div>
+                </div>
+                <div className={sharedStyles.formGroup}>
+                    <label className={sharedStyles.label}>文章标签</label>
+                    <div className={sharedStyles.selectedTags}>
+                        {form.tags.map((tag, index) => (
+                            <span key={index} className={sharedStyles.tag}>
+                                {tag}
+                                <button
+                                    type="button"
+                                    className={sharedStyles.removeTag}
+                                    onClick={() => removeTag(tag)}
+                                    aria-label={`移除标签 ${tag}`}
+                                >
+                                    ×
+                                </button>
+                            </span>
+                        ))}
+                        {showTagInput ? (
+                            <input
+                                type="text"
+                                className={sharedStyles.tagInput}
+                                placeholder="输入标签名称..."
+                                value={newTag}
+                                onChange={e => setNewTag(e.target.value)}
+                                onKeyDown={handleNewTagSubmit}
+                                onBlur={() => {
+                                    if (newTag.trim()) addTag(newTag);
+                                    else setShowTagInput(false);
+                                }}
+                                autoFocus
+                            />
+                        ) : (
+                            <button
+                                type="button"
+                                className={sharedStyles.addTagBtn}
+                                onClick={() => setShowTagInput(true)}
+                            >
+                                + 添加标签
+                            </button>
+                        )}
+                    </div>
+                    <div className={sharedStyles.predefinedTags}>
+                        <span className={sharedStyles.predefinedLabel}>常用标签：</span>
+                        {predefinedTags
+                            .filter(tag => !form.tags.includes(tag))
+                            .slice(0, 10)
+                            .map(tag => (
+                                <button
+                                    key={tag}
+                                    type="button"
+                                    className={sharedStyles.predefinedTag}
+                                    onClick={() => addTag(tag)}
+                                >
+                                    {tag}
+                                </button>
+                            ))}
+                    </div>
+                </div>
+            </aside>
+            <aside className={`${sharedStyles.aside} ${sharedStyles.card} ${sharedStyles.articleForm}`}>
+                <div>审核状态：{form.auditStatus}</div>
+                <div>分区：{form.section || "未设置"}</div>
+                <div>定时发布：{form.scheduledAt ? new Date(form.scheduledAt).toLocaleString() : "未设置"}</div>
+                <div className={sharedStyles.asideHint}>提示：如需设置/清除定时发布时间，可在顶部栏进行操作。</div>
+            </aside>
         </div>
     );
 };

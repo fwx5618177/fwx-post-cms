@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { message } from "antd";
 import api from "../api";
 import { RouteItem, ContentItem, FormValues, UpdateFormValues, SelectOption } from "../types";
 
@@ -30,7 +29,8 @@ export const useFormData = () => {
         } catch (error) {
             console.error("Failed to fetch route list:", error);
             setRouteList([]);
-            message.error("获取路由列表失败");
+            // eslint-disable-next-line no-console
+            console.error("获取路由列表失败");
         }
     }, []);
 
@@ -51,7 +51,8 @@ export const useFormData = () => {
         } catch (error) {
             console.error("Failed to fetch content list:", error);
             setVersions([]);
-            message.error("获取内容列表失败");
+            // eslint-disable-next-line no-console
+            console.error("获取内容列表失败");
         }
     }, []);
 
@@ -71,7 +72,8 @@ export const useFormData = () => {
         } catch (error) {
             console.error("Failed to fetch detail info:", error);
             setDetailInfos(null);
-            message.error("获取详细信息失败");
+            // eslint-disable-next-line no-console
+            console.error("获取详细信息失败");
             return null;
         }
     }, []);
@@ -90,7 +92,8 @@ export const useFormData = () => {
                 const result = await api.createContent(contentConf);
 
                 if (result && Array.isArray(result) && result.length > 0) {
-                    message.success("添加成功!");
+                    // eslint-disable-next-line no-console
+                    console.info("添加成功!");
                     // 重新获取内容列表
                     await queryContentList();
                     return true;
@@ -98,7 +101,8 @@ export const useFormData = () => {
                 return false;
             } catch (error) {
                 console.error("Failed to create content:", error);
-                message.error("添加失败，请重试");
+                // eslint-disable-next-line no-console
+                console.error("添加失败，请重试");
                 return false;
             }
         },
@@ -116,7 +120,8 @@ export const useFormData = () => {
                 });
 
                 if (result) {
-                    message.success("更新成功!");
+                    // eslint-disable-next-line no-console
+                    console.info("更新成功!");
                     // 重新获取内容列表
                     await queryContentList();
                     return true;
@@ -124,7 +129,8 @@ export const useFormData = () => {
                 return false;
             } catch (error) {
                 console.error("Failed to update content:", error);
-                message.error("更新失败，请重试");
+                // eslint-disable-next-line no-console
+                console.error("更新失败，请重试");
                 return false;
             }
         },

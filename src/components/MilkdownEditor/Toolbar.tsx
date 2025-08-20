@@ -111,60 +111,60 @@ const MilkdownToolbar: React.FC<MilkdownToolbarProps> = ({ getEditor, readonly }
 
     return (
         <div className={styles.toolbar} aria-label="Milkdown toolbar">
-            <button title="撤销 (Ctrl+Z)" onClick={handleUndo} disabled={readonly}>
+            <button data-tooltip="撤销 (Ctrl+Z)" onClick={handleUndo} disabled={readonly}>
                 <RiArrowGoBackLine />
             </button>
-            <button title="重做 (Ctrl+Y)" onClick={handleRedo} disabled={readonly}>
+            <button data-tooltip="重做 (Ctrl+Y)" onClick={handleRedo} disabled={readonly}>
                 <RiArrowGoForwardLine />
             </button>
             <div className={styles.separator} />
 
-            <button title="粗体 (Ctrl+B)" onClick={() => toggle("strong")} disabled={readonly}>
+            <button data-tooltip="粗体 (Ctrl+B)" onClick={() => toggle("strong")} disabled={readonly}>
                 <RiBold />
             </button>
-            <button title="斜体 (Ctrl+I)" onClick={() => toggle("em")} disabled={readonly}>
+            <button data-tooltip="斜体 (Ctrl+I)" onClick={() => toggle("em")} disabled={readonly}>
                 <RiItalic />
             </button>
-            <button title="行内代码 (Ctrl+`)" onClick={() => toggle("code")} disabled={readonly}>
+            <button data-tooltip="行内代码 (Ctrl+`)" onClick={() => toggle("code")} disabled={readonly}>
                 <RiCodeLine />
             </button>
             <div className={styles.separator} />
 
-            <button title="标题1 (Ctrl+Alt+1)" onClick={() => setHeading(1)} disabled={readonly}>
+            <button data-tooltip="标题1 (Ctrl+Alt+1)" onClick={() => setHeading(1)} disabled={readonly}>
                 <RiH1 />
             </button>
-            <button title="标题2 (Ctrl+Alt+2)" onClick={() => setHeading(2)} disabled={readonly}>
+            <button data-tooltip="标题2 (Ctrl+Alt+2)" onClick={() => setHeading(2)} disabled={readonly}>
                 <RiH2 />
             </button>
-            <button title="标题3 (Ctrl+Alt+3)" onClick={() => setHeading(3)} disabled={readonly}>
+            <button data-tooltip="标题3 (Ctrl+Alt+3)" onClick={() => setHeading(3)} disabled={readonly}>
                 <RiH3 />
             </button>
             <div className={styles.separator} />
 
-            <button title="无序列表 (Ctrl+Shift+8)" onClick={() => wrapNode("bullet_list")} disabled={readonly}>
+            <button data-tooltip="无序列表 (Ctrl+Shift+8)" onClick={() => wrapNode("bullet_list")} disabled={readonly}>
                 <RiListUnordered />
             </button>
-            <button title="有序列表 (Ctrl+Shift+7)" onClick={() => wrapNode("ordered_list")} disabled={readonly}>
+            <button data-tooltip="有序列表 (Ctrl+Shift+7)" onClick={() => wrapNode("ordered_list")} disabled={readonly}>
                 <RiListOrdered />
             </button>
-            <button title="引用 (Ctrl+Shift+B)" onClick={() => wrapNode("blockquote")} disabled={readonly}>
+            <button data-tooltip="引用 (Ctrl+Shift+B)" onClick={() => wrapNode("blockquote")} disabled={readonly}>
                 <RiDoubleQuotesL />
             </button>
-            <button title="任务列表" onClick={toggleTaskList} disabled={readonly}>
+            <button data-tooltip="任务列表" onClick={toggleTaskList} disabled={readonly}>
                 <RiCheckboxLine />
             </button>
-            <button title="插入表格" onClick={insertTable} disabled={readonly}>
+            <button data-tooltip="插入表格" onClick={insertTable} disabled={readonly}>
                 <RiTable2 />
             </button>
             <div className={styles.separator} />
 
-            <button title="分隔线 (---)" onClick={insertHorizontalRule} disabled={readonly}>
+            <button data-tooltip="分隔线 (---)" onClick={insertHorizontalRule} disabled={readonly}>
                 <RiSeparator />
             </button>
-            <button title="插入链接 (Ctrl+K)" onClick={insertLink} disabled={readonly}>
+            <button data-tooltip="插入链接 (Ctrl+K)" onClick={insertLink} disabled={readonly}>
                 <RiLinkM />
             </button>
-            <button title="插入图片" onClick={insertImage} disabled={readonly}>
+            <button data-tooltip="插入图片" onClick={insertImage} disabled={readonly}>
                 <RiImageLine />
             </button>
         </div>

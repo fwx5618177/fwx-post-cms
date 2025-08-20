@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { message, UploadFile, UploadProps } from "antd";
-import { RcFile } from "antd/lib/upload/interface";
-import { PostCosConf, BeforeUploadValueType, ExtendedUploadFile } from "@/request";
+import { PostCosConf } from "@/request";
 import { getBase64 } from "@/request";
-import { PreviewState, OSSUploadProps } from "../types";
+import { PreviewState, OSSUploadProps, UploadFileLite, UploadPropsLite } from "../types";
 import api from "../api";
 
 /**
@@ -21,7 +19,7 @@ export const useOSSUpload = ({
         image: "",
         title: "",
     });
-    const [fileList, setFileList] = useState<UploadFile[]>(value as UploadFile[]);
+    const [fileList, setFileList] = useState<UploadFileLite[]>(value as UploadFileLite[]);
 
     // 初始化OSS配置
     const initOSSConfig = useCallback(async () => {
@@ -34,7 +32,8 @@ export const useOSSUpload = ({
 
             setOSSData(result as unknown as PostCosConf);
         } catch (error) {
-            message.error(error instanceof Error ? error.message : String(error));
+            // eslint-disable-next-line no-console
+            console.error(error instanceof Error ? error.message : String(error));
         }
     }, [uploadDir]);
 
@@ -43,9 +42,9 @@ export const useOSSUpload = ({
     }, [initOSSConfig]);
 
     // 预览处理
-    const handlePreview = useCallback(async (file: UploadFile) => {
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj as RcFile);
+    const handlePreview = useCallback(async (file: UploadFileLite) => {
+        if (!file.url && !file.preview && file.originFileObj) {
+            file.preview = await getBase64(file.originFileObj as File);
         }
 
         setPreviewState({
@@ -56,7 +55,7 @@ export const useOSSUpload = ({
     }, []);
 
     // 文件变化处理
-    const handleChange: UploadProps["onChange"] = useCallback(
+    const handleChange: UploadPropsLite["onChange"] = useCallback(
         ({ fileList: newFileList }) => {
             onChange?.([...newFileList]);
             setFileList(newFileList);
@@ -66,7 +65,7 @@ export const useOSSUpload = ({
 
     // 文件移除处理
     const handleRemove = useCallback(
-        (file: UploadFile) => {
+        (file: UploadFileLite) => {
             const files = (value || []).filter(v => v.url !== file.url);
             onChange?.(files);
         },
@@ -75,24 +74,24 @@ export const useOSSUpload = ({
 
     // 上传前处理
     const beforeUpload = useCallback(
-        (file: RcFile): BeforeUploadValueType => {
-            if (!OSSData) return false;
-
-            const filename = file.uid + "_" + file.name;
+        (file: File) => {
+            if (!OSSData) return false as any;
+            const uid = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+            const filename = uid + "_" + file.name;
             const tmpKey = OSSData.key?.substring(0, OSSData.key.lastIndexOf("*")) || "";
-
-            const extendedFile = file as unknown as ExtendedUploadFile;
-            extendedFile.dist = tmpKey + filename;
-            extendedFile.url = "https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/" + extendedFile.dist;
-
-            return file;
+            const dist = tmpKey + filename;
+            const url = "https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com/" + dist;
+            // 附加到 fileList 显示
+            const next = [...fileList, { uid, name: file.name, originFileObj: file, dist, url, status: "uploading" }];
+            setFileList(next);
+            return file as any;
         },
-        [OSSData],
+        [OSSData, fileList],
     );
 
     // 获取上传数据
     const getUploadData = useCallback(
-        (file: ExtendedUploadFile): PostCosConf => {
+        (file: UploadFileLite): PostCosConf => {
             return {
                 ...(OSSData as PostCosConf),
                 key: file.dist || "",

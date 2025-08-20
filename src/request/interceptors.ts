@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from "axios";
-// import { message } from "antd";
+// antd 已移除，不再使用 message 组件
 import { IResponseData } from "./http-types";
 import { ErrorMessageMap } from "./error-messages";
 

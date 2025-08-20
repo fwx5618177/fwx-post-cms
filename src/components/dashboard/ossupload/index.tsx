@@ -1,200 +1,134 @@
-import { Button, Card, Col, Form, Input, message, Row, Select, Switch, UploadFile, UploadProps } from "antd";
-import { useState } from "react";
-import { uploadOSSDir, uploadStyle } from "@/request";
-import OSSUploadBase from "@/components/OssUpload";
-import { UploadPost } from "./interface";
+import React, { useState } from "react";
+import SimpleOssUpload from "@/components/OssUpload";
 import { v4 as uuidv4 } from "uuid";
 import api from "./api";
 
-const { Option } = Select;
+type UploadStyle = "click" | "dragger";
+type UploadDir = "upload" | "image" | "file" | "video" | "kaboom" | "3DModel";
+
+interface LiteUploadFile {
+    uid?: string;
+    url?: string;
+    dist: string;
+    name: string;
+    size?: number;
+    type?: string;
+}
 
 interface FormI {
     directory: string;
-    dragger: "click" | "dragger";
+    dragger: UploadStyle;
     list: string;
-    path: string;
+    path: UploadDir;
     resoureParent: string;
-    uploadFile: (UploadFile & { dist: string })[];
+    uploadFile: LiteUploadFile[];
 }
 
-const OSSUpload = () => {
-    const [listType, setListType] = useState<UploadProps["listType"]>("text");
-    const [uploadStyle, setUploadStyle] = useState<uploadStyle>("click");
-    const [uploadPath, setUploadPath] = useState<uploadOSSDir>("image");
+const OSSUpload: React.FC = () => {
+    const [listType, setListType] = useState<string>("text");
+    const [uStyle, setUStyle] = useState<UploadStyle>("click");
+    const [uploadPath, setUploadPath] = useState<UploadDir>("image");
     const [directoryStatus, setDirectoryStatus] = useState<boolean>(false);
     const [resource, setResource] = useState<string>("");
+    const [uploadFiles, setUploadFiles] = useState<LiteUploadFile[]>([]);
 
-    const [form] = Form.useForm();
-
-    const tailLayout = {
-        wrapperCol: { offset: 8, span: 16 },
-    };
-
-    const onReset = () => {
-        form.resetFields();
-    };
-
-    const handleSubmit = async (value: FormI) => {
-        console.log(value);
-
-        const { uploadFile, resoureParent } = value as FormI;
-
-        const result: UploadPost[] = uploadFile?.map(ci => ({
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const result = uploadFiles.map(ci => ({
             uuid: uuidv4(),
             createdAt: new Date(),
-            url: ci?.url as string,
-            relativePath: ci?.dist as string,
-            name: ci?.name as string,
-            size: String(ci?.size),
-            type: ci?.type as string,
-            resoureParent: resoureParent,
+            url: ci.url || "",
+            relativePath: ci.dist,
+            name: ci.name,
+            size: String(ci.size || 0),
+            type: ci.type || "",
+            resoureParent: resource,
         }));
-
-        if (result.length > 1) {
-            const data = await api.createData(result);
-            console.log("count:", data);
-            message.success(`${data}个上传成功!`);
-        } else {
-            const data = await api.createData(result[0]);
-            console.log("add:", data);
-            const uploadResult = data as UploadPost;
-            message.success(`${uploadResult?.name} 上传成功!`);
-        }
-    };
-
-    const initialVal = {
-        list: "text",
-        dragger: "click",
-        path: uploadPath,
+        const data = await api.createData(result.length > 1 ? result : result[0]);
+        // eslint-disable-next-line no-console
+        console.info("上传成功:", data);
     };
 
     return (
         <>
-            <h3
-                style={{
-                    margin: 12,
-                }}
+            <h3 style={{ margin: 12 }}>OSS Upload</h3>
+            <div
+                style={{ margin: 12, background: "#232428", border: "1px solid #36373a", borderRadius: 6, padding: 12 }}
             >
-                OSS Upload
-            </h3>
-
-            <Card
-                style={{
-                    margin: 12,
-                }}
-            >
-                <Form name="form" form={form} onFinish={handleSubmit} initialValues={initialVal}>
-                    <Row gutter={24}>
-                        <Col span={12}>
-                            <Form.Item name={"list"} label="List Type">
-                                <Select placeholder="Please select" onSelect={_ => setListType(_)}>
-                                    {(["text", "picture", "picture-card"] as UploadProps["listType"][])?.map(
-                                        (ci, index) => (
-                                            <Option key={index + "_listType"} value={ci}>
-                                                {ci}
-                                            </Option>
-                                        ),
-                                    )}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-
-                        <Col span={12}>
-                            <Form.Item name={"dragger"} label="Dragger Type">
-                                <Select placeholder="Please select" onSelect={_ => setUploadStyle(_)}>
-                                    {(["click", "dragger"] as uploadStyle[])?.map((ci, index) => (
-                                        <Option key={index + "_uploadStyle"} value={ci}>
-                                            {ci}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-
-                    <Row gutter={24}>
-                        <Col span={12}>
-                            <Form.Item name={"path"} label="Upload Path">
-                                <Select
-                                    placeholder="Please select"
-                                    onSelect={_ => {
-                                        setUploadPath(_);
-                                    }}
-                                >
-                                    {["upload", "image", "file", "video", "kaboom", "3DModel"]?.map((ci, index) => (
-                                        <Option key={index + "_uploadpath"} value={ci}>
-                                            {ci}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-
-                        <Col span={12}>
-                            <Form.Item name={"directory"} label="directory switch">
-                                <Switch
-                                    checkedChildren={"开启"}
-                                    unCheckedChildren={"关闭"}
-                                    onChange={(checked: boolean) => setDirectoryStatus(checked)}
-                                ></Switch>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-
-                    <Row gutter={24}>
-                        <Col span={12}>
-                            <Form.Item
-                                name={"resoureParent"}
-                                label={"Resource"}
-                                required
-                                rules={[
-                                    {
-                                        message: "Need to addthis resource parent",
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    onChange={e => {
-                                        const value = e?.target.value;
-                                        setResource(`/${value}`);
-                                    }}
-                                    placeholder="Please input your key words"
-                                    allowClear
-                                />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-
-                    <Row gutter={24}>
-                        <Col span={24}>
-                            <Form.Item name={"uploadFile"}>
-                                <OSSUploadBase
-                                    listType={listType}
-                                    uploadStyle={uploadStyle}
-                                    uploadDir={(uploadPath + resource) as uploadOSSDir}
-                                    directory={directoryStatus}
-                                />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-
-                    <Form.Item {...tailLayout}>
-                        <Button type="primary" htmlType="submit">
-                            Submit
-                        </Button>
-
-                        <Button
-                            style={{
-                                marginLeft: 8,
+                <form onSubmit={handleSubmit}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                        <label>
+                            List Type
+                            <select value={listType} onChange={e => setListType(e.target.value)}>
+                                {["text", "picture", "picture-card"].map(type => (
+                                    <option key={type} value={type}>
+                                        {type}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                        <label>
+                            Dragger Type
+                            <select value={uStyle} onChange={e => setUStyle(e.target.value as UploadStyle)}>
+                                {(["click", "dragger"] as UploadStyle[]).map(type => (
+                                    <option key={type} value={type}>
+                                        {type}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                        <label>
+                            Upload Path
+                            <select value={uploadPath} onChange={e => setUploadPath(e.target.value as UploadDir)}>
+                                {["upload", "image", "file", "video", "kaboom", "3DModel"].map(type => (
+                                    <option key={type} value={type}>
+                                        {type}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                        <label>
+                            directory switch
+                            <input
+                                type="checkbox"
+                                checked={directoryStatus}
+                                onChange={e => setDirectoryStatus(e.target.checked)}
+                            />
+                        </label>
+                        <label style={{ gridColumn: "1 / -1" }}>
+                            Resource
+                            <input
+                                placeholder="Please input your key words"
+                                value={resource}
+                                onChange={e => setResource(e.target.value)}
+                            />
+                        </label>
+                        <div style={{ gridColumn: "1 / -1" }}>
+                            <SimpleOssUpload
+                                uploadDir={`${uploadPath}/${resource || ""}` as any}
+                                onChangeFiles={(files: any[]) => setUploadFiles(files as LiteUploadFile[])}
+                            />
+                        </div>
+                    </div>
+                    <div style={{ marginTop: 12 }}>
+                        <button type="submit">Submit</button>
+                        <button
+                            type="button"
+                            style={{ marginLeft: 8 }}
+                            onClick={() => {
+                                setListType("text");
+                                setUStyle("click");
+                                setUploadPath("image");
+                                setDirectoryStatus(false);
+                                setResource("");
+                                setUploadFiles([]);
                             }}
-                            htmlType="button"
-                            onClick={onReset}
                         >
                             Reset
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Card>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </>
     );
 };

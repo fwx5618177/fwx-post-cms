@@ -133,21 +133,35 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(({ defaultValue = "", r
         editor.use(commonmark);
 
         let originalDispatch: any = null;
-        editor.action((ctx: any) => {
-            const view = ctx.get(editorViewCtx) as EditorView | undefined;
-            if (!view || !view.dispatchTransaction) return;
-            originalDispatch = view.dispatchTransaction;
-            view.dispatchTransaction = (tr: any) => {
-                // 先走原始逻辑
-                originalDispatch.call(view, tr);
-                // 再触发外部更新
-                try {
-                    const markdown = getMarkdown();
-                    const html = getHtml();
-                    onUpdate?.({ markdown, html });
-                } catch {}
-            };
-        });
+
+        const tryAttach = () => {
+            try {
+                editor.action((ctx: any) => {
+                    let view: EditorView | undefined;
+                    try {
+                        view = ctx.get(editorViewCtx) as EditorView | undefined;
+                    } catch {
+                        view = undefined;
+                    }
+                    if (!view || !view.dispatchTransaction) return;
+                    originalDispatch = view.dispatchTransaction;
+                    view.dispatchTransaction = (tr: any) => {
+                        originalDispatch.call(view, tr);
+                        try {
+                            const markdown = getMarkdown();
+                            const html = getHtml();
+                            onUpdate?.({ markdown, html });
+                        } catch {}
+                    };
+                });
+            } catch {
+                // ignore and retry
+            }
+        };
+
+        // 初次尝试挂载；若此时 view 尚未准备好，延时再试一次
+        tryAttach();
+        const retryTimer = window.setTimeout(tryAttach, 50);
 
         return () => {
             // 恢复原始 dispatchTransaction
@@ -156,6 +170,7 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(({ defaultValue = "", r
                 if (!view || !originalDispatch) return;
                 view.dispatchTransaction = originalDispatch;
             });
+            window.clearTimeout(retryTimer);
         };
     }, [get, getHtml, getMarkdown, onUpdate]);
 

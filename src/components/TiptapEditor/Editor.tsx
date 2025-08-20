@@ -553,6 +553,7 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(
                                     onClick={button.action}
                                     disabled={button.disabled}
                                     title={button.title}
+                                    data-tooltip={button.title}
                                 >
                                     <IconComponent />
                                 </button>
@@ -610,14 +611,7 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(
                     <EditorContent editor={editor} />
                 </div>
 
-                {/* 状态栏 */}
-                {!readonly && (
-                    <div className={styles.statusBar}>
-                        <span className={styles.stats}>
-                            字符: {characterCount.characters()} | 单词: {characterCount.words()}
-                        </span>
-                    </div>
-                )}
+                {/* 统一使用全局 EditorHeader 的统计展示，移除本地状态栏 */}
             </div>
         );
     },

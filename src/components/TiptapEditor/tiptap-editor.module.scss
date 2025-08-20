@@ -1,4 +1,5 @@
 @use "sass:color";
+@use "../../styles/variables.scss" as *;
 
 .container {
     display: flex;
@@ -7,8 +8,8 @@
     width: 100%;
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #404040;
-    background-color: #252526;
+    border: 1px solid $border-color;
+    background-color: $bg-darker;
     position: relative;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -25,39 +26,41 @@
 .toolbar {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    background-color: #1e1e1e;
-    border-bottom: 1px solid #404040;
-    gap: 6px;
+    padding: 8px 10px;
+    background: $bg-darker;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+    gap: 8px;
     flex-wrap: wrap;
     position: relative;
+    margin-bottom: 10px;
 
     .toolbarButton {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 36px;
-        height: 36px;
-        border-radius: 6px;
-        background-color: transparent;
-        border: none;
-        color: #9e9e9e;
+        width: 32px;
+        height: 28px;
+        border: 1px solid $border-color;
+        border-radius: 4px;
+        background: $bg-dark;
+        color: $text-primary;
         cursor: pointer;
         transition: all 0.15s ease;
         position: relative;
 
-        &:hover {
-            background-color: rgba(74, 107, 255, 0.15);
-            color: #e1e1e1;
+        &:hover:not(:disabled) {
+            background: color.adjust($bg-dark, $lightness: 5%);
         }
 
         &.active {
-            background-color: #4a6bff;
-            color: #ffffff;
+            background: $primary-color;
+            color: $text-on-primary;
+            border-color: $primary-color;
         }
 
         &:disabled {
-            opacity: 0.4;
+            opacity: 0.5;
             cursor: not-allowed;
         }
 
@@ -65,13 +68,47 @@
             width: 18px;
             height: 18px;
         }
+
+        // 统一 tooltip 皮肤
+        &[data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: $bg-darker;
+            color: $text-primary;
+            border: 1px solid $border-color;
+            border-radius: 4px;
+            padding: 6px 8px;
+            font-size: 12px;
+            max-width: 240px;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.3;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.12s ease;
+            z-index: 1000;
+        }
+
+        &[data-tooltip]:hover::after {
+            opacity: 1;
+        }
+
+        // 统一键盘可视化焦点
+        &:focus-visible {
+            outline: 2px solid $primary-color;
+            outline-offset: 2px;
+        }
     }
 
     .separator {
         width: 1px;
-        height: 24px;
-        background-color: #404040;
-        margin: 0 6px;
+        height: 20px;
+        background: $border-color;
+        margin: 0 4px;
     }
 
     .colorControls {
@@ -79,7 +116,7 @@
         gap: 12px;
         margin-left: 12px;
         padding-left: 12px;
-        border-left: 1px solid #404040;
+        border-left: 1px solid $border-color;
     }
 
     .colorPicker {
@@ -165,9 +202,9 @@
 // 气泡菜单样式
 .bubbleMenu {
     display: flex;
-    background-color: #1e1e1e;
-    border: 1px solid #404040;
-    border-radius: 8px;
+    background: $bg-darker;
+    border: 1px solid $border-color;
+    border-radius: 6px;
     padding: 6px;
     gap: 4px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
@@ -179,25 +216,29 @@
         width: 36px;
         height: 36px;
         border: none;
-        background: transparent;
-        color: #9e9e9e;
+        background: $bg-dark;
+        color: $text-primary;
         cursor: pointer;
-        border-radius: 6px;
+        border-radius: 4px;
         transition: all 0.15s ease;
 
         &:hover {
-            background-color: rgba(74, 107, 255, 0.15);
-            color: #e1e1e1;
+            background: color.adjust($bg-dark, $lightness: 5%);
         }
 
         &.active {
-            background-color: #4a6bff;
-            color: #ffffff;
+            background: $primary-color;
+            color: $text-on-primary;
         }
 
         svg {
             width: 18px;
             height: 18px;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
     }
 }
@@ -205,9 +246,9 @@
 // 浮动菜单样式
 .floatingMenu {
     display: flex;
-    background-color: #1e1e1e;
-    border: 1px solid #404040;
-    border-radius: 8px;
+    background: $bg-darker;
+    border: 1px solid $border-color;
+    border-radius: 6px;
     padding: 6px;
     gap: 4px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
@@ -219,25 +260,29 @@
         width: 36px;
         height: 36px;
         border: none;
-        background: transparent;
-        color: #9e9e9e;
+        background: $bg-dark;
+        color: $text-primary;
         cursor: pointer;
-        border-radius: 6px;
+        border-radius: 4px;
         transition: all 0.15s ease;
 
         &:hover {
-            background-color: rgba(74, 107, 255, 0.15);
-            color: #e1e1e1;
+            background: color.adjust($bg-dark, $lightness: 5%);
         }
 
         &.active {
-            background-color: #4a6bff;
-            color: #ffffff;
+            background: $primary-color;
+            color: $text-on-primary;
         }
 
         svg {
             width: 18px;
             height: 18px;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
     }
 }
@@ -411,7 +456,7 @@
                 }
             }
 
-            > div {
+            >div {
                 flex: 1;
                 line-height: 1.5;
 
@@ -424,7 +469,7 @@
 
             // 已完成任务的样式
             &[data-checked="true"] {
-                > div {
+                >div {
                     opacity: 0.6;
 
                     p {

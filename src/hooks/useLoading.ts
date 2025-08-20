@@ -1,5 +1,4 @@
 import { useState, useCallback, useRef } from "react";
-import { message } from "antd";
 
 // 加载状态类型
 export interface LoadingState {
@@ -38,16 +37,10 @@ export const useLoading = (initialState: LoadingState = {}) => {
                 ...prev,
                 [key]: loading,
             }));
-
-            // 显示消息
+            // 轻量提示：使用 console 代替 antd message，避免引入 UI 依赖
             if (showMessage && loading && messageContent) {
-                message.loading({
-                    content: messageContent,
-                    key: `loading-${key}`,
-                    duration: 0,
-                });
-            } else if (showMessage && !loading) {
-                message.destroy(`loading-${key}`);
+                // eslint-disable-next-line no-console
+                console.info(`[loading] ${key}: ${messageContent}`);
             }
         };
 
@@ -66,8 +59,8 @@ export const useLoading = (initialState: LoadingState = {}) => {
                     ...prev,
                     [key]: false,
                 }));
-                message.destroy(`loading-${key}`);
-                message.warning("操作超时，请重试");
+                // eslint-disable-next-line no-console
+                console.warn(`[loading] ${key}: 操作超时，请重试`);
             }, timeout);
             timeoutRefs.current.set(`${key}-timeout`, timeoutId);
         }
@@ -92,10 +85,7 @@ export const useLoading = (initialState: LoadingState = {}) => {
         timeoutRefs.current.forEach(timeout => clearTimeout(timeout));
         timeoutRefs.current.clear();
 
-        // 清除所有消息
-        Object.keys(loadingStates).forEach(key => {
-            message.destroy(`loading-${key}`);
-        });
+        // 不再需要清除 UI 消息
 
         setLoadingStates({});
     }, [loadingStates]);

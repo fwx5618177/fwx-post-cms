@@ -14,6 +14,16 @@
     gap: 12px;
 }
 
+.stepsBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+    background: $bg-darker;
+}
+
 .status {
     padding: 6px 12px;
     background: color.adjust($info-color, $lightness: 40%);
@@ -23,10 +33,43 @@
     font-size: 14px;
 }
 
+.errorTip {
+    padding: 6px 10px;
+    background: color.adjust($danger-color, $lightness: 40%);
+    border: 1px solid color.adjust($danger-color, $lightness: 20%);
+    color: color.adjust($danger-color, $lightness: -10%);
+    border-radius: 4px;
+    font-size: 14px;
+}
+
 .actions {
     margin-left: auto;
     display: inline-flex;
     gap: 8px;
+}
+
+.workflow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 8px;
+
+    label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: $text-secondary;
+
+        select,
+        input[type="text"],
+        input[type="datetime-local"] {
+            padding: 6px 8px;
+            border: 1px solid $border-color;
+            border-radius: 4px;
+            background: $bg-darker;
+            color: $text-primary;
+        }
+    }
 }
 
 .button {
@@ -53,4 +96,77 @@
         opacity: 0.6;
         cursor: not-allowed;
     }
+
+    &.tertiary {
+        background: $bg-dark;
+        color: $text-secondary;
+    }
+}
+
+.modalBackdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: $z-modal;
+}
+
+.modal {
+    width: 520px;
+    background: $bg-darker;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    box-shadow: $shadow-lg;
+    padding: 16px;
+
+    h3 {
+        margin: 0 0 12px 0;
+        color: $text-primary;
+        font-size: $font-size-xl;
+    }
+}
+
+.modalBody {
+    color: $text-primary;
+    display: grid;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    strong {
+        color: $text-secondary;
+        margin-right: 6px;
+    }
+}
+
+.modalIssues {
+    margin-top: 8px;
+    padding: 8px;
+    background: $bg-dark;
+    border: 1px solid $border-color;
+    border-radius: 6px;
+
+    ul {
+        margin: 6px 0 0 20px;
+    }
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.toast {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    background: $bg-darker;
+    border: 1px solid $border-color;
+    color: $text-primary;
+    padding: 10px 14px;
+    border-radius: 6px;
+    box-shadow: $shadow-md;
+    z-index: $z-toast;
 }

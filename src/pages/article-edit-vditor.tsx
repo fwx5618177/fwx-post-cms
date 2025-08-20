@@ -2,11 +2,15 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import Vditor from "vditor";
 import "vditor/dist/index.css";
 import styles from "@styles/pages/article-edit-vditor.module.scss";
+import sharedStyles from "@styles/pages/editor-shared.module.scss";
 import Loading from "@components/Loading";
 import OssUpload from "@components/OssUpload";
 import EditorHeader from "@/components/EditorHeader";
+import type { PublishStep } from "@/components/EditorSteps";
 import { computeEditorStats } from "@/utils/editorStats";
 import { usePublishForm } from "@/hooks/usePublishForm";
+import { useParams } from "react-router-dom";
+import { articleApi } from "@/services/api";
 
 // 默认 Markdown 内容
 const defaultMarkdown = `# Vditor 编辑器示例
@@ -88,9 +92,20 @@ const ArticleEditVditor: React.FC = () => {
 
     // 状态管理
     const [isReady, setIsReady] = useState<boolean>(false);
-    const { form, update, setContent, isSaving, isDirty, issues, scheduleAutoSave, autoSave, publish } = usePublishForm(
-        { content: defaultMarkdown },
-    );
+    const {
+        form,
+        update,
+        setContent,
+        isSaving,
+        isDirty,
+        issues,
+        scheduleAutoSave,
+        autoSave,
+        publish,
+        lastSavedAt,
+        lastPublishedAt,
+        lastError,
+    } = usePublishForm({ content: defaultMarkdown });
     const [showPreview, setShowPreview] = useState<boolean>(false);
     const previewRef = useRef<HTMLDivElement>(null);
     const autoSaveTimerRef = useRef<number | null>(null);
@@ -103,7 +118,7 @@ const ArticleEditVditor: React.FC = () => {
             const vditor = new Vditor(containerRef.current, {
                 height: "100%",
                 mode: "ir",
-                placeholder: "请输入内容...",
+                placeholder: "开始撰写您的文章内容...",
                 theme: "dark",
                 value: defaultMarkdown,
                 cache: {
@@ -159,6 +174,39 @@ const ArticleEditVditor: React.FC = () => {
             }
         };
     }, [setContent, scheduleAutoSave]);
+
+    // 统一 Vditor 工具栏 tooltip：映射 aria-label/title 到 data-tooltip，并移除 title 避免浏览器默认提示
+    useEffect(() => {
+        if (!isReady || !containerRef.current) return;
+        const root = containerRef.current as HTMLElement;
+        const toolbar = root.querySelector(".vditor-toolbar");
+        if (!toolbar) return;
+
+        const syncTooltips = () => {
+            const items = toolbar.querySelectorAll<HTMLElement>(".vditor-tooltipped");
+            items.forEach(el => {
+                const text = el.getAttribute("aria-label") || el.getAttribute("title");
+                if (text) {
+                    el.setAttribute("data-tooltip", text);
+                    el.removeAttribute("title");
+                }
+            });
+        };
+
+        // 首次同步
+        syncTooltips();
+
+        // 监听动态变更
+        const observer = new MutationObserver(() => syncTooltips());
+        observer.observe(toolbar, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ["title", "aria-label"],
+        });
+
+        return () => observer.disconnect();
+    }, [isReady]);
 
     // 获取 Markdown 内容
     const getMarkdown = useCallback((): string => {
@@ -241,6 +289,27 @@ const ArticleEditVditor: React.FC = () => {
 
     // 统计：字数/词数/阅读时长
     const stats = React.useMemo(() => computeEditorStats(form.content || ""), [form.content]);
+    // 路由 id 存在时，拉取文章详情同步表单与步骤
+    const { id } = useParams();
+    useEffect(() => {
+        if (!id) return;
+        (async () => {
+            try {
+                const data = await articleApi.detail(id);
+                Object.entries(data || {}).forEach(([key, value]) => {
+                    if (key in form) {
+                        // @ts-ignore
+                        update(key as any, value as any);
+                    }
+                });
+                if (typeof data?.content === "string") {
+                    setContent(data.content);
+                }
+            } catch (e) {
+                console.error("加载文章详情失败", e);
+            }
+        })();
+    }, [id]);
 
     // 关闭或刷新时的未保存提示
     useEffect(() => {
@@ -254,148 +323,201 @@ const ArticleEditVditor: React.FC = () => {
     }, [isDirty]);
 
     return (
-        <div className={styles.container}>
-            <EditorHeader
-                issues={issues}
-                stats={stats}
-                isSaving={isSaving}
-                isDirty={isDirty}
-                disabled={!isReady}
-                onSaveDraft={saveDraftNow}
-                onPublish={publishNow}
-                extraActions={
-                    <button className={styles.button} onClick={togglePreview} disabled={!isReady}>
-                        {showPreview ? "返回编辑" : "预览模式"}
-                    </button>
-                }
-            />
-
-            {/* 文章信息表单 */}
-            <div className={styles.articleForm}>
-                {/* 标题输入 */}
-                <div className={styles.formGroup}>
-                    <label className={styles.label}>文章标题 *</label>
+        <div className={sharedStyles.page}>
+            <div className={sharedStyles.main}>
+                <EditorHeader
+                    issues={issues}
+                    stats={stats}
+                    isSaving={isSaving}
+                    isDirty={isDirty}
+                    disabled={!isReady}
+                    onSaveDraft={saveDraftNow}
+                    onPublish={publishNow}
+                    lastSavedAt={lastSavedAt}
+                    lastPublishedAt={lastPublishedAt}
+                    lastError={lastError}
+                    auditStatus={form.auditStatus}
+                    section={form.section}
+                    scheduledAt={form.scheduledAt ?? ""}
+                    onChangeAuditStatus={s => update("auditStatus", s)}
+                    onChangeSection={s => update("section", s)}
+                    onChangeScheduledAt={val => update("scheduledAt", val)}
+                    step={((): PublishStep => {
+                        if (form.status === "published") return "published";
+                        if (form.auditStatus === "approved") return "confirm";
+                        if (form.auditStatus === "rejected") return "review";
+                        return "draft";
+                    })()}
+                    onStepChange={async step => {
+                        switch (step) {
+                            case "draft":
+                                update("auditStatus", "pending");
+                                update("status", "draft");
+                                break;
+                            case "review":
+                                update("auditStatus", "pending");
+                                update("status", "draft");
+                                break;
+                            case "confirm":
+                                update("auditStatus", "approved");
+                                update("status", "draft");
+                                break;
+                            case "published": {
+                                const res = await publish();
+                                if (!res.ok) return;
+                                break;
+                            }
+                        }
+                    }}
+                    extraActions={
+                        <button className={sharedStyles.button} onClick={togglePreview} disabled={!isReady}>
+                            {showPreview ? "返回编辑" : "预览模式"}
+                        </button>
+                    }
+                />
+                <div className={`${sharedStyles.card} ${sharedStyles.titleBar}`}>
                     <input
-                        type="text"
-                        className={styles.titleInput}
+                        className={sharedStyles.titleInputMain}
                         placeholder="请输入文章标题..."
                         value={form.title}
                         onChange={e => update("title", e.target.value)}
                     />
                 </div>
 
-                {/* 文章类型选择 */}
-                <div className={styles.formGroup}>
-                    <label className={styles.label}>文章类型</label>
-                    <select
-                        className={styles.typeSelect}
-                        value={form.type}
-                        onChange={e => update("type", e.target.value)}
-                    >
-                        {articleTypes.map(type => (
-                            <option key={type.value} value={type.value}>
-                                {type.label}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                {/* 封面上传 */}
-                <div className={styles.formGroup}>
-                    <label className={styles.label}>文章封面</label>
-                    <div className={styles.coverRow}>
-                        <div className={styles.coverUploader}>
-                            <OssUpload value={form.coverUrl} onChange={(url: string) => update("coverUrl", url)} />
-                        </div>
-                        {form.coverUrl && <img src={form.coverUrl} alt="cover" className={styles.coverPreview} />}
+                {/* 文章信息表单 */}
+                <div className={sharedStyles.articleForm}>
+                    <div className={sharedStyles.formGroup}>
+                        <label className={sharedStyles.label}>文章标题 *</label>
+                        <input
+                            type="text"
+                            className={sharedStyles.titleInput}
+                            placeholder="请输入文章标题..."
+                            value={form.title}
+                            onChange={e => update("title", e.target.value)}
+                        />
                     </div>
-                </div>
-
-                {/* 摘要 */}
-                <div className={styles.formGroup}>
-                    <label className={styles.label}>文章摘要</label>
-                    <textarea
-                        className={styles.excerptInput}
-                        placeholder="用于列表与分享的简短摘要，建议 50-120 字"
-                        rows={3}
-                        value={form.excerpt}
-                        onChange={e => update("excerpt", e.target.value)}
-                    />
-                </div>
-
-                {/* 标签管理 */}
-                <div className={styles.formGroup}>
-                    <label className={styles.label}>文章标签</label>
-
-                    {/* 已选择的标签 */}
-                    <div className={styles.selectedTags}>
-                        {form.tags.map((tag, index) => (
-                            <span key={index} className={styles.tag}>
-                                {tag}
-                                <button
-                                    type="button"
-                                    className={styles.removeTag}
-                                    onClick={() => removeTag(tag)}
-                                    aria-label={`移除标签 ${tag}`}
-                                >
-                                    ×
-                                </button>
-                            </span>
-                        ))}
-
-                        {/* 添加新标签 */}
-                        {showTagInput ? (
-                            <input
-                                type="text"
-                                className={styles.tagInput}
-                                placeholder="输入标签名称..."
-                                value={newTag}
-                                onChange={e => setNewTag(e.target.value)}
-                                onKeyDown={handleNewTagSubmit}
-                                onBlur={() => {
-                                    if (newTag.trim()) {
-                                        addTag(newTag);
-                                    } else {
-                                        setShowTagInput(false);
-                                    }
-                                }}
-                                autoFocus
-                            />
-                        ) : (
-                            <button type="button" className={styles.addTagBtn} onClick={() => setShowTagInput(true)}>
-                                + 添加标签
-                            </button>
-                        )}
-                    </div>
-
-                    {/* 预设标签 */}
-                    <div className={styles.predefinedTags}>
-                        <span className={styles.predefinedLabel}>常用标签：</span>
-                        {predefinedTags
-                            .filter(tag => !form.tags.includes(tag))
-                            .slice(0, 10)
-                            .map(tag => (
-                                <button
-                                    key={tag}
-                                    type="button"
-                                    className={styles.predefinedTag}
-                                    onClick={() => handlePredefinedTagClick(tag)}
-                                >
-                                    {tag}
-                                </button>
+                    <div className={sharedStyles.formGroup}>
+                        <label className={sharedStyles.label}>文章类型</label>
+                        <select
+                            className={sharedStyles.typeSelect}
+                            value={form.type}
+                            onChange={e => update("type", e.target.value)}
+                        >
+                            {articleTypes.map(type => (
+                                <option key={type.value} value={type.value}>
+                                    {type.label}
+                                </option>
                             ))}
+                        </select>
+                    </div>
+                    <div className={sharedStyles.formGroup}>
+                        <label className={sharedStyles.label}>文章封面</label>
+                        <div className={sharedStyles.coverRow}>
+                            <div className={sharedStyles.coverUploader}>
+                                <OssUpload value={form.coverUrl} onChange={(url: string) => update("coverUrl", url)} />
+                            </div>
+                            {form.coverUrl && (
+                                <img src={form.coverUrl} alt="cover" className={sharedStyles.coverPreview} />
+                            )}
+                        </div>
+                    </div>
+                    <div className={sharedStyles.formGroup}>
+                        <label className={sharedStyles.label}>文章摘要</label>
+                        <textarea
+                            className={sharedStyles.excerptInput}
+                            placeholder="用于列表与分享的简短摘要，建议 50-120 字"
+                            rows={3}
+                            value={form.excerpt}
+                            onChange={e => update("excerpt", e.target.value)}
+                        />
+                    </div>
+                    <div className={sharedStyles.formGroup}>
+                        <label className={sharedStyles.label}>文章标签</label>
+                        <div className={sharedStyles.selectedTags}>
+                            {form.tags.map((tag, index) => (
+                                <span key={index} className={sharedStyles.tag}>
+                                    {tag}
+                                    <button
+                                        type="button"
+                                        className={sharedStyles.removeTag}
+                                        onClick={() => removeTag(tag)}
+                                        aria-label={`移除标签 ${tag}`}
+                                    >
+                                        ×
+                                    </button>
+                                </span>
+                            ))}
+                            {showTagInput ? (
+                                <input
+                                    type="text"
+                                    className={sharedStyles.tagInput}
+                                    placeholder="输入标签名称..."
+                                    value={newTag}
+                                    onChange={e => setNewTag(e.target.value)}
+                                    onKeyDown={handleNewTagSubmit}
+                                    onBlur={() => {
+                                        if (newTag.trim()) {
+                                            addTag(newTag);
+                                        } else {
+                                            setShowTagInput(false);
+                                        }
+                                    }}
+                                    autoFocus
+                                />
+                            ) : (
+                                <button
+                                    type="button"
+                                    className={sharedStyles.addTagBtn}
+                                    onClick={() => setShowTagInput(true)}
+                                >
+                                    + 添加标签
+                                </button>
+                            )}
+                        </div>
+                        <div className={sharedStyles.predefinedTags}>
+                            <span className={sharedStyles.predefinedLabel}>常用标签：</span>
+                            {predefinedTags
+                                .filter(tag => !form.tags.includes(tag))
+                                .slice(0, 10)
+                                .map(tag => (
+                                    <button
+                                        key={tag}
+                                        type="button"
+                                        className={sharedStyles.predefinedTag}
+                                        onClick={() => handlePredefinedTagClick(tag)}
+                                    >
+                                        {tag}
+                                    </button>
+                                ))}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div className={styles.editorWrapper}>
-                {showPreview ? (
-                    <div ref={previewRef} className={styles.previewContainer} />
-                ) : (
-                    <div ref={containerRef} className={styles.vditorContainer}></div>
-                )}
-                {!isReady && <Loading />}
+                <div className={styles.editorWrapper}>
+                    {showPreview ? (
+                        <div ref={previewRef} className={styles.previewContainer} />
+                    ) : (
+                        <div ref={containerRef} className={styles.vditorContainer}></div>
+                    )}
+                    {!isReady && <Loading />}
+                </div>
             </div>
+            <aside className={`${sharedStyles.aside} ${sharedStyles.card} ${sharedStyles.articleForm}`}>
+                <h4 className={sharedStyles.asideTitle}>发布设置</h4>
+                <div>
+                    <div>
+                        当前审核状态：
+                        {form.auditStatus === "approved"
+                            ? "已通过"
+                            : form.auditStatus === "rejected"
+                            ? "已驳回"
+                            : "待审核"}
+                    </div>
+                    <div>分区：{form.section || "未设置"}</div>
+                    <div>定时发布：{form.scheduledAt ? new Date(form.scheduledAt).toLocaleString() : "未设置"}</div>
+                </div>
+                <div className={sharedStyles.asideHint}>提示：如需设置/清除定时发布时间，可在顶部栏进行操作。</div>
+            </aside>
         </div>
     );
 };

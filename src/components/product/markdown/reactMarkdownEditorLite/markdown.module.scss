@@ -2,6 +2,7 @@
  * Markdown Editor Self Component Styles
  * Modern SCSS implementation based on original CSS
  */
+@use "sass:color";
 
 // Variables
 $editor-bg-color: #f759ab;
@@ -30,7 +31,9 @@ $editor-height: 450px;
 .markdownEditorSelf {
     height: $editor-height;
     width: 100%;
-    background: linear-gradient(135deg, $editor-bg-color 0%, lighten($editor-bg-color, 10%) 100%);
+    background: linear-gradient(135deg,
+            $editor-bg-color 0%,
+            color.adjust($editor-bg-color, $lightness: 10%) 100%);
     color: $editor-text-color;
     border-radius: $border-radius;
     cursor: pointer;
@@ -149,6 +152,7 @@ $editor-height: 450px;
     0% {
         transform: translate(-50%, -50%) rotate(0deg);
     }
+
     100% {
         transform: translate(-50%, -50%) rotate(360deg);
     }
@@ -158,7 +162,7 @@ $editor-height: 450px;
 .markdownEditorSelf.disabled {
     opacity: 0.6;
     cursor: not-allowed;
-    background: desaturate($editor-bg-color, 30%);
+    background: color.adjust($editor-bg-color, $saturation: -30%);
 
     &:hover {
         border: 2px solid transparent;
@@ -170,7 +174,9 @@ $editor-height: 450px;
 // Dark theme support
 @media (prefers-color-scheme: dark) {
     .markdownEditorSelf {
-        background: linear-gradient(135deg, darken($editor-bg-color, 20%) 0%, darken($editor-bg-color, 10%) 100%);
+        background: linear-gradient(135deg,
+                color.adjust($editor-bg-color, $lightness: -20%) 0%,
+                color.adjust($editor-bg-color, $lightness: -10%) 100%);
 
         &::before {
             background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
@@ -178,12 +184,12 @@ $editor-height: 450px;
         }
 
         &:hover {
-            border-color: lighten($hover-border-color, 10%);
+            border-color: color.adjust($hover-border-color, $lightness: 10%);
             box-shadow: 0 4px 16px rgba(64, 169, 255, 0.3);
         }
 
         &:focus {
-            border-color: lighten($hover-border-color, 10%);
+            border-color: color.adjust($hover-border-color, $lightness: 10%);
             box-shadow: 0 0 0 3px rgba(64, 169, 255, 0.3);
         }
     }

@@ -1,3 +1,33 @@
+@use "sass:color";
+@use "@/styles/variables.scss" as *;
+
 :global(.milkdown) {
     height: 100%;
+}
+
+:global(.milkdown .ProseMirror) {
+    padding: 32px;
+    background-color: $bg-darker;
+    color: $text-primary;
+}
+
+:global(.milkdown .ProseMirror)::-webkit-scrollbar {
+    width: 8px;
+}
+
+:global(.milkdown .ProseMirror)::-webkit-scrollbar-track {
+    background-color: rgba(45, 45, 48, 0.5);
+}
+
+:global(.milkdown .ProseMirror)::-webkit-scrollbar-thumb {
+    background-color: $border-color;
+    border-radius: 4px;
+}
+
+// 统一占位文案样式
+:global(.milkdown .ProseMirror p.is-empty:first-child::before) {
+    content: "开始撰写您的文章内容...";
+    color: color.adjust($text-primary, $lightness: -40%);
+    pointer-events: none;
+    position: absolute;
 }

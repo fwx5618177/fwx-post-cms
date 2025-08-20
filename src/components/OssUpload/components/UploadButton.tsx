@@ -1,6 +1,5 @@
 import React from "react";
-import { Button } from "antd";
-import { PlusOutlined, UploadOutlined, FileImageOutlined } from "@ant-design/icons";
+import { RiAddLine, RiUpload2Line, RiImage2Line } from "react-icons/ri";
 import { UploadButtonProps } from "../types";
 
 /**
@@ -11,28 +10,28 @@ export const UploadButton: React.FC<UploadButtonProps> = ({ listType }) => {
     switch (listType) {
         case "picture":
             return (
-                <Button type="primary" icon={<FileImageOutlined />}>
-                    Click Image to Upload
-                </Button>
+                <button type="button">
+                    <RiImage2Line /> Click Image to Upload
+                </button>
             );
         case "picture-card":
             return (
                 <div>
-                    <PlusOutlined />
+                    <RiAddLine />
                     <div style={{ marginTop: 8 }}>Upload</div>
                 </div>
             );
         case "text":
             return (
-                <Button type="primary" icon={<UploadOutlined />}>
-                    Click to Upload
-                </Button>
+                <button type="button">
+                    <RiUpload2Line /> Click to Upload
+                </button>
             );
         default:
             return (
-                <Button type="primary" icon={<UploadOutlined />}>
-                    Click to Upload
-                </Button>
+                <button type="button">
+                    <RiUpload2Line /> Click to Upload
+                </button>
             );
     }
 };

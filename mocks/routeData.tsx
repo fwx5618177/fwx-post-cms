@@ -1,22 +1,29 @@
-import { CarryOutOutlined, FormOutlined } from "@ant-design/icons";
-import { DataNode } from "antd/lib/tree";
+import { RiCheckboxCircleLine, RiEditBoxLine } from "react-icons/ri";
 import React from "react";
 
 /**
  * 数据
  */
-export const treeData: DataNode[] = [
+export interface SimpleNode {
+    title: React.ReactNode;
+    key: string;
+    icon?: React.ReactNode;
+    switcherIcon?: React.ReactNode;
+    children?: SimpleNode[];
+}
+
+export const treeData: SimpleNode[] = [
     {
         title: "parent 1",
         key: "0-0",
-        icon: <CarryOutOutlined />,
+        icon: <RiCheckboxCircleLine />,
         children: [
             {
                 title: "parent 1-0",
                 key: "0-0-0",
-                icon: <CarryOutOutlined />,
+                icon: <RiCheckboxCircleLine />,
                 children: [
-                    { title: "leaf", key: "0-0-0-0", icon: <CarryOutOutlined /> },
+                    { title: "leaf", key: "0-0-0-0", icon: <RiCheckboxCircleLine /> },
                     {
                         title: (
                             <>
@@ -25,15 +32,15 @@ export const treeData: DataNode[] = [
                             </>
                         ),
                         key: "0-0-0-1",
-                        icon: <CarryOutOutlined />,
+                        icon: <RiCheckboxCircleLine />,
                     },
-                    { title: "leaf", key: "0-0-0-2", icon: <CarryOutOutlined /> },
+                    { title: "leaf", key: "0-0-0-2", icon: <RiCheckboxCircleLine /> },
                 ],
             },
             {
                 title: "parent 1-1",
                 key: "0-0-1",
-                icon: <CarryOutOutlined />,
+                icon: <RiCheckboxCircleLine />,
                 children: [{ title: "leaf", key: "0-0-1-0", icon: <CarryOutOutlined /> }],
             },
             {
@@ -91,10 +98,10 @@ export const treeData: DataNode[] = [
             {
                 title: "parent 2-0",
                 key: "0-1-0",
-                icon: <CarryOutOutlined />,
+                icon: <RiCheckboxCircleLine />,
                 children: [
-                    { title: "leaf", key: "0-1-0-0", icon: <CarryOutOutlined /> },
-                    { title: "leaf", key: "0-1-0-1", icon: <CarryOutOutlined /> },
+                    { title: "leaf", key: "0-1-0-0", icon: <RiCheckboxCircleLine /> },
+                    { title: "leaf", key: "0-1-0-1", icon: <RiCheckboxCircleLine /> },
                 ],
             },
         ],

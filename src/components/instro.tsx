@@ -1,4 +1,4 @@
-import { Card, Descriptions } from "antd";
+// 移除 antd 依赖，使用轻量结构
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Parser } from "marked";
 import moment from "moment";
@@ -30,29 +30,36 @@ const Instro: React.FC<{ routeKey: string }> = ({ routeKey }) => {
     }, [queryContent]);
 
     return (
-        <Card
-            style={{
-                margin: 12,
-            }}
-        >
+        <div style={{ margin: 12, background: "#232428", border: "1px solid #36373a", borderRadius: 6, padding: 12 }}>
             {content && (
                 <header
                     style={{
                         margin: 6,
                     }}
                 >
-                    <Descriptions title="Infos" bordered column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}>
-                        <Descriptions.Item label="Publish time">
-                            {moment(content?.createdAt).format("YYYY-MM-DD HH:mm:ss")}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Route key sname">{content?.routekeyname}</Descriptions.Item>
-                        <Descriptions.Item label="Title">{content?.title}</Descriptions.Item>
-                        <Descriptions.Item label="User name">{content?.username}</Descriptions.Item>
-                    </Descriptions>
+                    <div style={{ fontWeight: 700, marginBottom: 8 }}>Infos</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 8 }}>
+                        <div style={{ background: "#1c1d20", padding: 8, borderRadius: 4 }}>
+                            <div style={{ color: "#9aa0a6" }}>Publish time</div>
+                            <div>{moment(content?.createdAt).format("YYYY-MM-DD HH:mm:ss")}</div>
+                        </div>
+                        <div style={{ background: "#1c1d20", padding: 8, borderRadius: 4 }}>
+                            <div style={{ color: "#9aa0a6" }}>Route key sname</div>
+                            <div>{content?.routekeyname}</div>
+                        </div>
+                        <div style={{ background: "#1c1d20", padding: 8, borderRadius: 4 }}>
+                            <div style={{ color: "#9aa0a6" }}>Title</div>
+                            <div>{content?.title}</div>
+                        </div>
+                        <div style={{ background: "#1c1d20", padding: 8, borderRadius: 4 }}>
+                            <div style={{ color: "#9aa0a6" }}>User name</div>
+                            <div>{content?.username}</div>
+                        </div>
+                    </div>
                 </header>
             )}
             <div ref={showRef}></div>
-        </Card>
+        </div>
     );
 };
 

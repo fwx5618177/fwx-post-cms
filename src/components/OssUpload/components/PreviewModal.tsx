@@ -1,5 +1,4 @@
 import React from "react";
-import { Modal } from "antd";
 import { PreviewModalProps } from "../types";
 
 /**
@@ -9,17 +8,39 @@ import { PreviewModalProps } from "../types";
 export const PreviewModal: React.FC<PreviewModalProps> = ({ previewState, onCancel }) => {
     const { visible, image, title } = previewState;
 
+    if (!visible) return null;
     return (
-        <Modal open={visible} title={title} footer={null} onCancel={onCancel} width={800} centered>
-            <img
-                alt="preview"
+        <div
+            role="dialog"
+            aria-modal="true"
+            style={{
+                position: "fixed",
+                inset: 0,
+                background: "rgba(0,0,0,0.55)",
+                zIndex: 1050,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+            }}
+            onClick={onCancel}
+        >
+            <div
                 style={{
-                    width: "100%",
-                    maxHeight: "70vh",
-                    objectFit: "contain",
+                    background: "#232428",
+                    border: "1px solid #36373a",
+                    borderRadius: 8,
+                    width: 800,
+                    maxWidth: "90vw",
+                    padding: 12,
                 }}
-                src={image}
-            />
-        </Modal>
+                onClick={e => e.stopPropagation()}
+            >
+                <div style={{ fontWeight: 700, marginBottom: 8 }}>{title}</div>
+                <img alt="preview" style={{ width: "100%", maxHeight: "70vh", objectFit: "contain" }} src={image} />
+                <div style={{ textAlign: "right", marginTop: 8 }}>
+                    <button onClick={onCancel}>关闭</button>
+                </div>
+            </div>
+        </div>
     );
 };

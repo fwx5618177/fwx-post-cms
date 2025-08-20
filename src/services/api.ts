@@ -11,16 +11,16 @@ import { OSSSignatureRequest, PostCosConf } from "@/request";
 // ================================
 export const articleApi = {
     // 获取文章详情
-    detail: (id: string) => request.get(`/api/content/detail/${id}`),
+    detail: (id: string) => request.get(`/api/article/${id}`),
 
     // 获取文章列表
-    list: () => request.get("/api/content/list"),
+    list: () => request.get("/api/article"),
 
     // 创建文章
-    create: (params: any) => request.put("/api/content/create", params),
+    create: (params: any) => request.post("/api/article", params),
 
-    // 更新文章
-    update: (params: any) => request.put(`/api/content/detail/${params?.title}`, params),
+    // 更新文章（使用 id）
+    update: (id: string, params: any) => request.put(`/api/article/${id}`, params),
 
     // 删除文章
     delete: (id: string) => request.delete(`/api/article/${id}`),

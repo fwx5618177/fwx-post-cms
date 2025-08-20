@@ -143,7 +143,7 @@ $gitlab-color: #fc6d26;
                 transition: all 0.2s ease;
 
                 &:hover {
-                    background: lighten($primary-color, $lightness: -5%);
+                    background: color.adjust($primary-color, $lightness: -5%);
                 }
 
                 &:active {

@@ -1,4 +1,4 @@
-import { message } from "antd";
+// 轻量错误提示方案：使用 console 代替 antd message，避免 UI 依赖
 
 // 错误类型枚举
 export enum ErrorType {
@@ -75,9 +75,7 @@ export class ErrorHandler {
         this.logError(appError);
 
         // 显示用户友好的错误消息
-        if (showMessage) {
-            this.showErrorMessage(appError);
-        }
+        if (showMessage) this.showErrorMessage(appError);
 
         return appError;
     }
@@ -138,54 +136,9 @@ export class ErrorHandler {
 
     // 显示错误消息
     private showErrorMessage(error: AppError): void {
-        switch (error.type) {
-            case ErrorType.NETWORK:
-                message.error({
-                    content: error.message,
-                    duration: 5,
-                    key: "network-error",
-                });
-                break;
-
-            case ErrorType.AUTHENTICATION:
-                message.warning({
-                    content: error.message,
-                    duration: 5,
-                    key: "auth-error",
-                });
-                break;
-
-            case ErrorType.AUTHORIZATION:
-                message.warning({
-                    content: error.message,
-                    duration: 5,
-                    key: "permission-error",
-                });
-                break;
-
-            case ErrorType.VALIDATION:
-                message.warning({
-                    content: error.message,
-                    duration: 3,
-                    key: "validation-error",
-                });
-                break;
-
-            case ErrorType.SERVER:
-                message.error({
-                    content: error.message,
-                    duration: 5,
-                    key: "server-error",
-                });
-                break;
-
-            default:
-                message.error({
-                    content: error.message,
-                    duration: 4,
-                    key: "unknown-error",
-                });
-        }
+        const prefix = `Error(${error.type})`;
+        // eslint-disable-next-line no-console
+        console.error(prefix, error.message);
     }
 
     // 上报错误到监控服务

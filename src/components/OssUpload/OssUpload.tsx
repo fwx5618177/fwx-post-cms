@@ -1,6 +1,5 @@
 import React from "react";
-import { UploadProps } from "antd";
-import { OSSUploadProps } from "./types";
+import { OSSUploadProps, UploadPropsLite } from "./types";
 import { useOSSUpload } from "./hooks/useOSSUpload";
 import { UploadStyleElement } from "./components/UploadStyleElement";
 import { PreviewModal } from "./components/PreviewModal";
@@ -37,16 +36,16 @@ const OSSUpload: React.FC<OSSUploadProps> = ({
     });
 
     // 构建上传属性配置
-    const uploadProps: UploadProps = {
+    const uploadProps: UploadPropsLite = {
         action: "https://moxi-blog-1252315781.cos.ap-shanghai.myqcloud.com",
         listType,
         fileList,
-        accept: accept as UploadProps["accept"],
+        accept: accept as string,
         directory,
         multiple,
         maxCount,
         onPreview: handlePreview,
-        onChange: handleChange,
+        onChange: handleChange as any,
         onRemove: handleRemove,
         data: getUploadData,
         beforeUpload,

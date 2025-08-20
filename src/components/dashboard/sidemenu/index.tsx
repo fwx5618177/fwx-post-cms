@@ -1,14 +1,14 @@
-import { bgLayoutSet, routeTable } from "../../../config/routes.controller";
-import { CheckOutlined, CloseOutlined, SettingTwoTone } from "@ant-design/icons";
-import { Badge, Button, Card, Col, Form, Input, Radio, Row, Switch, Tree, Select, message } from "antd";
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { RiSettings3Line } from "react-icons/ri";
+import styles from "@/styles/pages/sidemenu.module.scss";
 import "./style.css";
 import { confRouteLevel } from "./conf";
 import api from "./api";
-import styles from "@/styles/pages/sidemenu.module.scss";
 
-const { Option } = Select;
+// 占位：无 antd 环境下的本地数据
+const bgLayoutSet = () => [{ label: "默认", value: "default" }];
+const routeTable = () => [] as Array<{ key: string; title: string; children?: any[] }>;
 
 interface OptionItem {
     label: string;
@@ -16,31 +16,21 @@ interface OptionItem {
 }
 
 const SideMenu: React.FC = () => {
-    const [form] = Form.useForm();
     const { t } = useTranslation();
-
-    // 设置背景归类
-    const [bgSortsStatus, setBgSortsStatus] = useState<boolean>(true);
-
-    // 设置为父还是组件
-    const [outletSet, setOutletSet] = useState<boolean>(true);
-
-    // 路由的等级
-    const [routeLevel, setRouteLevel] = useState<number>(0);
-
-    // 获取父路由
+    const [bgSortsStatus, setBgSortsStatus] = useState(true);
+    const [outletSet, setOutletSet] = useState(true);
+    const [routeLevel, setRouteLevel] = useState(0);
     const [parentRouteList, setParentRouteList] = useState<OptionItem[]>([]);
 
-    // style
-    const layout = {
-        labelCol: { span: 8 },
-        wrapperCol: { span: 16 },
-    };
-    const tailLayout = {
-        wrapperCol: { offset: 8, span: 16 },
-    };
+    const [menushow, setMenushow] = useState("");
+    const [parentVal, setParentVal] = useState("");
+    const [keyInput, setKeyInput] = useState("");
+    const [labelInput, setLabelInput] = useState("");
+    const [pathInput, setPathInput] = useState("");
+    const [outletVal, setOutletVal] = useState(true);
+    const [casesensitiveVal, setCasesensitiveVal] = useState(false);
 
-    interface RouteFormValues {
+    const onFinish = async (values: {
         menushow: string;
         pageLevel: number;
         key: string;
@@ -49,60 +39,23 @@ const SideMenu: React.FC = () => {
         outlet: boolean;
         casesensitive: boolean;
         parent?: string | number;
-    }
-
-    const onFinish = async (values: RouteFormValues) => {
-        console.log("Success:", values);
-
-        const { menushow, pageLevel, key, label, path, outlet, casesensitive } = values;
-
-        const routeConf = {
-            menushow,
-            level: String(pageLevel),
-            key,
-            label,
-            path,
-            outlet,
-            casesensitive,
-        };
-
-        const result = await api.createRoute(routeConf);
-
-        // console.log(result)
-
+    }) => {
+        const result = await api.createRoute(values as any);
         if (result && Array.isArray(result) && result.length > 0) {
-            message.success("添加成功!");
+            // eslint-disable-next-line no-console
+            console.info("添加成功!");
         }
     };
 
-    const onReset = () => {
-        form.resetFields();
-    };
-
-    const queryExtraRoutes = useCallback(async () => {
-        // const result = await api.queryRouteList()
-    }, []);
-
     const queryParentRoutes = useCallback(async () => {
-        const result = await api.parentLists({
-            parent: routeLevel - 1,
-        });
-
+        const result = await api.parentLists({ parent: routeLevel - 1 });
         if (result && Array.isArray(result) && result.length > 0) {
-            const data: OptionItem[] = result?.map(ci => ({
-                label: ci?.name,
-                value: ci?.key,
-            }));
-
+            const data: OptionItem[] = result.map((ci: any) => ({ label: ci?.name, value: ci?.key }));
             setParentRouteList(data);
         } else {
             setParentRouteList([]);
         }
     }, [routeLevel]);
-
-    useEffect(() => {
-        queryExtraRoutes();
-    }, [queryExtraRoutes]);
 
     useEffect(() => {
         queryParentRoutes();
@@ -115,241 +68,193 @@ const SideMenu: React.FC = () => {
                 <h3>{t("sidemenu")}</h3>
             </header>
 
-            <Row gutter={24}>
-                <Col span={12}>
-                    <Badge.Ribbon text={t("routebadge.ribbon")}>
-                        <Card
-                            // hoverable
-                            style={{
-                                margin: 12,
-                                height: 600,
-                                overflowY: "scroll",
-                            }}
-                            title={
-                                <>
-                                    <div className="route_conf_card_title">
-                                        <SettingTwoTone />
-                                        <h3
-                                            style={{
-                                                textAlign: "center",
-                                            }}
-                                        >
-                                            {t("routecard.text")}
-                                        </h3>
-                                    </div>
-                                </>
-                            }
-                            size={"small"}
-                        >
-                            <Form
-                                {...layout}
-                                form={form}
-                                name="basic"
-                                initialValues={{ routebgshowstatus: bgSortsStatus }}
-                                onFinish={onFinish}
-                                autoComplete="off"
-                            >
-                                <Form.Item
-                                    name="routebgshowstatus"
-                                    label={t("routebgshowstatus")}
-                                    rules={[{ required: true, message: t("routebgshowstatus.text") }]}
-                                >
-                                    <Switch
-                                        checkedChildren={<CheckOutlined />}
-                                        unCheckedChildren={<CloseOutlined />}
-                                        defaultChecked
-                                        onChange={(checked: boolean) => setBgSortsStatus(checked)}
-                                    />
-                                </Form.Item>
-
-                                {bgSortsStatus && (
-                                    <Form.Item
-                                        name="menushow"
-                                        label={t("routemenushow")}
-                                        rules={[{ required: true, message: t("routemenushow.text") }]}
-                                    >
-                                        <Select placeholder="Select">
-                                            {bgLayoutSet()?.map((ci, index) => (
-                                                <Option key={index + "_bglayout"} value={ci?.value}>
-                                                    {ci?.label}
-                                                </Option>
-                                            ))}
-                                        </Select>
-                                    </Form.Item>
-                                )}
-
-                                <Form.Item
-                                    name="pageLevel"
-                                    label={t("routepagelevel")}
-                                    rules={[{ required: true, message: t("routepagelevel.text") }]}
-                                >
-                                    <Select
-                                        placeholder="Select"
-                                        onSelect={_ => {
-                                            setRouteLevel(_);
-                                            if (_ === 2) {
-                                                setOutletSet(false);
-                                            }
-                                        }}
-                                    >
-                                        {confRouteLevel?.map((ci, index) => (
-                                            <Option key={index + "_confRoute"} value={ci?.value}>
-                                                {ci?.label}
-                                            </Option>
-                                        ))}
-                                    </Select>
-                                </Form.Item>
-
-                                {routeLevel !== 0 && (
-                                    <Form.Item
-                                        name="parent"
-                                        label={t("routepageParent")}
-                                        rules={[{ required: true, message: t("routepageParent.text") }]}
-                                    >
-                                        <Select placeholder="Select">
-                                            {parentRouteList?.map((ci, index) => (
-                                                <Option key={index + "_confRoute"} value={ci?.value}>
-                                                    {ci?.label}
-                                                </Option>
-                                            ))}
-                                        </Select>
-                                    </Form.Item>
-                                )}
-
-                                <Form.Item
-                                    name="key"
-                                    label={t("routekey")}
-                                    rules={[{ required: true, message: t("routekey.text") }]}
-                                >
-                                    <Input />
-                                </Form.Item>
-
-                                <Form.Item
-                                    name="label"
-                                    label={t("routelabel")}
-                                    rules={[{ required: true, message: t("routelabel.text") }]}
-                                >
-                                    <Input />
-                                </Form.Item>
-
-                                <Form.Item
-                                    name="path"
-                                    label={t("routepath")}
-                                    rules={[{ required: true, message: t("routepath.text") }]}
-                                >
-                                    <Input />
-                                </Form.Item>
-
-                                {/* <Form.Item name='icon' label={t('routeicon')} rules={[{ required: true, message: t('routeicon.text') }]}>
-                                    <Input />
-                                </Form.Item> */}
-
-                                {/* <Form.Item name='index' label={t('routeindex')} rules={[{ required: true, message: t('routeindex.text') }]}>
-                                    <Input />
-                                </Form.Item> */}
-
-                                {/* <Form.Item name='child' label={t('routechild')} rules={[{ required: true, message: t('routechild.text') }]}>
-                                    <Input />
-                                </Form.Item> */}
-
-                                {/* <Form.Item name='component' label={t('routecomponent')} rules={[{ required: true, message: t('routecomponent.text') }]}>
-                                    <Input />
-                                </Form.Item> */}
-
-                                {outletSet && (
-                                    <Form.Item
-                                        name="outlet"
-                                        label={t("routeoutlet")}
-                                        rules={[{ required: true, message: t("routeoutlet.text") }]}
-                                    >
-                                        <Radio.Group
-                                            options={[
-                                                {
-                                                    label: t("routeoutlet.text.radio.status.start"),
-                                                    value: true,
-                                                },
-                                                {
-                                                    label: t("routeoutlet.text.radio.status.close"),
-                                                    value: false,
-                                                },
-                                            ]}
-                                            optionType={"button"}
-                                            buttonStyle={"solid"}
-                                        />
-                                    </Form.Item>
-                                )}
-
-                                <Form.Item
-                                    name="casesensitive"
-                                    label={t("routecasesensitive")}
-                                    rules={[{ required: true, message: t("routecasesensitive.text") }]}
-                                >
-                                    <Radio.Group
-                                        options={[
-                                            {
-                                                label: t("routecasesensitive.radio.status.start"),
-                                                value: true,
-                                            },
-                                            {
-                                                label: t("routecasesensitive.radio.status.close"),
-                                                value: false,
-                                            },
-                                        ]}
-                                        optionType={"button"}
-                                        buttonStyle={"solid"}
-                                    />
-                                </Form.Item>
-
-                                <Form.Item {...tailLayout}>
-                                    <Button type="primary" htmlType="submit">
-                                        {t("button.submit")}
-                                    </Button>
-
-                                    <Button
-                                        style={{
-                                            marginLeft: 8,
-                                        }}
-                                        htmlType="button"
-                                        onClick={onReset}
-                                    >
-                                        {t("button.reset")}
-                                    </Button>
-                                </Form.Item>
-                            </Form>
-                        </Card>
-                    </Badge.Ribbon>
-                </Col>
-
-                <Col span={12}>
-                    <Badge.Ribbon text={t("routebadge.ribbonshow")} color="volcano">
-                        <Card
-                            title={t("routetable.treedata")}
-                            headStyle={{
-                                display: "flex",
-                                alignContent: "center",
-                                justifyContent: "center",
-                            }}
-                            hoverable
-                            style={{
-                                margin: 12,
-                                minHeight: 600,
-                            }}
-                        >
-                            <Tree
-                                height={500}
-                                // switcherIcon={<RightCircleTwoTone />}
-                                showLine
-                                showIcon
-                                defaultExpandAll
-                                // onSelect={onSelect}
-                                // switcherIcon={<DownOutlined />}
-                                // treeData={treeData}
-                                treeData={routeTable()}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+                <div
+                    style={{
+                        margin: 12,
+                        background: "#232428",
+                        border: "1px solid #36373a",
+                        borderRadius: 6,
+                        padding: 12,
+                        height: 600,
+                        overflowY: "auto",
+                    }}
+                >
+                    <div className="route_conf_card_title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <RiSettings3Line />
+                        <h3 style={{ textAlign: "center" }}>{t("routecard.text")}</h3>
+                    </div>
+                    <form
+                        onSubmit={async e => {
+                            e.preventDefault();
+                            await onFinish({
+                                menushow,
+                                pageLevel: routeLevel,
+                                key: keyInput,
+                                label: labelInput,
+                                path: pathInput,
+                                outlet: outletVal,
+                                casesensitive: casesensitiveVal,
+                                parent: parentVal || undefined,
+                            });
+                        }}
+                    >
+                        <div style={{ marginBottom: 12 }}>
+                            <label style={{ marginRight: 8 }}>{t("routebgshowstatus")}</label>
+                            <input
+                                type="checkbox"
+                                checked={bgSortsStatus}
+                                onChange={e => setBgSortsStatus(e.target.checked)}
                             />
-                        </Card>
-                    </Badge.Ribbon>
-                </Col>
-            </Row>
+                        </div>
+                        {bgSortsStatus && (
+                            <div style={{ marginBottom: 12 }}>
+                                <label style={{ marginRight: 8 }}>{t("routemenushow")}</label>
+                                <select value={menushow} onChange={e => setMenushow(e.target.value)}>
+                                    <option value="" disabled>
+                                        Select
+                                    </option>
+                                    {bgLayoutSet().map((ci: OptionItem, index: number) => (
+                                        <option key={index + "_bglayout"} value={String(ci.value)}>
+                                            {ci.label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+                        <div style={{ marginBottom: 12 }}>
+                            <label style={{ marginRight: 8 }}>{t("routepagelevel")}</label>
+                            <select value={routeLevel} onChange={e => setRouteLevel(Number(e.target.value))}>
+                                <option value={0}>Select</option>
+                                {confRouteLevel.map((ci: any, index: number) => (
+                                    <option key={index + "_confRoute"} value={ci.value}>
+                                        {ci.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        {routeLevel !== 0 && (
+                            <div style={{ marginBottom: 12 }}>
+                                <label style={{ marginRight: 8 }}>{t("routepageParent")}</label>
+                                <select value={parentVal} onChange={e => setParentVal(e.target.value)}>
+                                    <option value="" disabled>
+                                        Select
+                                    </option>
+                                    {parentRouteList.map((ci: OptionItem, index: number) => (
+                                        <option key={index + "_confRoute"} value={String(ci.value)}>
+                                            {ci.label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+                        <div style={{ marginBottom: 12 }}>
+                            <label style={{ marginRight: 8 }}>{t("routekey")}</label>
+                            <input value={keyInput} onChange={e => setKeyInput(e.target.value)} />
+                        </div>
+                        <div style={{ marginBottom: 12 }}>
+                            <label style={{ marginRight: 8 }}>{t("routelabel")}</label>
+                            <input value={labelInput} onChange={e => setLabelInput(e.target.value)} />
+                        </div>
+                        <div style={{ marginBottom: 12 }}>
+                            <label style={{ marginRight: 8 }}>{t("routepath")}</label>
+                            <input value={pathInput} onChange={e => setPathInput(e.target.value)} />
+                        </div>
+                        {outletSet && (
+                            <div style={{ marginBottom: 12 }}>
+                                <label style={{ marginRight: 8 }}>{t("routeoutlet")}</label>
+                                <label style={{ marginRight: 8 }}>
+                                    <input
+                                        type="radio"
+                                        name="outlet"
+                                        checked={outletVal}
+                                        onChange={() => setOutletVal(true)}
+                                    />
+                                    {t("routeoutlet.text.radio.status.start")}
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="outlet"
+                                        checked={!outletVal}
+                                        onChange={() => setOutletVal(false)}
+                                    />
+                                    {t("routeoutlet.text.radio.status.close")}
+                                </label>
+                            </div>
+                        )}
+                        <div style={{ marginBottom: 12 }}>
+                            <label style={{ marginRight: 8 }}>{t("routecasesensitive")}</label>
+                            <label style={{ marginRight: 8 }}>
+                                <input
+                                    type="radio"
+                                    name="casesensitive"
+                                    checked={casesensitiveVal}
+                                    onChange={() => setCasesensitiveVal(true)}
+                                />
+                                {t("routecasesensitive.radio.status.start")}
+                            </label>
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="casesensitive"
+                                    checked={!casesensitiveVal}
+                                    onChange={() => setCasesensitiveVal(false)}
+                                />
+                                {t("routecasesensitive.radio.status.close")}
+                            </label>
+                        </div>
+                        <div>
+                            <button type="submit">{t("button.submit")}</button>
+                            <button
+                                type="button"
+                                style={{ marginLeft: 8 }}
+                                onClick={() => {
+                                    setMenushow("");
+                                    setParentVal("");
+                                    setKeyInput("");
+                                    setLabelInput("");
+                                    setPathInput("");
+                                    setOutletVal(true);
+                                    setCasesensitiveVal(false);
+                                }}
+                            >
+                                {t("button.reset")}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div
+                    style={{
+                        margin: 12,
+                        background: "#232428",
+                        border: "1px solid #36373a",
+                        borderRadius: 6,
+                        padding: 12,
+                        minHeight: 600,
+                    }}
+                >
+                    <div style={{ textAlign: "center", fontWeight: 700, marginBottom: 8 }}>
+                        {t("routetable.treedata")}
+                    </div>
+                    <div style={{ maxHeight: 500, overflow: "auto" }}>
+                        {(() => {
+                            const data = routeTable();
+                            const renderNode = (node: any) => (
+                                <li key={node.key} style={{ padding: "4px 0" }}>
+                                    <span>{typeof node.title === "string" ? node.title : node.key}</span>
+                                    {Array.isArray(node.children) && node.children.length > 0 && (
+                                        <ul style={{ paddingLeft: 16, listStyle: "circle" }}>
+                                            {node.children.map((child: any) => renderNode(child))}
+                                        </ul>
+                                    )}
+                                </li>
+                            );
+                            return <ul style={{ listStyle: "disc", paddingLeft: 16 }}>{data.map(renderNode)}</ul>;
+                        })()}
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

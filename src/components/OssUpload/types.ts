@@ -1,25 +1,53 @@
-import { UploadFile, UploadProps } from "antd";
 import { uploadOSSDir, uploadStyle } from "@/request";
 
-// OSS上传组件属性接口
+export type UploadListType = "text" | "picture" | "picture-card";
+
+export interface UploadFileLite {
+    uid: string;
+    name: string;
+    size?: number;
+    type?: string;
+    url?: string;
+    preview?: string;
+    originFileObj?: File;
+    status?: "uploading" | "done" | "error" | "removed";
+    dist?: string;
+}
+
+export interface UploadPropsLite {
+    action?: string;
+    listType?: UploadListType;
+    fileList?: UploadFileLite[];
+    accept?: string;
+    directory?: boolean;
+    multiple?: boolean;
+    maxCount?: number;
+    onPreview?: (file: UploadFileLite) => void;
+    onChange?: (info: { fileList: UploadFileLite[] }) => void;
+    onRemove?: (file: UploadFileLite) => void | boolean;
+    data?: any;
+    beforeUpload?: (file: File) => any;
+}
+
+// OSS上传组件属性接口（遗留封装）
 export interface OSSUploadProps {
-    value?: UploadFile[];
-    onChange?: (fileList: UploadFile[]) => void;
-    accept?: UploadProps["accept"];
+    value?: UploadFileLite[];
+    onChange?: (fileList: UploadFileLite[]) => void;
+    accept?: string;
     uploadDir?: uploadOSSDir;
     directory?: boolean;
     multiple?: boolean;
     maxCount?: number;
-    listType?: UploadProps["listType"];
+    listType?: UploadListType;
     uploadStyle?: uploadStyle;
 }
 
 // 上传配置
 export interface UploadConfig {
     action: string;
-    listType: UploadProps["listType"];
-    fileList: UploadFile[];
-    accept: UploadProps["accept"];
+    listType: UploadListType;
+    fileList: UploadFileLite[];
+    accept: string;
     directory?: boolean;
     multiple?: boolean;
     maxCount?: number;
@@ -35,15 +63,15 @@ export interface PreviewState {
 // 上传样式元素属性
 export interface UploadStyleElementProps {
     uploadStyle: uploadStyle;
-    uploadProps: UploadProps;
-    fileList: UploadFile[];
+    uploadProps: UploadPropsLite;
+    fileList: UploadFileLite[];
     maxCount: number;
-    listType: UploadProps["listType"];
+    listType: UploadListType;
 }
 
 // 上传按钮属性
 export interface UploadButtonProps {
-    listType: UploadProps["listType"];
+    listType: UploadListType;
 }
 
 // 预览模态框属性

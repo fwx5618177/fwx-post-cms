@@ -1,0 +1,59 @@
+@use "sass:color";
+@use "../variables.scss" as *;
+
+.steps {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stepWrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.step {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid $border-color;
+    border-radius: 999px;
+    background: $bg-darker;
+    color: $text-secondary;
+    cursor: pointer;
+    transition: $transition-all;
+
+    &.active {
+        background: $primary-color;
+        color: $text-on-primary;
+        border-color: $primary-color;
+    }
+
+    &.completed {
+        background: color.adjust($primary-color, $lightness: 10%);
+        color: $text-on-primary;
+        border-color: color.adjust($primary-color, $lightness: 10%);
+        opacity: 0.9;
+    }
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.label {
+    font-size: $font-size-base;
+}
+
+.connector {
+    display: inline-block;
+    width: 48px;
+    height: 3px;
+    background: $border-color;
+    transform: translateY(-1px);
+}
