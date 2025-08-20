@@ -1,4 +1,3 @@
-@use "sass:color";
 @use "@/styles/variables.scss" as *;
 
 :global(.milkdown) {
@@ -27,7 +26,7 @@
 // 统一占位文案样式
 :global(.milkdown .ProseMirror p.is-empty:first-child::before) {
     content: "开始撰写您的文章内容...";
-    color: color.adjust($text-primary, $lightness: -40%);
+    color: darken($text-primary, 40%);
     pointer-events: none;
     position: absolute;
 }

@@ -18,7 +18,7 @@ interface OptionItem {
 const SideMenu: React.FC = () => {
     const { t } = useTranslation();
     const [bgSortsStatus, setBgSortsStatus] = useState(true);
-    const [outletSet, setOutletSet] = useState(true);
+    const [outletSet, _setOutletSet] = useState(true);
     const [routeLevel, setRouteLevel] = useState(0);
     const [parentRouteList, setParentRouteList] = useState<OptionItem[]>([]);
 

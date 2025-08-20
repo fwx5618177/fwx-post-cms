@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import moment from "moment";
 import { UpdateFormValues, SelectOption, ContentItem } from "./types";
 
-const { Option } = Select;
+// const { Option } = Select; // Unused import
 
 interface UpdateFormProps {
     versions: SelectOption[];

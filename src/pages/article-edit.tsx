@@ -1,4 +1,21 @@
 import React, { useEffect, useState, useCallback } from "react";
+import {
+    FaPen,
+    FaEye,
+    FaCheck,
+    FaTimes,
+    FaBold,
+    FaItalic,
+    FaUnderline,
+    FaStrikethrough,
+    FaListUl,
+    FaQuoteRight,
+    FaCode,
+    FaImage,
+    FaLink,
+    FaExclamationTriangle,
+    FaArrowLeft,
+} from "react-icons/fa";
 import sharedStyles from "@styles/pages/editor-shared.module.scss";
 import EditorHeader from "@/components/EditorHeader";
 import type { PublishStep } from "@/components/EditorSteps";
@@ -8,16 +25,16 @@ import { useParams } from "react-router-dom";
 import { articleApi } from "@/services/api";
 import OssUpload from "@/components/OssUpload";
 
-interface ArticleForm {
-    title: string;
-    category: string;
-    tags: string[];
-    content: string;
-    coverImage: string;
-    excerpt: string;
-}
+// interface ArticleForm {
+//     title: string;
+//     category: string;
+//     tags: string[];
+//     content: string;
+//     coverImage: string;
+//     excerpt: string;
+// }
 
-type EditMode = "view" | "edit";
+// type EditMode = "view" | "edit"; // Unused type
 type PreviewMode = "none" | "desktop" | "mobile";
 
 type PublishStep = "draft" | "review" | "confirm" | "published";
@@ -83,10 +100,9 @@ const ArticleEdit = () => {
 
     const [currentTag, setCurrentTag] = useState("");
     const [customCategory, setCustomCategory] = useState("");
-    const [previewMode, setPreviewMode] = useState<PreviewMode>("none");
     const [publishStep, setPublishStep] = useState<PublishStep>("draft");
     const [publishStatus, setPublishStatus] = useState<PublishStatus>("idle");
-    const [publishError, setPublishError] = useState<string>("");
+    const [publishError, _setPublishError] = useState<string>("");
     const [changedFields, setChangedFields] = useState<string[]>([]);
 
     const categories = ["Technology", "Programming", "Design", "Business", "Other"];
@@ -98,8 +114,7 @@ const ArticleEdit = () => {
                 const data = await articleApi.detail(id);
                 Object.entries(data || {}).forEach(([key, value]) => {
                     if (key in form) {
-                        // @ts-ignore
-                        update(key as any, value as any);
+                        update(key as keyof typeof form, value as string);
                     }
                 });
                 if (typeof data?.content === "string") setContent(data.content);
@@ -107,7 +122,7 @@ const ArticleEdit = () => {
                 console.error("加载文章详情失败", e);
             }
         })();
-    }, [id]);
+    }, [id, form, setContent, update]);
 
     const stats = React.useMemo(() => computeEditorStats(form.content || ""), [form.content]);
 
@@ -195,7 +210,7 @@ const ArticleEdit = () => {
         navigate("/content/article/list");
     };
 
-    const handlePreviewModeChange = (newMode: PreviewMode) => {
+    const _handlePreviewModeChange = (newMode: PreviewMode) => {
         setPreviewMode(prevMode => (prevMode === newMode ? "none" : newMode));
     };
 
@@ -247,7 +262,7 @@ const ArticleEdit = () => {
         );
     };
 
-    const renderPublishSteps = () => {
+    const _renderPublishSteps = () => {
         const steps: PublishStep[] = ["draft", "review", "confirm", "published"];
         const currentStepIndex = steps.indexOf(publishStep);
 
@@ -280,7 +295,7 @@ const ArticleEdit = () => {
         );
     };
 
-    const renderStepContent = () => {
+    const _renderStepContent = () => {
         switch (publishStep) {
             case "draft":
                 return (

@@ -1,4 +1,3 @@
-@use "sass:color";
 @use "../variables.scss" as *;
 
 .steps {
@@ -32,9 +31,9 @@
     }
 
     &.completed {
-        background: color.adjust($primary-color, $lightness: 10%);
+        background: lighten($primary-color, 10%);
         color: $text-on-primary;
-        border-color: color.adjust($primary-color, $lightness: 10%);
+        border-color: lighten($primary-color, 10%);
         opacity: 0.9;
     }
 }

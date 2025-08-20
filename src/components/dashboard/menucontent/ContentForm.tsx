@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { FormValues, SelectOption } from "./types";
 
-const { Option } = Select;
+// const { Option } = Select; // Unused import
 
 interface ContentFormProps {
     routeList: SelectOption[];
@@ -27,7 +27,7 @@ export const ContentForm: React.FC<ContentFormProps> = ({
     const formRef = React.useRef<HTMLFormElement | null>(null);
     const { t } = useTranslation();
 
-    const layout = {};
+    // const layout = {}; // Unused variable
 
     return (
         <form

@@ -1,4 +1,4 @@
-@use "sass:color";
+@use "../variables.scss" as *;
 
 $bg-primary: #1a1b1e;
 $bg-secondary: #2c2d31;
@@ -616,7 +616,7 @@ $warning-color: #f59e0b;
                     color: $text-primary;
 
                     &:hover {
-                        background-color: color.adjust($success-color, $lightness: -5%);
+                        background-color: darken($success-color, 5%);
                     }
                 }
             }
@@ -708,7 +708,7 @@ $warning-color: #f59e0b;
                     color: $text-primary;
 
                     &:hover:not(:disabled) {
-                        background-color: color.adjust($success-color, $lightness: -5%);
+                        background-color: darken($success-color, 5%);
                     }
 
                     &:disabled {

@@ -106,8 +106,7 @@ const ArticleEditTiptap: React.FC = () => {
                 Object.entries(data || {}).forEach(([key, value]) => {
                     // 仅同步已存在字段
                     if (key in form) {
-                        // @ts-ignore
-                        update(key as any, value as any);
+                        update(key as keyof typeof form, value as string);
                     }
                 });
                 if (typeof data?.content === "string") setContent(data.content);
@@ -115,7 +114,7 @@ const ArticleEditTiptap: React.FC = () => {
                 console.error("加载文章详情失败", e);
             }
         })();
-    }, [id]);
+    }, [id, form, setContent, update]);
 
     // 发布表单
     const {

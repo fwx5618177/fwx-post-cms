@@ -298,8 +298,7 @@ const ArticleEditVditor: React.FC = () => {
                 const data = await articleApi.detail(id);
                 Object.entries(data || {}).forEach(([key, value]) => {
                     if (key in form) {
-                        // @ts-ignore
-                        update(key as any, value as any);
+                        update(key as keyof typeof form, value as string);
                     }
                 });
                 if (typeof data?.content === "string") {
@@ -309,7 +308,7 @@ const ArticleEditVditor: React.FC = () => {
                 console.error("加载文章详情失败", e);
             }
         })();
-    }, [id]);
+    }, [id, form, setContent, update]);
 
     // 关闭或刷新时的未保存提示
     useEffect(() => {

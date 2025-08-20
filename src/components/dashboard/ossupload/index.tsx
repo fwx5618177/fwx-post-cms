@@ -15,7 +15,7 @@ interface LiteUploadFile {
     type?: string;
 }
 
-interface FormI {
+interface _FormI {
     directory: string;
     dragger: UploadStyle;
     list: string;

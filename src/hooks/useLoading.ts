@@ -88,7 +88,7 @@ export const useLoading = (initialState: LoadingState = {}) => {
         // 不再需要清除 UI 消息
 
         setLoadingStates({});
-    }, [loadingStates]);
+    }, []);
 
     // 包装异步函数，自动管理加载状态
     const withLoading = useCallback(

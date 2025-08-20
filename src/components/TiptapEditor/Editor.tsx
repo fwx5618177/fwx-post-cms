@@ -482,7 +482,7 @@ const Editor = forwardRef<EditorRefMethods, EditorProps>(
             return <div className={styles.loading}>编辑器加载中...</div>;
         }
 
-        const characterCount = editor.storage.characterCount || { characters: () => 0, words: () => 0 };
+        const _characterCount = editor.storage.characterCount || { characters: () => 0, words: () => 0 };
 
         return (
             <div className={styles.container}>

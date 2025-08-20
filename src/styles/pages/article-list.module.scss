@@ -1,4 +1,4 @@
-@use "sass:color";
+@use "../variables.scss" as *;
 
 // Dark theme colors
 $bg-primary: #1a1b1e;
@@ -103,13 +103,13 @@ $danger-color: #ef4444;
                 }
 
                 &:hover {
-                    background-color: color.adjust($bg-secondary, $lightness: 2%);
+                    background-color: lighten($bg-secondary, 2%);
                 }
 
                 &:focus {
                     outline: none;
                     border-color: $accent-color;
-                    background-color: color.adjust($bg-secondary, $lightness: 3%);
+                    background-color: lighten($bg-secondary, 3%);
                     box-shadow: 0 0 0 3px rgba($accent-color, 0.15);
 
                     &+svg {
@@ -153,13 +153,13 @@ $danger-color: #ef4444;
                     @include card-shadow;
 
                     &:hover {
-                        background-color: color.adjust($bg-secondary, $lightness: 2%);
+                        background-color: lighten($bg-secondary, 2%);
                     }
 
                     &:focus {
                         outline: none;
                         border-color: $accent-color;
-                        background-color: color.adjust($bg-secondary, $lightness: 3%);
+                        background-color: lighten($bg-secondary, 3%);
                         box-shadow: 0 0 0 3px rgba($accent-color, 0.15);
 
                         &+svg {
@@ -201,17 +201,17 @@ $danger-color: #ef4444;
 
         &.published {
             background-color: rgba($success-color, 0.15);
-            color: color.adjust($success-color, $lightness: 10%);
+            color: lighten($success-color, 10%);
         }
 
         &.draft {
             background-color: rgba($warning-color, 0.15);
-            color: color.adjust($warning-color, $lightness: 10%);
+            color: lighten($warning-color, 10%);
         }
 
         &.archived {
             background-color: rgba($text-secondary, 0.15);
-            color: color.adjust($text-secondary, $lightness: 10%);
+            color: lighten($text-secondary, 10%);
         }
     }
 

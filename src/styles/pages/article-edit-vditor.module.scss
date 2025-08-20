@@ -1,4 +1,4 @@
-@use "sass:color";
+@use "../variables.scss" as *;
 
 $primary-color: #007bff;
 $success-color: #28a745;
@@ -37,7 +37,7 @@ $text-color: #e0e0e0;
                 gap: 10px;
                 align-items: center;
                 padding: 6px 12px;
-                background: color.adjust($light-color, $lightness: 3%);
+                background: lighten($light-color, 3%);
                 border: 1px solid $border-color;
                 border-radius: 4px;
                 color: $text-color;
@@ -46,11 +46,11 @@ $text-color: #e0e0e0;
 
             .modeInfo {
                 padding: 6px 12px;
-                background: color.adjust($info-color, $lightness: 45%);
+                background: lighten($info-color, 45%);
                 border-radius: 4px;
                 font-size: 14px;
                 color: $info-color;
-                border: 1px solid color.adjust($info-color, $lightness: 30%);
+                border: 1px solid lighten($info-color, 30%);
 
                 span {
                     font-weight: 500;
@@ -72,8 +72,8 @@ $text-color: #e0e0e0;
                 transition: all 0.2s ease;
 
                 &:hover:not(:disabled) {
-                    background: color.adjust($light-color, $lightness: 5%);
-                    border-color: color.adjust($border-color, $lightness: 10%);
+                    background: lighten($light-color, 5%);
+                    border-color: lighten($border-color, 10%);
                 }
 
                 &:disabled {
@@ -87,8 +87,8 @@ $text-color: #e0e0e0;
                     border-color: $primary-color;
 
                     &:hover:not(:disabled) {
-                        background: color.adjust($primary-color, $lightness: -5%);
-                        border-color: color.adjust($primary-color, $lightness: -5%);
+                        background: darken($primary-color, 5%);
+                        border-color: darken($primary-color, 5%);
                     }
                 }
 
@@ -98,8 +98,8 @@ $text-color: #e0e0e0;
                     border-color: $info-color;
 
                     &:hover:not(:disabled) {
-                        background: color.adjust($info-color, $lightness: -5%);
-                        border-color: color.adjust($info-color, $lightness: -5%);
+                        background: darken($info-color, 5%);
+                        border-color: darken($info-color, 5%);
                     }
                 }
             }
@@ -221,7 +221,7 @@ $text-color: #e0e0e0;
                 }
 
                 &::placeholder {
-                    color: color.adjust($text-color, $lightness: -30%);
+                    color: darken($text-color, 30%);
                 }
             }
 
@@ -318,7 +318,7 @@ $text-color: #e0e0e0;
                 border: 1px dashed $border-color;
                 border-radius: 16px;
                 background: transparent;
-                color: color.adjust($text-color, $lightness: -20%);
+                color: darken($text-color, 20%);
                 font-size: 13px;
                 cursor: pointer;
                 transition: all 0.2s ease;
@@ -337,7 +337,7 @@ $text-color: #e0e0e0;
             align-items: center;
 
             .predefinedLabel {
-                color: color.adjust($text-color, $lightness: -20%);
+                color: darken($text-color, 20%);
                 font-size: 12px;
                 font-weight: 500;
                 margin-right: 4px;
@@ -348,7 +348,7 @@ $text-color: #e0e0e0;
                 border: 1px solid $border-color;
                 border-radius: 12px;
                 background: transparent;
-                color: color.adjust($text-color, $lightness: -10%);
+                color: darken($text-color, 10%);
                 font-size: 11px;
                 cursor: pointer;
                 transition: all 0.2s ease;
@@ -445,7 +445,7 @@ $text-color: #e0e0e0;
                 position: relative;
 
                 &:hover {
-                    background: color.adjust($light-color, $lightness: 5%) !important;
+                    background: lighten($light-color, 5%) !important;
                 }
 
                 // 统一 tooltip 皮肤
@@ -573,7 +573,7 @@ $text-color: #e0e0e0;
             blockquote {
                 padding: 1em !important;
                 border-left-color: $border-color !important;
-                background: color.adjust($dark-color, $lightness: 2%) !important;
+                background: lighten($dark-color, 2%) !important;
                 color: $text-color !important;
             }
 
